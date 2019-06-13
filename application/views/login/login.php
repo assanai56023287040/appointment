@@ -1,6 +1,9 @@
-<!doctype html>
 <html lang="en">
-  <head>
+<head>
+
+  	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
   	<title>ระบบนัดหมายออนไลน์</title>
   	<style type="text/css">
         html{
@@ -14,11 +17,13 @@
     <?php $this->load->view('css/mycss'); ?>
 </head>
 <body bgcolor="#E6E6FA">
-</body>
-
+	<div class="text-white">
+		สวัสดี ชาวโลก
+	</div>
 <?php $this->load->view('js/myjs'); ?>
 
 <script type="text/javascript">
 
 </script>
+</body>
 </html>
