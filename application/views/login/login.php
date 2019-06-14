@@ -17,13 +17,63 @@
     <?php $this->load->view('css/mycss'); ?>
 </head>
 <body bgcolor="#E6E6FA">
-	<div class="text-white">
-		สวัสดี ชาวโลก
+<div class="container-fluid" id="app">
+
+	<button type="button" class="btn btn-primary" @click="showEmSign()" data-toggle="modal" data-target="#em-sign">Show Modal</button>
+
+	{{ idcard }}
+</div>
+	
+	<!-- modal zone -->
+	<div id="em-sign" class="modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<!-- modal header -->
+				<div class="modal-header">
+					aaaaa
+				</div>
+
+				<!-- modal body -->
+				<div class="modal-body">
+					bbbbb
+				</div>
+
+				<!-- modal footer -->
+				<div class="modal-footer">
+					ccccc
+				</div>
+			</div>
+		</div>
 	</div>
 <?php $this->load->view('js/myjs'); ?>
 
 <script type="text/javascript">
+	var app = new Vue({
+		el: '#app',
+		data: {
+			idcard: '',
+		},
+		methods: {
+			showEmSign() {
+				// $('#em-sign').modal();
+				console.log('pass to fnc showEmSign');
+				this.idcard = 'xxxxxxxxxx';
+			}
+		},
+		mounted() {
+			var _this = this;
 
+		},
+		computed: {
+
+		},
+		filter: {
+
+		},
+		watch: {
+
+		}
+	})
 </script>
 </body>
 </html>
