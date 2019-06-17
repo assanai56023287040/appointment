@@ -2,6 +2,7 @@
 <head>
 
   	<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   	<title>ระบบนัดหมายออนไลน์</title>
@@ -21,9 +22,12 @@
 
 	<button type="button" class="btn btn-primary" @click="showEmSign()" data-toggle="modal" data-target="#em-sign">Show Modal</button>
 
+	<div class="form-group">
+		<label for="idc">ID Card</label>
+		<input type="text" class="form-control" name="idcard" v-model="idcard" id="idc" />
+	</div>
 	{{ idcard }}
-</div>
-	
+
 	<!-- modal zone -->
 	<div id="em-sign" class="modal">
 		<div class="modal-dialog">
@@ -45,6 +49,8 @@
 			</div>
 		</div>
 	</div>
+</div>
+	
 <?php $this->load->view('js/myjs'); ?>
 
 <script type="text/javascript">
@@ -62,7 +68,8 @@
 		},
 		mounted() {
 			var _this = this;
-
+			this.idcard = 'abcd';
+			// $('#idc').val('aaaaa');
 		},
 		computed: {
 
@@ -73,7 +80,7 @@
 		watch: {
 
 		}
-	})
+	});
 </script>
 </body>
 </html>
