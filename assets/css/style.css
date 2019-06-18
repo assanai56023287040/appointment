@@ -1,9 +1,9 @@
-@font-face {
+/*@font-face {
   font-family: athiti;
   src: url(../../assets/fonts/athiti/athiti-regular.ttf) format('truetype');
 }
-
+*/
 body {
-  font-family: athiti, monospace;
+  font-family: 'Athiti', monospace;
   font-size: 1.5rem;
 }
