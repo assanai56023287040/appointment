@@ -15,19 +15,39 @@
   			/* min-height: 100%; */
   			background-image: linear-gradient(to top, #8500aa, #9a31bf, #b050d4, #c56ce9, #db87ff);
   		}
+
+  		.badge-login {
+  			min-height: 40%;
+  			min-width: 100%;
+  			background-color: white;
+  			position: absolute;
+  			vertical-align: middle;
+  			border-radius: 20px;
+  		}
   	</style>
     
 </head>
 <body>
 <div class="container-fluid" id="app">
 
-	<button type="button" class="btn btn-primary" @click="showEmSign()" data-toggle="modal" data-target="#em-sign">Show Modal</button>
-
-	<div class="form-group">
-		<label for="idc">ID Card</label>
-		<input type="text" class="form-control" name="idcard" v-model="idcard" id="idc" />
+	<div class="row full-height">
+		<div class="col-3 text-left">
+			<button class="btn btn-primary stay-left-bottom p-4" type="button" @click="showEmSign()" data-toggle="modal" data-target="#em-sign" style="border-radius: 40px;">
+				<i class="fa fa-lock" style="color: white;font-size: 2rem;"></i>
+			</button>
+		</div>
+		<div class="col-6">
+			<div style="min-height: 30%;"></div>
+			<div class="rounded-lg badge-login">
+				<!-- <div class="form-group">
+					 <label for="idc">ID Card</label>
+					<input type="text" class="form-control" name="idcard" v-model="idcard" id="idcard" />
+				</div> -->
+			</div>
+			<div style="min-height: 30%;"></div>
+		</div>
+		<div class="col-3"></div>
 	</div>
-	{{ idcard }}
 
 	<!-- modal zone -->
 	<div id="em-sign" class="modal fade">

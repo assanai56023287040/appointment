@@ -7,3 +7,13 @@ body {
   font-family: 'Athiti', monospace;
   font-size: 1.5rem;
 }
+
+.full-height {
+  height: 100%;
+}
+
+.stay-left-bottom {
+	position: absolute;
+	bottom: 15;
+	left: 15;
+}
