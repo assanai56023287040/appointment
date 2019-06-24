@@ -24,6 +24,12 @@
   			vertical-align: middle;
   			border-radius: 20px;
   		}
+
+  		.modal-center {
+			display: flex;
+			text-align: left;
+			vertical-align: middle;
+		}
   	</style>
     
 </head>
@@ -31,27 +37,38 @@
 <div class="container-fluid" id="app">
 
 	<div class="row full-height">
-		<div class="col-3 text-left">
+		<div class="col-4 text-left">
 			<button class="btn btn-primary stay-left-bottom p-4" type="button" @click="showEmSign()" data-toggle="modal" data-target="#em-sign" style="border-radius: 40px;">
 				<i class="fa fa-lock" style="color: white;font-size: 2rem;"></i>
 			</button>
 		</div>
-		<div class="col-6">
+		<div class="col-4">
 			<div style="min-height: 30%;"></div>
-			<div class="rounded-lg badge-login">
-				<!-- <div class="form-group">
-					 <label for="idc">ID Card</label>
-					<input type="text" class="form-control" name="idcard" v-model="idcard" id="idcard" />
-				</div> -->
+			<div class="rounded-lg badge-login text-center">
+				<img class="mt-3" src="<?php echo base_url('assets/img/tuh_header_logo.png'); ?>" width="75%" alt="Responsive image">
+
+					<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
+					<div class="px-5 mb-3">
+						<input class="form-control px-5 text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" />
+						<button class="btn mt-3 p-3 btn-purple" id="btnRegister">
+							<i class="fa fa-pen-alt fa-flip-horizontal" style="font-size: 2rem;"></i>
+							<br/>
+							<span class="mt-3">ลงทะเบียน</span>
+						</button>
+						<!-- <div class="mt-4">
+							<span class="py-3 fa fa-pen-alt fa-flip-horizontal rounded-top" width="100%" style="font-size: 1rem;background-color: #b19cd9;"></span>
+							<span width="100%" style="font-size: 1rem;background-color: #ebe4ef;">ลงทะเบียน</span>
+						</div> -->
+					</div>
 			</div>
 			<div style="min-height: 30%;"></div>
 		</div>
-		<div class="col-3"></div>
+		<div class="col-4"></div>
 	</div>
 
 	<!-- modal zone -->
 	<div id="em-sign" class="modal fade">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-center">
 			<div class="modal-content">
 				<!-- modal header -->
 				<div class="modal-header">
@@ -89,7 +106,7 @@
 		},
 		mounted() {
 			var _this = this;
-			this.idcard = 'abcd';
+			// this.idcard = 'abcd';
 			// $('#idc').val('aaaaa');
 		},
 		computed: {

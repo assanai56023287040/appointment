@@ -17,3 +17,17 @@ body {
 	bottom: 15;
 	left: 15;
 }
+
+.btn-purple {
+	background-color: #BA55D3;
+	color: white;
+	border: 5px solid #EE82EE;
+	font-size: 1.5rem;
+}
+
+.btn-purple:hover {
+	background-color: #EE82EE;
+	color: black;
+	border: 5px solid #BA55D3;
+  	box-shadow: 5px 5px 15px #EE82EE;
+}
