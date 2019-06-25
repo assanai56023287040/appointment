@@ -110,7 +110,7 @@
 		mounted() {
 			var _this = this;
 			// this.idcard = 'abcd';
-			$('#idcard').val('aaaaa');
+			// $('#idcard').val('aaaaa');
 			// $('#register-doc').slideUp("slow");
 			// $('#register-doc').show("slide", { direction: "left" }, 1000);
 			// this.registerDoc: true;
