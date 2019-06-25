@@ -21,13 +21,27 @@ body {
 .btn-purple {
 	background-color: #BA55D3;
 	color: white;
-	border: 5px solid #EE82EE;
+	border: 3px solid #EE82EE;
 	font-size: 1.5rem;
 }
 
 .btn-purple:hover {
 	background-color: #EE82EE;
 	color: black;
-	border: 5px solid #BA55D3;
+	border: 3px solid #BA55D3;
   	box-shadow: 5px 5px 15px #EE82EE;
+}
+
+.btn-blue {
+	background-color: #0668E6;
+	color: white;
+	border: 3px solid #4BF1FF;
+	font-size: 1.5rem;
+}
+
+.btn-blue:hover {
+	background-color: #4BF1FF;
+	color: black;
+	border: 3px solid #0668E6;
+  	box-shadow: 5px 5px 15px #4BF1FF;
 }
