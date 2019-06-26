@@ -36,7 +36,8 @@
 <body>
 <div class="container-fluid" id="app">
 
-<section style="display: none;" id="register-doc">
+<!-- หน้าแรกของการ Login -->
+<section v-show="rgdoc">
 	<div class="row full-height">
 		<div class="col-4 text-left">
 			<button class="btn btn-blue stay-left-bottom p-4" type="button" @click="showEmSign()" data-toggle="modal" data-target="#em-sign" style="border-radius: 40px;">
@@ -50,8 +51,8 @@
 
 					<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
 					<div class="px-5 mb-4">
-						<input class="form-control px-5 text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" />
-						<button class="btn mt-3 p-3 btn-purple" id="btnRegister">
+						<input class="form-control px-5 text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="showRegisterForm()" />
+						<button class="btn mt-3 p-3 btn-purple" id="btnRegister" @click="showRegisterForm">
 							<i class="fa fa-pen-alt fa-flip-horizontal" style="font-size: 2rem;"></i>
 							<br/>
 							<span class="mt-3">ลงทะเบียน</span>
@@ -66,9 +67,15 @@
 		</div>
 		<div class="col-4"></div>
 	</div>	
-</section>	
+</section>
 
-	<!-- modal zone -->
+<section>
+	<div class="form-group rounded-lg">
+		<input type="text" class="form-control text-center">
+	</div>
+</section>
+
+	<!-- ********************     modal zone     ******************** -->
 	<div id="em-sign" class="modal fade">
 		<div class="modal-dialog modal-center">
 			<div class="modal-content">
@@ -97,23 +104,57 @@
 	var app = new Vue({
 		el: '#app',
 		data: {
-			// registerDoc: false,
+			rgdoc: false,
+			rgform: false,
 			idcard: '',
 		},
 		methods: {
 			showEmSign() {
 				$('#em-sign').modal();
-				console.log('pass to fnc showEmSign');
-				this.idcard = 'xxxxxxxxxx';
-			}
+				this.idcard = 'xxxxxxxxxxxxx';
+			},
+			idcardChecker(id) {
+				if(id.length != 13){
+					return false;
+				}
+				for(i=0, sum=0; i < 12; i++){
+					sum += parseFloat(id.charAt(i))*(13-i); 
+				}
+				if((11-sum%11)%10!=parseFloat(id.charAt(12))){
+					return false;
+				}
+				return true;
+			},
+			showRegisterForm(){
+				if(this.idcardChecker(this.idcard)){
+					
+					Swal.fire({
+	                		title: 'เลขบัตรประชาชนถูกต้อง',
+	                		text: 'กรุณารอสักครู่...',
+		                  	type: 'success',
+		                  	showConfirmButton: false,
+		                  	allowOutsideClick: false,
+		                  	timer: 3000,
+		                }).then(() => {
+		                		this.rgdoc = false;
+								this.rgform = true;
+		                	});
+					
+				}else{
+					Swal.fire({
+					  type: 'error',
+					  title: 'เลขบัตรประชาชนไม่ถูกต้อง!',
+					  text: 'คุณกรอกเลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบความถูกต้อง',
+					  confirmButtonText: 'ปิด'
+					});
+				}
+				
+			},
+
 		},
 		mounted() {
 			var _this = this;
-			// this.idcard = 'abcd';
-			// $('#idcard').val('aaaaa');
-			// $('#register-doc').slideUp("slow");
-			// $('#register-doc').show("slide", { direction: "left" }, 1000);
-			// this.registerDoc: true;
+			this.rgdoc = true;
 		},
 		computed: {
 
