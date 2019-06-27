@@ -18,30 +18,58 @@ body {
 	left: 15;
 }
 
-.btn-purple {
+.x-btn-purple {
 	background-color: #BA55D3;
 	color: white;
 	border: 3px solid #EE82EE;
 	font-size: 1.5rem;
 }
 
-.btn-purple:hover {
+.x-btn-purple:hover {
 	background-color: #EE82EE;
 	color: black;
 	border: 3px solid #BA55D3;
   	box-shadow: 5px 5px 15px #EE82EE;
 }
 
-.btn-blue {
+.x-btn-blue {
 	background-color: #0668E6;
 	color: white;
 	border: 3px solid #4BF1FF;
 	font-size: 1.5rem;
 }
 
-.btn-blue:hover {
+.x-btn-blue:hover {
 	background-color: #4BF1FF;
 	color: black;
 	border: 3px solid #0668E6;
   	box-shadow: 5px 5px 15px #4BF1FF;
+}
+
+.x-btn-red {
+	background-color: #b30000;
+	color: white;
+	border: 3px solid #ff1a1a;
+	font-size: 1.5rem;
+}
+
+.x-btn-red:hover {
+	background-color: #ff1a1a;
+	color: black;
+	border: 3px solid #b30000;
+  	box-shadow: 5px 5px 15px #ff1a1a;
+}
+
+.x-btn-white {
+	background-color: #b30000;
+	color: white;
+	border: 3px solid #ff1a1a;
+	font-size: 1.5rem;
+}
+
+.x-btn-white:hover {
+	background-color: #ff1a1a;
+	color: black;
+	border: 3px solid #b30000;
+  	box-shadow: 5px 5px 15px #ff1a1a;
 }
