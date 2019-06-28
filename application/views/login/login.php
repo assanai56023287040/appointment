@@ -24,12 +24,6 @@
   			vertical-align: middle;
   			border-radius: 20px;
   		}
-
-  		.modal-center {
-			display: flex;
-			text-align: left;
-			vertical-align: middle;
-		}
   	</style>
     
 </head>
@@ -37,7 +31,7 @@
 <div class="container-fluid" id="app">
 
 <!-- หน้าแรกของการ Login -->
-<section v-show="rgdoc">
+<section v-show="rgsign" id="rgsign">
 	<div class="row full-height">
 		<div class="col-4 text-left">
 			<button class="btn x-btn-blue stay-left-bottom p-4" type="button" @click="showEmSign()" data-toggle="modal" data-target="#em-sign" style="border-radius: 50px;">
@@ -69,10 +63,28 @@
 	</div>	
 </section>
 
-<section v-show="rgform">
-	<div class="form-group rounded-lg">
-		<input type="text" class="form-control text-center">
+<!-- หนา้ลูกค้าใช้ ดูข้อมูล -->
+<section v-show="rgform" id="rgform" class="p-4">
+	<div class="row pt-3" style="min-height: 10%">
+		<div class="col-4 text-left">
+			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
+				<i class="far fa-arrow-alt-circle-left m-2" style="font-size: 2rem;"></i>
+				<span>ย้อนกลับ</span> 
+			</button>
+		</div>
+		<div class="col-4"></div>
+		<div class="col-4 text-right">
+			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()" title="ข้อมูลผู้ใช้">
+				<i class="far fa-user-circle m-2" style="font-size: 2rem;"></i>
+			</button>
+		</div>
 	</div>
+	<div class="bg-white" style="border-radius: 10px;min-height: 50px;">
+		<!-- <div class="form-group rounded-lg">
+			<input type="text" class="form-control text-center date-picker">
+		</div> -->
+	</div>
+		
 </section>
 
 	<!-- ********************     modal zone     ******************** -->
@@ -120,9 +132,9 @@
 	var app = new Vue({
 		el: '#app',
 		data: {
-			rgdoc: false,
+			rgsign: false,
 			rgform: false,
-			idcard: '',
+			idcard: '1100600311926',
 			adminusername: '',
 			adminpassword: '',
 
@@ -131,6 +143,10 @@
 			showEmSign() {
 				$('#em-sign').modal();
 				// this.idcard = 'xxxxxxxxxxxxx';
+			},
+			showLoginForm(){
+				this.rgsign = true;
+				this.rgform = false;
 			},
 			idcardChecker(id) {
 				if(id.length != 13){
@@ -153,9 +169,9 @@
 		                  	type: 'success',
 		                  	showConfirmButton: false,
 		                  	allowOutsideClick: false,
-		                  	timer: 3000,
+		                  	timer: 1000,
 		                }).then(() => {
-		                		this.rgdoc = false;
+								this.rgsign = false;
 								this.rgform = true;
 		                	});
 					
@@ -169,11 +185,33 @@
 				}
 				
 			},
+			activeDatePicker(){
+				$(".date-picker").datepicker_thai({
+					dateFormat: 'dd/mm/yy',
+					buttonImage: "", // ใส่ path รุป
+					buttonImageOnly: false,
+					currentText: "วันนี้",
+					closeText: "ปิด",
+					showButtonPanel: true,
+					langTh:true,
+					yearTh:true,
+					numberOfMonths: 1,
+					// showOn: 'button',
+					// buttonText: "เลือกวันที่",
+					// showOn: "both",
+					// altField:"#h_dateinput",
+					// altFormat: "yy-mm-dd",
+					// onSelect:function(selectedDate, datePicker) {            
+		  			// 		_this.date = selectedDate;
+			  		// }
+				});
+			},
 
 		},
 		mounted() {
 			var _this = this;
-			this.rgdoc = true;
+			this.showLoginForm();
+			this.activeDatePicker();
 		},
 		computed: {
 
@@ -183,7 +221,13 @@
 		},
 		watch: {
 
-		}
+		},
+		// created () {
+		// 	document.addEventListener("backbutton", this.showLoginForm(), false);
+		// },
+		// beforeDestroy () {
+		// 	document.removeEventListener("backbutton", this.showLoginForm());
+		// }
 	});
 </script>
 </body>

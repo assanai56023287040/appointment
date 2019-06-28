@@ -61,15 +61,15 @@ body {
 }
 
 .x-btn-white {
-	background-color: #b30000;
-	color: white;
-	border: 3px solid #ff1a1a;
+	background-color: #ffffff;
+	color: black;
+	border: 3px solid #b3b3b3;
 	font-size: 1.5rem;
 }
 
 .x-btn-white:hover {
-	background-color: #ff1a1a;
+	background-color: #b3b3b3;
 	color: black;
-	border: 3px solid #b30000;
-  	box-shadow: 5px 5px 15px #ff1a1a;
+	border: 3px solid #ffffff;
+  	box-shadow: 5px 5px 15px #ffffff;
 }
