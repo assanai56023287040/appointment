@@ -49,15 +49,15 @@ body {
 .x-btn-red {
 	background-color: #b30000;
 	color: white;
-	border: 3px solid #ff1a1a;
+	border: 3px solid #ff471a;
 	font-size: 1.5rem;
 }
 
 .x-btn-red:hover {
-	background-color: #ff1a1a;
+	background-color: #ff471a;
 	color: black;
 	border: 3px solid #b30000;
-  	box-shadow: 5px 5px 15px #ff1a1a;
+  	box-shadow: 5px 5px 15px #ff471a;
 }
 
 .x-btn-white {
@@ -72,4 +72,26 @@ body {
 	color: black;
 	border: 3px solid #ffffff;
   	box-shadow: 5px 5px 15px #ffffff;
+}
+
+.x-btn-green {
+	background-color: #239023;
+	color: white;
+	border: 3px solid #79ff4d;
+	font-size: 1.5rem;
+}
+
+.x-btn-green:hover {
+	background-color: #79ff4d;
+	color: black;
+	border: 3px solid #239023;
+  	box-shadow: 5px 5px 15px #79ff4d;
+}
+
+
+
+.vl-purple {
+	height: 90%;
+	border-left: 4px solid #BA55D3;
+	border-radius: 5px;
 }
