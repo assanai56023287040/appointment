@@ -116,10 +116,10 @@
 				<input class="form-control text-center mt-1 mb-0" placeholder="คำค้นหา" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">จากวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 date-picker" />
+				<input class="form-control text-center mt-1 mb-0 date-picker" v-model="stdate" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 date-picker" />
+				<input class="form-control text-center mt-1 mb-0 date-picker" v-model="sfdate" />
 
 				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;">
 					<i class="fa fa-search align-middle" style="font-size: 1.8rem"></i>
@@ -159,7 +159,7 @@
 					<div class="text-center px-5">
 							<i class="far fa-user-circle" style="font-size: 6rem;color: #BA55D3;"></i>
 						<input class="form-control text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
-						<input class="form-control text-center mt-4 font-weight-bold" type="text" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
+						<input class="form-control text-center mt-4 font-weight-bold" type="password" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
 						<button type="button" class="btn x-btn-purple btn-block mt-4 p-3">
 							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
 							<br/>
@@ -196,7 +196,7 @@
 					<div class="text-center px-5">
 							<i class="far fa-user-circle" style="font-size: 6rem;color: #BA55D3;"></i>
 						<input class="form-control text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
-						<input class="form-control text-center mt-4 font-weight-bold" type="text" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
+						<input class="form-control text-center mt-4 font-weight-bold" type="passowrd" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
 						<button type="button" class="btn x-btn-purple btn-block mt-4 p-3">
 							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
 							<br/>
@@ -227,7 +227,10 @@
 			adminpassword: '',
 			phn: '123456',
 			pname: 'assanai dangmin',
-
+			// for form search
+			skeyword: '',
+			sfdate: '',
+			stdate: '',
 		},
 		methods: {
 			onlyShowModal(modal_id){
@@ -295,6 +298,11 @@
 			  		// }
 				});
 			},
+			clearForm(type){
+				switch(type){
+
+				}
+			}
 
 		},
 		mounted() {
