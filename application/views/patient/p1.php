@@ -108,7 +108,7 @@
 				<div class="vl-purple my-3" style="top: 0;right: 0;	position: absolute;"></div>
 				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;">
 					<i class="fa fa-plus align-middle" style="font-size: 1.8rem"></i>
-					<span class="align-middle mx-2" style="font-size: 1rem;">เพิ่มข้อมูลใบนัด</span>
+					<span class="align-middle mx-2" style="font-size: 1rem;">เพิ่มข้อมูลใบนัด</span> <!-- ขอทำนัด -->
 				</button>
 				<hr/>
 				<!-- search form is here -->
