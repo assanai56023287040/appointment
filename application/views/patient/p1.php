@@ -64,7 +64,7 @@
 </section>
 
 <!-- หนา้ลูกค้าใช้ ดูข้อมูล -->
-<section v-show="rgform" id="rgform" class="p-4 container-fluid">
+<section v-show="rgform" id="rgform" class="p-4 container-fluid" style="display: flex; flex-flow: column; height: 100%;">
 	<div class="row pt-3">
 		<div class="col-4 text-left">
 			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
@@ -102,8 +102,8 @@
 		</div> -->
 	</div>
 
-	<div class="container-fluid">
-		<div class="row mt-2 bg-white" style="border-radius: 10px;">
+	<div class="container-fluid" style="display: flex; flex-flow: column; flex: 1 1 auto;">
+		<div class="row mt-2 bg-white" style="border-radius: 10px;  flex: 1 1 auto;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
 				<div class="vl-purple my-3" style="top: 0;right: 0;	position: absolute;"></div>
 				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;">
@@ -133,14 +133,27 @@
 
 				<hr/>
 			</div>
-			<div class="col-9"></div>
+			<!-- row list of apm -->
+			<div class="col-9 text-center">
+				<h4 class="mt-3 font-weight-bold">รายการขอทำนัด</h4>
+				<hr class="m-0">
+				<div class="container-fluid m-0" style="overflow: auto;">
+					<div class="bg-white" v-for="(list , idx) in apmlist">
+						<div class="row py-2">
+							<div class="col-2 text-left">{{ idx+1 }}</div>
+							<div class="col-10">{{ list.header }}</div>
+						</div>
+						<hr class="m-0"/>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>
 
 	<!-- ********************     modal zone     ******************** -->
 	<div id="em-sign" class="modal fade" data-backdrop="true" role="dialog">
-		<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
 				<!-- modal header -->
 				<div class="modal-header">
@@ -231,6 +244,14 @@
 			skeyword: '',
 			sfdate: '',
 			stdate: '',
+			apmlist: [
+				{
+					header: 'ปวดเข่า',
+				},{
+					header: 'ปวดหัว',
+				}
+			],
+
 		},
 		methods: {
 			onlyShowModal(modal_id){
