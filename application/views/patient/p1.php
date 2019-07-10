@@ -152,6 +152,8 @@
 </section>
 
 	<!-- ********************     modal zone     ******************** -->
+
+	<!-- em-sign modal id -->
 	<div id="em-sign" class="modal fade" data-backdrop="true" role="dialog">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
@@ -189,6 +191,7 @@
 		</div> <!-- end of div modal dialog -->
 	</div> <!-- end of div modal em-sign -->
 
+	<!-- patient-profile modal id -->
 	<div id="patient-profile" class="modal fade" data-backdrop="true" role="dialog">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
@@ -206,16 +209,12 @@
 
 				<!-- modal body -->
 				<div class="modal-body">
-					<div class="text-center px-5">
-							<i class="far fa-user-circle" style="font-size: 6rem;color: #BA55D3;"></i>
-						<input class="form-control text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
-						<input class="form-control text-center mt-4 font-weight-bold" type="passowrd" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
-						<button type="button" class="btn x-btn-purple btn-block mt-4 p-3">
-							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
-							<br/>
-							ลงชื่อเข้าใช้
-						</button>
-
+					<div class="container-fluid">
+						<div class="row" style="min-height: 10px;">
+							<div class="col-4"></div>
+							<div class="col-4"></div>
+							<div class="col-4"></div>
+						</div>
 					</div>
 				</div>
 
