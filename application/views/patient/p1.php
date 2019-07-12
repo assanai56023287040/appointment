@@ -60,7 +60,7 @@
 			<div style="min-height: 30%;"></div>
 		</div>
 		<div class="col-4"></div>
-	</div>	
+	</div>
 </section>
 
 <!-- หนา้ลูกค้าใช้ ดูข้อมูล -->
@@ -210,10 +210,31 @@
 				<!-- modal body -->
 				<div class="modal-body">
 					<div class="container-fluid">
-						<div class="row" style="min-height: 10px;">
-							<div class="col-4"></div>
-							<div class="col-4"></div>
-							<div class="col-4"></div>
+						<div class="row justify-content-md-center" style="min-height: 10px;">
+							<div class="col-3 text-left">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อ(ไทย) : </p>
+								<input type="text" class="form-control" v-model="pp_th_fname" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อ(อังกฤษ) : </p>
+								<input type="text" class="form-control" v-model="pp_en_fname" :readonly="!isProfileEdit">
+							</div>
+							<div class="col-3">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สกุล(ไทย) : </p>
+								<input type="text" class="form-control" v-model="pp_th_lname" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สกุล(อังกฤษ) : </p>
+								<input type="text" class="form-control" v-model="pp_en_lname" :readonly="!isProfileEdit">
+							</div>
+							<div class="col-3">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เพศ : </p>
+								<input type="text" class="form-control" v-model="pp_gender" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สถานภาพ : </p>
+								<input type="text" class="form-control" v-model="pp_status" :readonly="!isProfileEdit">
+							</div>
+							<div class="col-3">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เชื้อชาติ : </p>
+								<input type="text" class="form-control" v-model="pp_origin" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สัญชาติ : </p>
+								<input type="text" class="form-control" v-model="pp_nationality" :readonly="!isProfileEdit">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -250,6 +271,15 @@
 					header: 'ปวดหัว',
 				}
 			],
+			isProfileEdit: false,
+			pp_th_fname: 'อัศนัย',
+			pp_th_lname: 'แดงมิน',
+			pp_en_fname: 'Assanai',
+			pp_en_lname: 'Dangmin',
+			pp_gender: 'ชาย',
+			pp_status: 'โสด',
+			pp_nationality: 'ไทย',
+			pp_origin: 'ไทย',
 
 		},
 		methods: {
