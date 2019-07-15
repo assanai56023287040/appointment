@@ -22,4 +22,35 @@ class Login extends CI_Controller {
 	{
 		$this->load->view('patient/p1');
 	}
+
+	function emSignin(){
+		$uid = $this->input->get('uid');
+		$pwd = $this->input->get('pwd');
+
+		$this->db->where('userid',$uid)
+				->where('password',$pwd)
+				->where('active <>','I');
+		$qres = $this->db->get('user');
+		$cnt = $qres->num_rows();
+		if($cnt == 1){
+			$res = array(
+				'success' => true
+				,'code' => 'pass'
+				,'row' => $qres->result_array()
+			);
+		}else if($cnt > 1){
+			$res = array(
+				'success' => false
+				,'code' => 'moreOne'
+			);
+		}else{
+			$res = array(
+				'success' => false
+				,'code' => 'notPass'
+			);
+		}
+
+		echo json_encode($res);
+
+	}
 }

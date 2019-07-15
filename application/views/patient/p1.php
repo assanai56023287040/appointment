@@ -160,7 +160,7 @@
 						<i class="far fa-user-circle" style="font-size: 6rem;color: #0668E6;"></i>
 						<input class="form-control text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
 						<input class="form-control text-center mt-4 font-weight-bold" type="password" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
-						<button type="button" class="btn x-btn-blue btn-block mt-4 p-3">
+						<button type="button" class="btn x-btn-blue btn-block mt-4 p-3" @click="emSignin()">
 							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
 							<br/>
 							ลงชื่อเข้าใช้
@@ -373,7 +373,24 @@
 				switch(type){
 
 				}
-			}
+			},
+			emSignin(){
+				$('#em-sign').modal('hide');
+				Swal.fire({
+	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่",
+	                allowOutsideClick: false,
+	            });
+	            Swal.showLoading();
+	            axios.get("<?php echo site_url('login/emSignin'); ?>",{
+	            	params : {
+	            		uid: this.adminusername
+	            		,pwd: this.adminpassword
+	            	}
+	            }).then(res => {
+	            	console.log(res);
+	            	Swal.close();
+	            });
+			},
 
 		},
 		mounted() {
