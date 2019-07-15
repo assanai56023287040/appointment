@@ -95,3 +95,61 @@ body {
 	border-left: 4px solid #BA55D3;
 	border-radius: 5px;
 }
+
+.true-center-page {
+	margin: 0;
+  	position: absolute;
+  	top: 50%;
+  	left: 50%;
+  	-ms-transform: translate(-50%, -50%);
+  	transform: translate(-50%, -50%);
+}
+
+.badge-login {
+	width: 40%;
+	border-radius: 20px;
+}
+
+.modal-xl {
+	max-width: 1100px !important;
+}
+
+@media screen and (max-width: 1140px) {
+  .true-center-page {
+  	width: 40%;
+  }
+
+  .modal-xl {
+	max-width: 1100px !important;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  .true-center-page {
+  	width: 40%;
+  }
+
+  .modal-xl {
+	max-width: 920px !important;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .true-center-page {
+  	width: 70%;
+  }
+
+  .modal-xl {
+	max-width: 680px !important;
+  }
+}
+
+@media screen and (max-width: 540px) {
+  .true-center-page {
+  	width: 100%;
+  }
+
+  .modal-xl {
+	max-width: 500px !important;
+  }
+}

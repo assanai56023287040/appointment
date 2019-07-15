@@ -16,14 +16,6 @@
   			background-image: linear-gradient(to top, #8500aa, #9a31bf, #b050d4, #c56ce9, #db87ff);
   		}
 
-  		.badge-login {
-  			/*min-height: 40%;*/
-  			min-width: 100%;
-  			background-color: white;
-  			position: absolute;
-  			vertical-align: middle;
-  			border-radius: 20px;
-  		}
   	</style>
     
 </head>
@@ -32,34 +24,26 @@
 
 <!-- หน้าแรกของการ Login -->
 <section v-show="rgsign" id="rgsign">
-	<div class="row full-height">
-		<div class="col-4 text-left">
-			<button class="btn x-btn-blue stay-left-bottom p-4" type="button" @click="onlyShowModal('em-sign')" style="border-radius: 50px;">
-				<i class="fa fa-lock" style="font-size: 2rem;"></i>
-			</button>
-		</div>
-		<div class="col-4">
-			<div style="min-height: 30%;"></div>
-			<div class="rounded-lg badge-login text-center">
-				<img class="mt-3" src="<?php echo base_url('assets/img/tuh_header_logo.png'); ?>" width="75%" alt="Responsive image">
+	<div class="full-height" style="position: relative;">
+		<div class="true-center-page container badge-login bg-white text-center">
+			<img class="mt-3" src="<?php echo base_url('assets/img/tuh_header_logo.png'); ?>" width="75%" alt="Responsive image">
 
-					<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
-					<div class="px-5 mb-4">
-						<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="showRegisterForm()" />
-						<button class="btn mt-3 p-3 x-btn-purple" id="btnRegister" @click="showRegisterForm()">
-							<i class="fa fa-pen-alt fa-flip-horizontal" style="font-size: 2rem;"></i>
-							<br/>
-							<span class="mt-3">ลงทะเบียน</span>
-						</button>
-						<!-- <div class="mt-4">
-							<span class="py-3 fa fa-pen-alt fa-flip-horizontal rounded-top" width="100%" style="font-size: 1rem;background-color: #b19cd9;"></span>
-							<span width="100%" style="font-size: 1rem;background-color: #ebe4ef;">ลงทะเบียน</span>
-						</div> -->
-					</div>
-			</div>
-			<div style="min-height: 30%;"></div>
+				<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
+				<div class="px-5 mb-4">
+					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="showRegisterForm()" />
+					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="showRegisterForm()">
+						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;"></i>
+						<br/>
+						ลงทะเบียน
+					</button>
+					<hr/>
+					<button class="btn btn-block x-btn-blue p-3" type="button" @click="onlyShowModal('em-sign')">
+						<i class="fa fa-user-nurse m-3 align-middle" style="font-size: 2rem;"></i>
+						<br/>
+						สำหรับพนักงาน
+					</button>
+				</div>
 		</div>
-		<div class="col-4"></div>
 	</div>
 </section>
 
@@ -102,11 +86,12 @@
 		</div> -->
 	</div>
 
+	<!-- list and search area -->
 	<div class="container-fluid" style="display: flex; flex-flow: column; flex: 1 1 auto;">
 		<div class="row mt-2 bg-white" style="border-radius: 10px;  flex: 1 1 auto;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
 				<div class="vl-purple my-3" style="top: 0;right: 0;	position: absolute;"></div>
-				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;">
+				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;" @click="onlyShowModal('new-appointment')">
 					<i class="fa fa-plus align-middle" style="font-size: 1.8rem"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">เพิ่มข้อมูลใบนัด</span> <!-- ขอทำนัด -->
 				</button>
@@ -172,10 +157,10 @@
 				<!-- modal body -->
 				<div class="modal-body">
 					<div class="text-center px-5">
-							<i class="far fa-user-circle" style="font-size: 6rem;color: #BA55D3;"></i>
+						<i class="far fa-user-circle" style="font-size: 6rem;color: #0668E6;"></i>
 						<input class="form-control text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
 						<input class="form-control text-center mt-4 font-weight-bold" type="password" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
-						<button type="button" class="btn x-btn-purple btn-block mt-4 p-3">
+						<button type="button" class="btn x-btn-blue btn-block mt-4 p-3">
 							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
 							<br/>
 							ลงชื่อเข้าใช้
@@ -193,7 +178,7 @@
 
 	<!-- patient-profile modal id -->
 	<div id="patient-profile" class="modal fade" data-backdrop="true" role="dialog">
-		<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
 			<div class="modal-content">
 				<!-- modal header -->
 				<div class="modal-header">
@@ -245,6 +230,42 @@
 			</div>
 		</div> <!-- end of div modal dialog -->
 	</div> <!-- end of div modal patient-profile -->
+
+	<!-- new-appointment modal id -->
+	<div id="new-appointment" class="modal fade" data-backdrop="true" role="dialog">
+		<div class="modal-dialog modal-xl modal-dialog-centered">
+			<div class="modal-content">
+				<!-- modal header -->
+				<div class="modal-header">
+					<div class="row" style="min-width: 100%">
+						<div class="col-6 text-left font-weight-bold">
+							เพิ่มข้อมูลการทำขอนัด
+						</div>
+						<div class="col-6 text-right px-0">
+							<i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
+						</div>
+					</div>
+				</div>
+
+				<!-- modal body -->
+				<div class="modal-body">
+					<div class="container-fluid">
+						<div class="row justify-content-md-center" style="min-height: 10px;">
+							
+						</div>
+					</div>
+				</div>
+
+				<!-- modal footer -->
+				<div class="modal-footer text-right">
+					<button class="btn x-btn-green my-3" style="border-radius: 10px;">
+						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
+						<span class="align-middle mx-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
+					</button>
+				</div>
+			</div>
+		</div> <!-- end of div modal dialog -->
+	</div> <!-- end of div modal new-appointment -->
 	
 </div> <!-- end of div container #app -->
 
