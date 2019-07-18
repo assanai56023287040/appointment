@@ -72,7 +72,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 // $active_group = 'default';
 // $active_group = 'devLaptop';
-$active_group = 'devPC';
+$active_group = 'devPc';
 $query_builder = TRUE;
 
 $db['devLaptop'] = array(
@@ -98,9 +98,9 @@ $db['devLaptop'] = array(
 	'save_queries' => TRUE
 );
 
-$db['devpc'] = array(
+$db['devPc'] = array(
 	'dsn'	=> '',
-	'hostname' => '172.30.230.150',
+	'hostname' => '172.30.230.169',
 	'username' => 'assanai',
 	'password' => '0853709109',
 	'database' => 'tuh_appointment',

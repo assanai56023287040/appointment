@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 header('Access-Control-Allow-Origin: *');
 
-class Login extends CI_Controller {
+class Patient extends CI_Controller {
 
 	/**
 	 * Index Page for this controller.
@@ -21,7 +21,7 @@ class Login extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('login/l1');
+		$this->load->view('patient/p1');
 	}
 
 	function emSignin(){

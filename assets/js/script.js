@@ -1,2 +1,12 @@
-// window.$ = window.jQuery = require('jquery'); // not sure if you need this at all
-// window.Bootstrap = require('bootstrap');
+function localset(k ,v){
+	localStorage.setItem(k ,v);
+}
+
+function localget(k){
+	var g = localStorage.getItem(k);
+	return g;
+}
+
+function localremove(k){
+	localStorage.removeitem(k);
+}
