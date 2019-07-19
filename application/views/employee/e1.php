@@ -44,7 +44,7 @@
 		<div class="row p-3">
 			<div class="col-6">
 				<h5 class="my-auto">
-					<span class="font-weight-bold">HN : </span>
+					<span class="font-weight-bold">รหัสพนักงาน : </span>
 					{{ phn }}
 				</h5>
 			</div>
