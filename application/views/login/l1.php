@@ -94,7 +94,7 @@
 	var app = new Vue({
 		el: '#app',
 		data: {
-			idcard: '1100600311926',
+			idcard: '',
 			adminusername: '',
 			adminpassword: '',
 		},
@@ -206,6 +206,7 @@
 		},
 		mounted() {
 			var _this = this;
+			this.idcard = localStorage.getItem('idcard');
 			this.activeDatePicker();
 		},
 		computed: {

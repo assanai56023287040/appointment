@@ -26,10 +26,10 @@
 <section v-show="listpage" id="listpage" class="p-4 container-fluid" style="display: flex; flex-flow: column; height: 100%;">
 	<div class="row pt-3">
 		<div class="col-4 text-left">
-			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
+			<!-- <button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
 				<i class="far fa-arrow-alt-circle-left m-2 align-middle" style="font-size: 2rem;"></i>
 				<span class="align-middle">ย้อนกลับ</span> 
-			</button>
+			</button> -->
 		</div>
 		<div class="col-4"></div>
 		<div class="col-4 text-right">
@@ -314,8 +314,21 @@
 		},
 		mounted() {
 			var _this = this;
-			this.showListPage();
-			this.activeDatePicker();
+			if(localStorage.getItem('idcard') != ''){
+				this.showListPage();
+				this.activeDatePicker();
+			}else{
+				Swal.fire({
+				  type: 'error',
+				  title: 'ท่านไม่มีสิทธิ์เข้าใช้งานหน้านี้!',
+				  timer: 2000,
+				  showConfirmButton: false,
+		          allowOutsideClick: false,
+				}).then(() => {
+					window.location = "<?php echo site_url('login'); ?>";
+				});
+			}
+			
 		},
 		computed: {
 

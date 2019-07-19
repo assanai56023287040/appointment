@@ -13,7 +13,7 @@
         }
   		body {
   			/* min-height: 100%; */
-  			background-image: linear-gradient(to top, #8500aa, #9a31bf, #b050d4, #c56ce9, #db87ff);
+  			background-image: linear-gradient(to bottom, #eeeeee, #e9e9e9, #e5e5e5, #e0e0e0, #dcdcdc, #d8d8d8, #d4d4d4, #d0d0d0, #cbcbcb, #c7c7c7, #c2c2c2, #bebebe);
   		}
 
   	</style>
@@ -26,10 +26,10 @@
 <section v-show="listpage" id="listpage" class="p-4 container-fluid" style="display: flex; flex-flow: column; height: 100%;">
 	<div class="row pt-3">
 		<div class="col-4 text-left">
-			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
+			<!-- <button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
 				<i class="far fa-arrow-alt-circle-left m-2 align-middle" style="font-size: 2rem;"></i>
 				<span class="align-middle">ย้อนกลับ</span> 
-			</button>
+			</button> -->
 		</div>
 		<div class="col-4"></div>
 		<div class="col-4 text-right">
