@@ -19,6 +19,12 @@ class Login extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
+
+	public function __construct(){
+		parent::__construct();
+		// $this->load->library('PHPRequests');
+	}
+
 	public function index()
 	{
 		$this->load->view('login/l1');
@@ -33,6 +39,13 @@ class Login extends CI_Controller {
 				->where('active <>','I');
 		$qres = $this->db->get('user');
 		$cnt = $qres->num_rows();
+
+		$header = array('Accept' => 'application/json');
+		$option = array('auth' => array('user','pass'));
+		$response = Request::get('192.168.199.9/absWS/api/Login' ,$header ,$option);
+
+
+
 		if($cnt == 1){
 			$res = array(
 				'success' => true
@@ -52,5 +65,16 @@ class Login extends CI_Controller {
 		}
 
 		echo json_encode($res);
+	}
+
+	function reqtest(){
+		$header = array('Content-Type' => 'application/json');
+		$option = array('user' => 'assanai'
+							,'password' => '0853709109'
+							// ,'verify' => false
+						);
+		$response = Requests::get('192.168.199.9/absWS/api/Login' ,$header ,$option);
+
+		echo json_encode($response);
 	}
 }
