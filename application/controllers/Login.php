@@ -40,22 +40,17 @@ class Login extends CI_Controller {
 		$qres = $this->db->get('user');
 		$cnt = $qres->num_rows();
 
-		$header = array('Accept' => 'application/json');
-		$option = array('auth' => array('user','pass'));
-		$response = Request::get('192.168.199.9/absWS/api/Login' ,$header ,$option);
+		
+		$response = Requests::get(TUH_API.'Login?user='.$uid.'&password='.$pwd ,array() ,array());
 
+		$res = json_decode($response->body);
+		$r = json_decode($res->Result)[0];
 
-
-		if($cnt == 1){
+		if($res->MessageCode == 200){
 			$res = array(
 				'success' => true
 				,'code' => 'pass'
-				,'row' => $qres->result_array()
-			);
-		}else if($cnt > 1){
-			$res = array(
-				'success' => false
-				,'code' => 'moreOne'
+				,'row' => $r
 			);
 		}else{
 			$res = array(
@@ -68,13 +63,22 @@ class Login extends CI_Controller {
 	}
 
 	function reqtest(){
-		$header = array('Content-Type' => 'application/json');
-		$option = array('user' => 'assanai'
-							,'password' => '0853709109'
-							// ,'verify' => false
-						);
-		$response = Requests::get('192.168.199.9/absWS/api/Login' ,$header ,$option);
+		// $header = array('Accept' => 'application/json');
+		// $option = array('user' => 'assanai'
+		// 					,'password' => '0853709109'
+		// 					// ,'verify' => false
+		// 				);
+		$response = Requests::get(TUH_API.'Login?user=assanai&password=0853709109' ,array() ,array());
 
-		echo json_encode($response);
+		$res = json_decode($response->body);
+		$r = json_decode($res->Result)[0];
+
+
+		print_r($res);
+		echo '<br/>';
+		print_r($r);
+		echo '<br/>msg code => '.$res->MessageCode;
+		echo '<br/> Staff Code => '.$r->STAFF_CODE;
+		echo '<br/> Staff Name => '.$r->STAFF_NAME;
 	}
 }

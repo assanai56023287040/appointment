@@ -32,7 +32,7 @@
 				<div class="px-5 mb-4">
 					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="showRegisterForm()" />
 					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="showRegisterForm()">
-						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;"></i>
+						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;" autocomplete="new-password"></i>
 						<br/>
 						ลงทะเบียน
 					</button>
@@ -206,7 +206,7 @@
 		},
 		mounted() {
 			var _this = this;
-			this.idcard = localStorage.getItem('idcard');
+			this.idcard = (localStorage.getItem('idcard') ? localStorage.getItem('idcard') : '');
 			this.activeDatePicker();
 		},
 		computed: {
