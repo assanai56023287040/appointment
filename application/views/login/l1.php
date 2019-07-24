@@ -23,16 +23,16 @@
 <div class="container-fluid" id="app">
 
 <!-- หน้าแรกของการ Login -->
-<section id="rgsign">
+<section id="signin" class="d-none">
 	<div class="full-height" style="position: relative;">
 		<div class="true-center-page container badge-login bg-white text-center">
 			<img class="mt-3" src="<?php echo base_url('assets/img/tuh_header_logo.png'); ?>" width="75%" alt="Responsive image">
 
 				<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
 				<div class="px-5 mb-4">
-					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="showRegisterForm()" />
-					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="showRegisterForm()">
-						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;" autocomplete="new-password"></i>
+					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="patientRegister()" autocomplete="new-password" />
+					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="patientRegister()">
+						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;"></i>
 						<br/>
 						ลงทะเบียน
 					</button>
@@ -69,8 +69,8 @@
 				<div class="modal-body">
 					<div class="text-center px-5">
 						<i class="far fa-user-circle" style="font-size: 6rem;color: #0668E6;"></i>
-						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" />
-						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" type="password" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="emSignin()" />
+						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" autocomplete="new-password" />
+						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" type="password" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="emSignin()" autocomplete="new-password" />
 						<button type="button" class="btn x-btn-blue btn-block mt-4 p-3" @click="emSignin()">
 							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
 							<br/>
@@ -140,27 +140,52 @@
 
 				}
 			},
-			showRegisterForm(){
-				if(this.idcardChecker(this.idcard)){
-					localStorage.setItem('idcard',this.idcard);
-					Swal.fire({
-	                		title: 'เลขบัตรประชาชนถูกต้อง',
-	                		text: 'กรุณารอสักครู่...',
-		                  	type: 'success',
-		                  	showConfirmButton: false,
-		                  	allowOutsideClick: false,
-		                  	timer: 1000,
-		                }).then(() => {
-								window.location = "<?php echo site_url('patient'); ?>";
-		                	});
-					
-				}else{
+			patientRegister(){
+				if(!this.idcardChecker(this.idcard)){
 					Swal.fire({
 					  type: 'error',
 					  title: 'เลขบัตรประชาชนไม่ถูกต้อง!',
 					  text: 'คุณกรอกเลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบความถูกต้อง',
 					  confirmButtonText: 'ปิด'
 					});
+				}else{
+					Swal.fire({
+		                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+		                allowOutsideClick: false,
+		            });
+		            Swal.showLoading();
+		            axios.get("<?php echo site_url('patient/register'); ?>",{
+		            	params : {
+		            		idcard: this.idcard
+		            	}
+		            }).then(res => {
+		            	console.log(res);
+		            	Swal.close();
+		            	res = res.data;
+
+		            	if(res.success){
+		            		var ptdata = JSON.stringify(res.row);
+							localStorage.setItem('idcard',this.idcard);
+							localStorage.setItem('patientdata',ptdata);
+							Swal.fire({
+			                		title: 'ลงทะเบียนเสร็จสิ้น',
+			                		text: 'กรุณารอสักครู่...',
+				                  	type: 'success',
+				                  	timer: 2000,
+				                  	showConfirmButton: false,
+				                  	allowOutsideClick: false,
+				                }).then(() => {
+				                		window.location = "<?php echo site_url('patient/listpage'); ?>";
+			                	});
+		            	}else{
+		            		Swal.fire({
+							  type: 'error',
+							  title: 'ไม่พบข้อมูล!',
+							  text: 'ระบบนัดหมายออนไลน์ของโรงพยาบาลธรรมศาสตร์เฉลิมพระเกียรติ สามารถลงทะเบียนเฉพาะผู้ป่วยเก่าเท่านั้น ',
+							  confirmButtonText: 'ปิด'
+							});
+		            	}
+		            });
 				}
 				
 			},
@@ -208,6 +233,7 @@
 			var _this = this;
 			this.idcard = (localStorage.getItem('idcard') ? localStorage.getItem('idcard') : '');
 			this.activeDatePicker();
+			$('#signin').removeClass('d-none');
 		},
 		computed: {
 

@@ -47,22 +47,23 @@ class Login extends CI_Controller {
 		$r = json_decode($res->Result)[0];
 
 		if($res->MessageCode == 200){
-			$res = array(
-				'success' => true
-				,'code' => 'pass'
-				,'row' => $r
-			);
+			echo json_encode(
+				array(
+					'success' => true
+					,'code' => 'pass'
+					,'row' => $r
+				));
 		}else{
-			$res = array(
-				'success' => false
-				,'code' => 'notPass'
-			);
+			echo json_encode(
+				array(
+					'success' => false
+					,'code' => 'notPass'
+				));
 		}
 
-		echo json_encode($res);
 	}
 
-	function reqtest(){
+	function logintest(){
 		// $header = array('Accept' => 'application/json');
 		// $option = array('user' => 'assanai'
 		// 					,'password' => '0853709109'
@@ -81,4 +82,27 @@ class Login extends CI_Controller {
 		echo '<br/> Staff Code => '.$r->STAFF_CODE;
 		echo '<br/> Staff Name => '.$r->STAFF_NAME;
 	}
+
+		function patienttest(){
+		// $header = array('Accept' => 'application/json');
+		// $option = array('user' => 'assanai'
+		// 					,'password' => '0853709109'
+		// 					// ,'verify' => false
+		// 				);
+		$response = Requests::get(TUH_API.'Patient?cardno=1100600311926&notype=10' ,array() ,array());
+		// $response = Requests::get(TUH_API.'Patient?cardno=1749900106140&notype=10' ,array() ,array());
+
+		$res = json_decode($response->body);
+		$r = json_decode($res->Result)[0];
+
+
+		print_r($res);
+		echo '<br/><br/>';
+		print_r($r);
+		echo '<br/>msg code => '.$res->MessageCode;
+		// echo '<br/> Staff Code => '.$r->STAFF_CODE;
+		// echo '<br/> Staff Name => '.$r->STAFF_NAME;
+	}
+
+
 }

@@ -23,25 +23,41 @@
 <div class="container-fluid" id="app">
 
 <!-- หนา้ลูกค้าใช้ ดูข้อมูล -->
-<section v-show="listpage" id="listpage" class="p-4 container-fluid" style="display: flex; flex-flow: column; height: 100%;">
-	<div class="row pt-3">
-		<div class="col-4 text-left">
+<section v-show="listpage" id="listpage" class="p-4 container-fluid d-none" style="display: flex; flex-flow: column; height: 100%;">
+	<div style="display: flex;">
+		<div class="bg-white text-left d-inline-block" style="border-radius: 10px;flex: 1;">
 			<!-- <button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
 				<i class="far fa-arrow-alt-circle-left m-2 align-middle" style="font-size: 2rem;"></i>
 				<span class="align-middle">ย้อนกลับ</span> 
 			</button> -->
+			<div class="row p-3">
+				<div class="col-6">
+					<h5 class="my-auto">
+						<span class="font-weight-bold">HN : </span>
+						{{ ptdata.HN }}
+					</h5>
+				</div>
+				<div class="col-6">
+					<h5 class="my-auto">
+						<span class="font-weight-bold">ชื่อ - นามสกุล : </span>
+						{{ ptdata.FNAME }} {{ ptdata.LNAME }}
+					</h5>
+				</div>
+			</div>
 		</div>
-		<div class="col-4"></div>
-		<div class="col-4 text-right">
+		<div class="text-right d-inline-block float-right align-middle ml-3">
 			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')" title="ข้อมูลผู้ใช้">
 				<i class="far fa-user-circle m-2" style="font-size: 2rem;"></i>
+			</button>
+			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ">
+				<i class="fa fa-angle-double-right m-2" style="font-size: 2rem;"></i>
 			</button>
 		</div>
 	</div>
 
 	<!-- area for show less profile -->
-	<div class="container-fluid bg-white mt-2" style="border-radius: 10px;">
-		<div class="row p-3">
+	<div class="container-fluid bg-white mt-2" style="border-radius: 10px;" >
+		<div class="row p-3" v-if="false">
 			<div class="col-6">
 				<h5 class="my-auto">
 					<span class="font-weight-bold">HN : </span>
@@ -135,27 +151,27 @@
 						<div class="row justify-content-md-center" style="min-height: 10px;">
 							<div class="col-3 text-left">
 								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อ(ไทย) : </p>
-								<input type="text" class="form-control" v-model="pp_th_fname" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อ(อังกฤษ) : </p>
-								<input type="text" class="form-control" v-model="pp_en_fname" :readonly="!isProfileEdit">
+								<input type="text" class="form-control" v-model="ptdata.FNAME" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">HN : </p>
+								<input type="text" class="form-control" v-model="ptdata.HN" :readonly="!isProfileEdit">
 							</div>
 							<div class="col-3">
 								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สกุล(ไทย) : </p>
-								<input type="text" class="form-control" v-model="pp_th_lname" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สกุล(อังกฤษ) : </p>
-								<input type="text" class="form-control" v-model="pp_en_lname" :readonly="!isProfileEdit">
+								<input type="text" class="form-control" v-model="ptdata.LNAME" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">AN : </p>
+								<input type="text" class="form-control" v-model="ptdata.AN" :readonly="!isProfileEdit">
 							</div>
 							<div class="col-3">
 								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เพศ : </p>
-								<input type="text" class="form-control" v-model="pp_gender" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สถานภาพ : </p>
-								<input type="text" class="form-control" v-model="pp_status" :readonly="!isProfileEdit">
+								<input type="text" class="form-control" v-model="ptdata.MALE" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เลขบัตรประชาชน : </p>
+								<input type="text" class="form-control" v-model="ptdata.CARDNO" :readonly="!isProfileEdit">
 							</div>
 							<div class="col-3">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เชื้อชาติ : </p>
-								<input type="text" class="form-control" v-model="pp_origin" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สัญชาติ : </p>
-								<input type="text" class="form-control" v-model="pp_nationality" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">วันเดือนปี เกิด : </p>
+								<input type="text" class="form-control" v-model="ptdata.BIRTHDATE" :readonly="!isProfileEdit">
+								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">แพ้ยา : </p>
+								<input type="text" class="form-control" :readonly="!isProfileEdit" :value="ptdata.ALLERGY? 'แพ้ยา' : 'ไม่แพ้ยา'">
 							</div>
 						</div>
 					</div>
@@ -176,7 +192,7 @@
 				<div class="modal-header">
 					<div class="row" style="min-width: 100%">
 						<div class="col-6 text-left font-weight-bold">
-							เพิ่มข้อมูลการทำขอนัด
+							เพิ่มข้อมูลใบนัด
 						</div>
 						<div class="col-6 text-right px-0">
 							<i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
@@ -187,7 +203,7 @@
 				<!-- modal body -->
 				<div class="modal-body">
 					<div class="container-fluid">
-						<div class="row justify-content-md-center" style="min-height: 10px;">
+						<div class="row justify-content-md-center" style="min-height: 10px;overflow-y: scroll;">
 							
 						</div>
 					</div>
@@ -195,9 +211,9 @@
 
 				<!-- modal footer -->
 				<div class="modal-footer text-right">
-					<button class="btn x-btn-green my-3" style="border-radius: 10px;">
+					<button class="btn x-btn-green my-3 px-3" style="border-radius: 10px;">
 						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
-						<span class="align-middle mx-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
+						<span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
 					</button>
 				</div>
 			</div>
@@ -212,8 +228,6 @@
 		el: '#app',
 		data: {
 			listpage: false,
-			phn: '123456',
-			pname: 'assanai dangmin',
 			// for form search
 			skeyword: '',
 			sfdate: '',
@@ -226,14 +240,7 @@
 				}
 			],
 			isProfileEdit: false,
-			pp_th_fname: 'อัศนัย',
-			pp_th_lname: 'แดงมิน',
-			pp_en_fname: 'Assanai',
-			pp_en_lname: 'Dangmin',
-			pp_gender: 'ชาย',
-			pp_status: 'โสด',
-			pp_nationality: 'ไทย',
-			pp_origin: 'ไทย',
+			ptdata : [],
 
 		},
 		methods: {
@@ -242,6 +249,7 @@
 			},
 			showListPage(){
 				this.listpage = true;
+				this.ptdata = JSON.parse(localStorage.getItem('patientdata'));
 			},
 			showLoginForm(){
 				window.location = "<?php echo site_url('login'); ?>";
@@ -310,13 +318,40 @@
 	            	}
 	            });
 			},
-
+			logout(){
+				Swal.fire({
+					title: 'ยืนยันการออกจากระบบ?'
+					// text: "You won't be able to revert this!",
+					,type: 'warning'
+					,showCancelButton: true
+					,confirmButtonColor: '#dd3333'
+					,confirmButtonText: 'ออกจากระบบ'
+					,cancelButtonColor: '#bfbfbf'
+					,cancelButtonText: ' ไม่'
+				}).then((result) => {
+					if (result.value) {
+						Swal.fire({
+							type: 'success'
+					  		,title: 'ออกจากระบบเรียบร้อย!'
+					  		,text: 'กรุณารอสักครู่...'
+					  		,timer: 2000
+					  		,showConfirmButton: false
+		                  	,allowOutsideClick: false
+						}).then(() => {
+							localStorage.setItem('idcard','');
+							localStorage.setItem('patientdata','');
+							window.location = "<?php echo site_url('login'); ?>";
+						});
+					}
+				});
+			},
 		},
 		mounted() {
 			var _this = this;
 			if(localStorage.getItem('idcard') != ''){
 				this.showListPage();
 				this.activeDatePicker();
+				$('#listpage').removeClass("d-none");
 			}else{
 				Swal.fire({
 				  type: 'error',
