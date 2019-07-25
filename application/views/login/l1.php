@@ -114,27 +114,6 @@
 				}
 				return true;
 			},
-			activeDatePicker(){
-				$(".date-picker").datepicker_thai({
-					dateFormat: 'dd/mm/yy',
-					buttonImage: "", // ใส่ path รุป
-					buttonImageOnly: false,
-					currentText: "วันนี้",
-					closeText: "ปิด",
-					showButtonPanel: true,
-					langTh:true,
-					yearTh:true,
-					numberOfMonths: 1,
-					// showOn: 'button',
-					// buttonText: "เลือกวันที่",
-					// showOn: "both",
-					// altField:"#h_dateinput",
-					// altFormat: "yy-mm-dd",
-					// onSelect:function(selectedDate, datePicker) {            
-		  			// 		_this.date = selectedDate;
-			  		// }
-				});
-			},
 			clearForm(type){
 				switch(type){
 
@@ -232,7 +211,6 @@
 		mounted() {
 			var _this = this;
 			this.idcard = (localStorage.getItem('idcard') ? localStorage.getItem('idcard') : '');
-			this.activeDatePicker();
 			$('#signin').removeClass('d-none');
 		},
 		computed: {

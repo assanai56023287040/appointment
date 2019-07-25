@@ -13,6 +13,9 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 <!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
 <script src="<?php echo base_url('assets/js/jquery-ui-1.12.1/jquery-ui.min.js'); ?>"></script>
-<script src="<?php echo base_url('assets/js/jqueryui_datepicker_thai_min.js'); ?>"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+<script type="text/javascript" src="<?php echo base_url('assets/js/bootstrap-datepicker.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/js/bootstrap-datepicker-thai.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo base_url('assets/js/locales/bootstrap-datepicker.th.js'); ?>"></script>
