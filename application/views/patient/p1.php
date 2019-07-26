@@ -46,10 +46,10 @@
 			</div>
 		</div>
 		<div class="text-right d-inline-block float-right align-middle ml-3">
-			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')" title="ข้อมูลผู้ใช้">
+			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')" title="ข้อมูลคนไข้" data-content="ดูรายละเอียดข้อมูลคนไข้" data-toggle="popover" data-trigger="hover" data-placement="bottom">
 				<i class="far fa-user-circle m-2" style="font-size: 2rem;"></i>
 			</button>
-			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ">
+			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ" data-content="กลับสู่หน้าลงทะเบียน" data-toggle="popover" data-trigger="hover" data-placement="bottom">
 				<i class="fa fa-angle-double-right m-2" style="font-size: 2rem;"></i>
 			</button>
 		</div>
@@ -70,10 +70,10 @@
 				<input class="form-control text-center mt-1 mb-0" placeholder="คำค้นหา" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">จากวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 datepicker" v-model="stdate" />
+				<input class="form-control text-center mt-1 mb-0 datepicker" id="sfdate" v-model="sfdate" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 datepicker" v-model="sfdate" />
+				<input class="form-control text-center mt-1 mb-0 datepicker" id="stdate" v-model="stdate" />
 
 				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;">
 					<i class="fa fa-search align-middle" style="font-size: 1.8rem"></i>
@@ -184,24 +184,36 @@
 						<div class="row justify-content-center" style="min-height: 10px;overflow: auto;">
 							<div class="col-sm-6">
 								<div class="form-group">
-									<label for="header">หัวข้อเรื่อง : </label>
+									<label class="small font-weight-bold" for="header">หัวข้อเรื่อง : </label>
 									<input class="form-control" type="text" id="header" v-model="newapm.header" placeholder="ระบุหัวข้อเรื่อง">
 								</div>
-								<div class="form-group">
-									<label for="apmdate">วันที่ที่ขอทำนัด : </label>
-									<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.apmdate" placeholder="เลือกวันที่">
-								</div>
-								<div class="form-group">
-									<label for="apmtime">เวลาที่ขอทำนัด : </label>
-									<select class="form-control" type="text" id="apmtime" v-model="newapm.apmtime" placeholder="เลือกเวลา">
-										<option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
-									</select> 
+								<div class="form-row align-item-center justify-content-center">
+									<div class="col form-group">
+										<label class="small font-weight-bold" for="apmdate">วันที่ที่ขอทำนัด : </label>
+										<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.apmdate" placeholder="เลือกวันที่">
+									</div>
+									<div class="col form-group">
+										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
+										<select class="form-control" type="text" id="apmtime" v-model="newapm.apmtime" placeholder="เลือกเวลา">
+											<option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
+										</select> 
+									</div>
+								</div> <!-- end div of sub form-row -->
+								<div class="alert alert-danger small">
+									<strong>เวลาทำการ : วันและเวลาราชการ     </strong>
+									<br/>จันทร์ - ศุกร์  |  8.00 - 16.00
+									<br/>ติดต่อคลีนิกในเวลา : 02-926-9991
+									<br/>ติดต่อคลีนิกนอกเวลา : 02-926-9860
 								</div>
 							</div>
 							<div class="col-sm-6">
 								<div class="form-group">
-									<label for="sicktxt">รายละเอียดอาการ : </label>
+									<label class="small font-weight-bold" for="sicktxt">รายละเอียดอาการ : </label>
 									<textarea class="form-control" id="sicktxt" v-model="newapm.sicktxt" placeholder="แจ้งรายละเอียดอาการป่วยสำหรับการขอทำนัด" rows="5"></textarea>
+								</div>
+								<div class="form-group">
+									<label class="small font-weight-bold" for="header">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
+									<input class="form-control" type="text" id="header" v-model="newapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
 								</div>
 							</div>
 						</div>
@@ -210,7 +222,7 @@
 
 				<!-- modal footer -->
 				<div class="modal-footer text-right">
-					<button class="btn x-btn-green px-3" style="border-radius: 10px;">
+					<button class="btn x-btn-green px-3" style="border-radius: 10px;" @click="savenewapm()">
 						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
 						<span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
 					</button>
@@ -245,6 +257,7 @@
 				sicktxt: '',
 				apmdate: '',
 				apmtime: '',
+				tel: '',
 			},
 			timehr: [
 				{k: "00", v:"00.00"},
@@ -296,6 +309,16 @@
 				$('#apmdate').datepicker()
 					.on('hide',()=>{
 						this.newapm.apmdate = $('#apmdate').val();
+					});
+
+				$('#sfdate').datepicker()
+					.on('hide',()=>{
+						this.sfdate = $('#sfdate').val();
+					});
+
+				$('#stdate').datepicker()
+					.on('hide',()=>{
+						this.stdate = $('#stdate').val();
 					});
 			},
 			clearForm(type){
@@ -368,6 +391,13 @@
 					}
 				});
 			},
+			savenewapm(){
+				axios.post("<?php echo site_url('patient/newapm'); ?>",{
+					newdata : this.newapm,
+				}).then(()=>{
+
+				});
+			},
 		},
 		mounted() {
 			var _this = this;
@@ -375,6 +405,7 @@
 				this.showListPage();
 				this.activeDatePicker();
 				$('#listpage').removeClass("d-none");
+				$('[data-toggle="popover"]').popover();
 			}else{
 				Swal.fire({
 				  type: 'error',
