@@ -52,6 +52,7 @@ class Patient extends CI_Controller {
 	function integrate($idcard , $data){
 		// $idcard = $this->input->post('idcard');
 		// $data = json_decode($this->input->post('patientdata'));
+		log_info('test log message abababab');
 
 		$this->db->where('cardno',$idcard)->where('active <> ','I');
 		$ex = $this->db->get('pt');
@@ -95,6 +96,13 @@ class Patient extends CI_Controller {
 	}
 
 	function listpage(){
+		log_info('pass to function list page');
 		$this->load->view('patient/p1');
+	}
+
+	function newapm(){
+		$apmdate = $this->input->post('apmdate');
+		log_info('here is newapm function and params is : ');
+		log_info(date('Y-m-d'),$apmdate);
 	}
 }

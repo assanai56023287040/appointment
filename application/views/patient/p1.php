@@ -70,10 +70,10 @@
 				<input class="form-control text-center mt-1 mb-0" placeholder="คำค้นหา" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">จากวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 datepicker" id="sfdate" v-model="sfdate" />
+				<input class="form-control text-center mt-1 mb-0 datepicker" id="sfdate" v-model="sfstringdate" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 datepicker" id="stdate" v-model="stdate" />
+				<input class="form-control text-center mt-1 mb-0 datepicker" id="stdate" v-model="ststringdate" />
 
 				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;">
 					<i class="fa fa-search align-middle" style="font-size: 1.8rem"></i>
@@ -190,7 +190,7 @@
 								<div class="form-row align-item-center justify-content-center">
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmdate">วันที่ที่ขอทำนัด : </label>
-										<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.apmdate" placeholder="เลือกวันที่">
+										<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.stringdate" placeholder="เลือกวันที่">
 									</div>
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
@@ -241,6 +241,8 @@
 			listpage: false,
 			// for form search
 			skeyword: '',
+			sfstringdate: '',
+			ststringdate: '',
 			sfdate: '',
 			stdate: '',
 			apmlist: [
@@ -255,6 +257,7 @@
 			newapm : {
 				header: '',
 				sicktxt: '',
+				stringdate: '',
 				apmdate: '',
 				apmtime: '',
 				tel: '',
@@ -307,18 +310,21 @@
 				});
 
 				$('#apmdate').datepicker()
-					.on('hide',()=>{
-						this.newapm.apmdate = $('#apmdate').val();
+					.on('hide',(v)=>{
+						this.newapm.stringdate = $('#apmdate').val();
+						this.newapm.apmdate = v.timeStamp;
 					});
 
 				$('#sfdate').datepicker()
-					.on('hide',()=>{
-						this.sfdate = $('#sfdate').val();
+					.on('hide',(v)=>{
+						this.sfstringdate = $('#sfdate').val();
+						this.sfdate = v.timeStamp;
 					});
 
 				$('#stdate').datepicker()
-					.on('hide',()=>{
-						this.stdate = $('#stdate').val();
+					.on('hide',(v)=>{
+						this.ststringdate = $('#stdate').val();
+						this.stdate = v.timeStamp;
 					});
 			},
 			clearForm(type){
@@ -392,10 +398,26 @@
 				});
 			},
 			savenewapm(){
-				axios.post("<?php echo site_url('patient/newapm'); ?>",{
-					newdata : this.newapm,
-				}).then(()=>{
-
+				let params = new URLSearchParams({
+					'header' : this.newapm.header,
+					'apmdate' : this.newapm.apmdate,
+					'apmtime' : this.newapm.apmtime,
+					'sicktxt' : this.newapm.sicktxt,
+					'tel' : this.newapm.tel,
+				});
+				axios.post("<?php echo site_url('patient/newapm'); ?>",params)
+				.then(()=>{
+					Swal.fire({
+						  type: 'success',
+						  title: 'บันทึกใบขอทำนัดเสร็จสิ้น',
+						  text: 'กรุณารอสักครู่.....',
+						  confirmButtonText: '',
+						  timer: 2000,
+						  showConfirmButton: false,
+		                  allowOutsideClick: false,
+					}).then(() => {
+						// window.location = "<?php echo site_url('employee'); ?>";
+					});
 				});
 			},
 		},
