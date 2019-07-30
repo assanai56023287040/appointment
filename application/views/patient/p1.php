@@ -70,12 +70,12 @@
 				<input class="form-control text-center mt-1 mb-0" placeholder="คำค้นหา" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">จากวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 datepicker" id="sfdate" v-model="sfstringdate" />
+				<input class="form-control text-center mt-1 mb-0 datepicker" id="sfdate" v-model="sfdate" />
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 datepicker" id="stdate" v-model="ststringdate" />
+				<input class="form-control text-center mt-1 mb-0 datepicker" id="stdate" v-model="stdate" />
 
-				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;">
+				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;" @click="listload()">
 					<i class="fa fa-search align-middle" style="font-size: 1.8rem"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">ค้นหา</span>
 				</button>
@@ -92,10 +92,29 @@
 				<h4 class="mt-3 font-weight-bold">รายการขอทำนัด</h4>
 				<hr class="m-0">
 				<div class="container-fluid m-0" style="overflow: auto;">
-					<div class="bg-white" v-for="(list , idx) in apmlist">
-						<div class="row py-2">
-							<div class="col-2 text-left">{{ idx+1 }}</div>
-							<div class="col-10">{{ list.header }}</div>
+					<div class="bg-white" id="frame-list" v-for="(list , idx) in apmlist">
+						<div class="row py-2" style="display: flex;">
+							<div class="col-1 text-center p-0" style="position: relative;">
+								<div class="vl-purple my-0" style="top: 0;right: 0;	position: absolute;"></div>
+								<span class="align-middle" >{{ idx+1 }}</span>
+							</div>
+							<div class="col" style="flex: 1;">
+								<div class="my-2" style="display: flex;">
+									<div class="d-inline-block pl-2 text-left float-left" style="flex: 1;overflow: hidden;">
+										<h5 class="font-weight-bold">หัวข้อเรื่อง : {{ list.header }}</h5>
+									</div>
+									<div class="d-inline-block pr-2 text-right float-right">
+										<h5 class="font-weight-bold">วันที่ขอทำนัด : {{ list.apmdate }}</h5>
+									</div>
+								</div>
+								<div class="d-block text-left pl-2 small" style="overflow: hidden;">
+									รายละเอียดอาการ : {{ list.sicktxt }}
+								</div>
+								<div class="d-block text-left w-50 pl-2 my-2 small" style="overflow: hidden;">
+									<div class="alert alert-success">{{ list.stid }}</div>
+								</div>
+							</div>
+							<div class="col-2 p-0"></div>
 						</div>
 						<hr class="m-0"/>
 					</div>
@@ -149,7 +168,7 @@
 								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">วันเดือนปี เกิด : </p>
 								<input type="text" class="form-control" v-model="ptdata.BIRTHDATE" :readonly="!isProfileEdit">
 								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">แพ้ยา : </p>
-								<input type="text" class="form-control" :readonly="!isProfileEdit" :value="ptdata.ALLERGY? 'แพ้ยา' : 'ไม่แพ้ยา'">
+								<input type="text" class="form-control" :readonly="!isProfileEdit" :value="ptdata.ALLERGY? 'แพ้ยา' : ptdata.ALLERGY">
 							</div>
 						</div>
 					</div>
@@ -190,7 +209,7 @@
 								<div class="form-row align-item-center justify-content-center">
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmdate">วันที่ที่ขอทำนัด : </label>
-										<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.stringdate" placeholder="เลือกวันที่">
+										<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.apmdate" placeholder="เลือกวันที่">
 									</div>
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
@@ -241,26 +260,22 @@
 			listpage: false,
 			// for form search
 			skeyword: '',
-			sfstringdate: '',
-			ststringdate: '',
 			sfdate: '',
 			stdate: '',
-			apmlist: [
-				{
-					header: 'ปวดเข่า',
-				},{
-					header: 'ปวดหัว',
-				}
-			],
+			// var for use
 			isProfileEdit: false,
+			ptid : '',
 			ptdata : [],
+			apmlist: [],
+			apmid: 0,
+
 			newapm : {
 				header: '',
 				sicktxt: '',
-				stringdate: '',
 				apmdate: '',
 				apmtime: '',
 				tel: '',
+				stid : '01',
 			},
 			timehr: [
 				{k: "00", v:"00.00"},
@@ -304,27 +319,24 @@
 			activeDatePicker(){
 				$('.datepicker').datepicker({
 						language:'th-th',
-						format:'dd/mm/yyyy',
+						format:'dd/mm/yyyy',	
 						autoclose: true,
 						todayHighlight: true,
 				});
 
 				$('#apmdate').datepicker()
-					.on('hide',(v)=>{
-						this.newapm.stringdate = $('#apmdate').val();
-						this.newapm.apmdate = v.timeStamp;
+					.on('hide', v =>{
+						this.newapm.apmdate = $('#apmdate').val();
 					});
 
 				$('#sfdate').datepicker()
-					.on('hide',(v)=>{
-						this.sfstringdate = $('#sfdate').val();
-						this.sfdate = v.timeStamp;
+					.on('hide', v =>{
+						this.sfdate= $('#sfdate').val();
 					});
 
 				$('#stdate').datepicker()
-					.on('hide',(v)=>{
-						this.ststringdate = $('#stdate').val();
-						this.stdate = v.timeStamp;
+					.on('hide', v =>{
+						this.stdate = $('#stdate').val();
 					});
 			},
 			clearForm(type){
@@ -404,9 +416,15 @@
 					'apmtime' : this.newapm.apmtime,
 					'sicktxt' : this.newapm.sicktxt,
 					'tel' : this.newapm.tel,
+					'ptid' : this.ptid,
+					'hn' : this.ptdata.HN,
+					'stid' : this.newapm.stid,
 				});
 				axios.post("<?php echo site_url('patient/newapm'); ?>",params)
-				.then(()=>{
+				.then( res => {
+					this.apmid = res.apmid;
+					this.emptyNewApm();
+					$('#new-appointment').modal('hide');
 					Swal.fire({
 						  type: 'success',
 						  title: 'บันทึกใบขอทำนัดเสร็จสิ้น',
@@ -416,9 +434,42 @@
 						  showConfirmButton: false,
 		                  allowOutsideClick: false,
 					}).then(() => {
+						this.listload()
 						// window.location = "<?php echo site_url('employee'); ?>";
 					});
 				});
+			},
+			emptyNewApm(){
+				this.newapm = {
+					header: '',
+					sicktxt: '',
+					apmdate: '',
+					apmtime: '',
+					tel: '',
+					stid : '01',
+				};
+			},
+			listload(){
+				$('#frame-list').hide("slide", { direction: "left" }, 500);
+				Swal.fire({
+	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+	                allowOutsideClick: false,
+	            });
+	            Swal.showLoading();
+	            let params = new URLSearchParams({
+					'keyword' : this.skeyword,
+					'fdate' : this.sfdate,
+					'tdate' : this.stdate,
+					'ptid' : this.ptid,
+				});
+	            axios.post("<?php echo site_url('patient/listload'); ?>",params)
+	            .then(res => {
+	            	this.apmlist = [];
+	            	Swal.close();
+	            	this.apmlist = res.data.row;
+	            	$('#frame-list').show("slide", { direction: "right" }, 500);
+	            });
+
 			},
 		},
 		mounted() {
@@ -426,8 +477,10 @@
 			if(localStorage.getItem('idcard') != ''){
 				this.showListPage();
 				this.activeDatePicker();
+				this.ptid = localStorage.getItem('ptid');
 				$('#listpage').removeClass("d-none");
 				$('[data-toggle="popover"]').popover();
+				this.listload();
 			}else{
 				Swal.fire({
 				  type: 'error',

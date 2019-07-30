@@ -33,12 +33,13 @@ class Patient extends CI_Controller {
 		$r = json_decode($res->Result)[0];
 
 		if($res->MessageCode == 200){
-			$this->integrate($idcard ,$r);
+			$ptid = $this->integrate($idcard ,$r);
 			echo json_encode(
 				array(
 					'success' => true
 					,'code' => 'pass'
 					,'row' => $r
+					,'ptid' => $ptid
 				));
 		}else{
 			echo json_encode(
@@ -93,16 +94,85 @@ class Patient extends CI_Controller {
 		// $params = array('ptid' => $id);
 
 		// $this->load->view('patient/p1',$params);
+		return $id;
 	}
 
 	function listpage(){
-		log_info('pass to function list page');
 		$this->load->view('patient/p1');
 	}
 
+	function date_formysql($date){
+		if(!empty($date)){
+			$date = explode('/', $date);
+			return ($date[2]-543).'-'.$date[1].'-'.$date[0];
+		}else{
+			return '';
+		}
+		
+	}
+
 	function newapm(){
-		$apmdate = $this->input->post('apmdate');
-		log_info('here is newapm function and params is : ');
-		log_info(date('Y-m-d'),$apmdate);
+
+		$this->db->insert('apmpt',array(
+			'header' => $this->input->post('header')
+			,'apmdate' => $this->date_formysql($this->input->post('apmdate'))
+			,'sicktxt' => $this->input->post('sicktxt')
+			,'tel' => $this->input->post('tel')
+			,'stid' => $this->input->post('stid')
+			,'ptid' => $this->input->post('ptid')
+			,'hn' => $this->input->post('hn')
+			,'chcnt' => 1
+			,'active' => 'A'
+			,'credt' => date("Y-m-d H:i:s")
+		));
+
+		$id = $this->db->insert_id();
+
+		echo json_encode(array(
+			'success' => true
+			,'apmid' => $id
+		));
+	}
+
+	function listload(){
+
+		$ptid = $this->input->post('ptid');
+		$keyword = $this->input->post('keyword');
+		$fdate = $this->date_formysql($this->input->post('fdate'));
+		$tdate = $this->date_formysql($this->input->post('tdate'));
+
+		$this->db->select("a.*
+						,p.fname 
+						,p.lname
+						,s.stname
+					",false)
+				->from('apmpt a')
+				->join('pt p','a.ptid = p.ptid','left')
+				->join('st s','s.stid = a.stid','left')
+				->where('a.ptid',$ptid)
+				->where('a.active <> ','I');
+
+		if(!empty($keyword)){
+			$this->db->where("CONCAT(IFNULL(a.header,'')
+								,IFNULL(a.sicktxt,'')
+							) LIKE '%{$keyword}%'");
+		}
+
+		if(!empty($fdate) && !empty($tdate)){
+			$this->db->where("apmdate BETWEEN '{$fdate}' AND '{$tdate}'");
+		}else if(!empty($fdate) && empty($tdate)){
+			$this->db->where('apmdate = {$fdate}');
+		}else if(empty($fdate) && !empty($tdate)){
+			$this->db->where('apmdate = {$tdate}');
+		}
+
+		$res = $this->db->get();
+
+		log_info($this->db->last_query());
+
+		echo json_encode(array(
+			'success' => true
+			,'row' => $res->result_array()
+		));
 	}
 }

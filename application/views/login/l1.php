@@ -145,6 +145,7 @@
 		            	if(res.success){
 		            		var ptdata = JSON.stringify(res.row);
 							localStorage.setItem('idcard',this.idcard);
+							localStorage.setItem('ptid',res.ptid);
 							localStorage.setItem('patientdata',ptdata);
 							Swal.fire({
 			                		title: 'ลงทะเบียนเสร็จสิ้น',
