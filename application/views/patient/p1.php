@@ -14,6 +14,8 @@
   		body {
   			/* min-height: 100%; */
   			background-image: linear-gradient(to top, #8500aa, #9a31bf, #b050d4, #c56ce9, #db87ff);
+  			background-repeat: no-repeat;
+  			background-attachment: fixed;
   		}
 
   	</style>
@@ -57,7 +59,7 @@
 
 	<!-- list and search area -->
 	<div class="container-fluid" style="display: flex; flex-flow: column; flex: 1 1 auto;">
-		<div class="row mt-2 bg-white" style="border-radius: 10px;  flex: 1 1 auto;">
+		<div class="row mt-2 mb-3 bg-white" style="border-radius: 10px;  flex: 1 1 auto;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
 				<div class="vl-purple my-3" style="top: 0;right: 0;	position: absolute;"></div>
 				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;" @click="onlyShowModal('new-appointment')">
@@ -88,37 +90,40 @@
 				<hr/>
 			</div>
 			<!-- row list of apm -->
-			<div class="col-9 text-center">
-				<h4 class="mt-3 font-weight-bold">รายการขอทำนัด</h4>
-				<hr class="m-0">
-				<div class="container-fluid m-0" style="overflow: auto;">
-					<div class="bg-white" id="frame-list" v-for="(list , idx) in apmlist">
-						<div class="row py-2" style="display: flex;">
-							<div class="col-1 text-center p-0" style="position: relative;">
-								<div class="vl-purple my-0" style="top: 0;right: 0;	position: absolute;"></div>
-								<span class="align-middle" >{{ idx+1 }}</span>
+			<div class="col-9 container text-center" style="display: flex;">
+				<div class="m-0 p-0 w-100 h-100" style="flex: 1;">
+					<div class="container m-0 pl-0">
+						<div class="row m-0 p-0">
+							<div class="col-12 m-0 p-0">
+								<h4 class="d-block mt-3 font-weight-bold">รายการขอทำนัด</h4>
+								<hr class="m-0">
 							</div>
-							<div class="col" style="flex: 1;">
-								<div class="my-2" style="display: flex;">
-									<div class="d-inline-block pl-2 text-left float-left" style="flex: 1;overflow: hidden;">
+						</div>
+						<div class="container m-0 bg-white" id="frame-list" v-for="(list , idx) in apmlist">
+							<div class="container py-1 my-2 x-card-light" style="border-radius: 10px;display: flex;">
+								<div class="d-inline float-left text-center p-0" style="position: relative;min-width: 40px;">
+									<div class="vl-purple my-0" style="top: 0;right: 0;	position: absolute;"></div>
+									<span class="align-middle" >{{ idx+1 }}</span>
+								</div>
+								<div class="d-inline pl-3 w-75" style="flex: 1;">
+									<div class="d-block text-left w-100 text-truncate">
 										<h5 class="font-weight-bold">หัวข้อเรื่อง : {{ list.header }}</h5>
 									</div>
-									<div class="d-inline-block pr-2 text-right float-right">
-										<h5 class="font-weight-bold">วันที่ขอทำนัด : {{ list.apmdate }}</h5>
+									<div class="d-block text-left small">
+										วันที่ขอทำนัด : {{ list.apmdate | thdate }}
+									</div>
+									<div class="d-block text-left w-100 text-truncate small">
+										รายละเอียดอาการ : {{ list.sicktxt }}
+									</div>
+									<div class="d-block text-left my-1 w-50 small">
+										<div class="alert" :class="stalertclass(list.stid)">{{ list.stname }}</div>
 									</div>
 								</div>
-								<div class="d-block text-left pl-2 small" style="overflow: hidden;">
-									รายละเอียดอาการ : {{ list.sicktxt }}
-								</div>
-								<div class="d-block text-left w-50 pl-2 my-2 small" style="overflow: hidden;">
-									<div class="alert alert-success">{{ list.stid }}</div>
-								</div>
-							</div>
-							<div class="col-2 p-0"></div>
-						</div>
-						<hr class="m-0"/>
-					</div>
-				</div>
+								<div class="d-inline float-right p-0" style="position: relative;min-width: 40px;"></div>
+							</div> <!-- end of div row -->
+						</div> <!-- end of div v-for -->
+					</div> <!-- end of content flex -->
+				</div> <!-- end of parent div for flex -->
 			</div>
 		</div>
 	</div>
@@ -208,7 +213,7 @@
 								</div>
 								<div class="form-row align-item-center justify-content-center">
 									<div class="col form-group">
-										<label class="small font-weight-bold" for="apmdate">วันที่ที่ขอทำนัด : </label>
+										<label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
 										<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.apmdate" placeholder="เลือกวันที่">
 									</div>
 									<div class="col form-group">
@@ -339,6 +344,14 @@
 						this.stdate = $('#stdate').val();
 					});
 			},
+			dateformysql(strdate){
+				if(strdate){
+					strdate = strdate.split('/');
+					return (strdate[2]-543)+'-'+strdate[1]+'-'+strdate[0];
+				}else{
+					return "";
+				}
+			},
 			clearForm(type){
 				switch(type){
 
@@ -412,7 +425,7 @@
 			savenewapm(){
 				let params = new URLSearchParams({
 					'header' : this.newapm.header,
-					'apmdate' : this.newapm.apmdate,
+					'apmdate' : this.dateformysql(this.newapm.apmdate),
 					'apmtime' : this.newapm.apmtime,
 					'sicktxt' : this.newapm.sicktxt,
 					'tel' : this.newapm.tel,
@@ -450,7 +463,7 @@
 				};
 			},
 			listload(){
-				$('#frame-list').hide("slide", { direction: "left" }, 500);
+				// $('#frame-list').hide("slide", { direction: "left" }, 500);
 				Swal.fire({
 	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
 	                allowOutsideClick: false,
@@ -458,8 +471,8 @@
 	            Swal.showLoading();
 	            let params = new URLSearchParams({
 					'keyword' : this.skeyword,
-					'fdate' : this.sfdate,
-					'tdate' : this.stdate,
+					'fdate' : this.dateformysql(this.sfdate),
+					'tdate' : this.dateformysql(this.stdate),
 					'ptid' : this.ptid,
 				});
 	            axios.post("<?php echo site_url('patient/listload'); ?>",params)
@@ -467,9 +480,30 @@
 	            	this.apmlist = [];
 	            	Swal.close();
 	            	this.apmlist = res.data.row;
-	            	$('#frame-list').show("slide", { direction: "right" }, 500);
+	            	// $('#frame-list').show("slide", { direction: "right" }, 500);
 	            });
 
+			},
+			stalertclass(v){
+				switch(v){
+					case '01': 
+						return 'alert-secondary'
+						break;
+					case '02': 
+						return 'alert-warning'
+						break;
+					case '03': 
+						return 'alert-success'
+						break;
+					case '04': 
+						return 'alert-primary'
+						break;
+					case '05': 
+						return 'alert-danger'
+						break;
+					default: 
+						return 'alert-light';
+				}
 			},
 		},
 		mounted() {
@@ -497,8 +531,18 @@
 		computed: {
 
 		},
-		filter: {
-
+		filters: {
+			thdate(v){
+				if(v){
+					let strdate = v.split('-');
+					if(strdate.length == 3){
+						return strdate[2]+'/'+strdate[1]+'/'+(parseInt(strdate[0],10)+543);
+					}else{return v;}
+					// return v;
+				}else{
+					return "";
+				}
+			},
 		},
 		watch: {
 

@@ -115,7 +115,7 @@ class Patient extends CI_Controller {
 
 		$this->db->insert('apmpt',array(
 			'header' => $this->input->post('header')
-			,'apmdate' => $this->date_formysql($this->input->post('apmdate'))
+			,'apmdate' =>$this->input->post('apmdate')
 			,'sicktxt' => $this->input->post('sicktxt')
 			,'tel' => $this->input->post('tel')
 			,'stid' => $this->input->post('stid')
@@ -138,11 +138,21 @@ class Patient extends CI_Controller {
 
 		$ptid = $this->input->post('ptid');
 		$keyword = $this->input->post('keyword');
-		$fdate = $this->date_formysql($this->input->post('fdate'));
-		$tdate = $this->date_formysql($this->input->post('tdate'));
+		$fdate = $this->input->post('fdate');
+		$tdate = $this->input->post('tdate');
 
-		$this->db->select("a.*
-						,p.fname 
+		$this->db->select("a.apmid
+						,a.apmdate
+						,a.tel
+						,a.stid
+						,a.ptid
+						,a.hn
+						,a.newcnt
+						,a.credt
+						,a.updt
+						,a.header
+						,a.sicktxt
+						,p.fname
 						,p.lname
 						,s.stname
 					",false)
@@ -170,9 +180,15 @@ class Patient extends CI_Controller {
 
 		log_info($this->db->last_query());
 
+		$res = $res->result_array();
+		// $res1 = $res;
+		// for ($i=0; $i < 6; $i++) { 
+		// 	array_push($res,$res1[0]);
+		// }
+
 		echo json_encode(array(
 			'success' => true
-			,'row' => $res->result_array()
+			,'row' => $res
 		));
 	}
 }

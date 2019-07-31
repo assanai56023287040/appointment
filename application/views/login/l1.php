@@ -217,7 +217,7 @@
 		computed: {
 
 		},
-		filter: {
+		filters: {
 
 		},
 		watch: {
