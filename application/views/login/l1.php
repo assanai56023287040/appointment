@@ -30,7 +30,7 @@
 
 				<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
 				<div class="px-5 mb-4">
-					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="patientRegister()" autocomplete="new-password" />
+					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="patientRegister()" autocomplete="off" />
 					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="patientRegister()">
 						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;"></i>
 						<br/>
@@ -155,7 +155,7 @@
 				                  	showConfirmButton: false,
 				                  	allowOutsideClick: false,
 				                }).then(() => {
-				                		window.location = "<?php echo site_url('patient/listpage'); ?>";
+				                		window.location = "<?php echo site_url('patient/patientpage'); ?>";
 			                	});
 		            	}else{
 		            		Swal.fire({
