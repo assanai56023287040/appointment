@@ -22,6 +22,16 @@ body {
 	pointer-events: none;
 }
 
+.sticky-top {
+	position: sticky;
+	top: 0px;
+}
+
+.sticky-bottom {
+	position: absolute;
+	bottom: 0px;
+}
+
 .x-btn-purple {
 	background-color: #BA55D3;
 	color: white;
@@ -138,6 +148,7 @@ body {
 	height: 95%;
 	border-left: 4px solid #BA55D3;
 	border-radius: 5px;
+	box-shadow: 2px 2px 3px #EE82EE;
 }
 
 
@@ -145,6 +156,7 @@ body {
 	height: 95%;
 	border-left: 4px solid #ffff4d;
 	border-radius: 5px;
+	box-shadow: 2px 2px 3px #e6e600;
 }
 
 .true-center-page {

@@ -86,16 +86,17 @@ class Appointment extends CI_Controller {
 		}else if(empty($fdate) && !empty($tdate)){
 			$this->db->where('apmdate = {$tdate}');
 		}
+		$this->db->order_by('apmdate','desc');
 
 		$res = $this->db->get();
 
 		log_info($this->db->last_query());
 
 		$res = $res->result_array();
-		$res1 = $res;
-		for ($i=0; $i < 6; $i++) { 
-			array_push($res,$res1[0]);
-		}
+		// $res1 = $res;
+		// for ($i=0; $i < 6; $i++) { 
+		// 	array_push($res,$res1[0]);
+		// }
 
 		echo json_encode(array(
 			'success' => true

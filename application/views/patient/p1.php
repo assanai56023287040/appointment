@@ -93,14 +93,14 @@
 			</div>
 			<!-- row list of apm -->
 			<div class="col-9 container text-center" style="display: flex;">
-				<div class="m-0 p-0 w-100 h-100" style="display: flex;flex-direction: column;flex: 1;">
-					<div class="row m-0 p-0">
-						<div class="col-12 m-0 p-0">
-							<h4 class="d-block mt-3 font-weight-bold">รายการขอทำนัด</h4>
-							<hr class="m-0">
-						</div>
-					</div>
+				<div class="m-0 p-0 w-100 h-100" style="display: flex;flex: 1;">
 					<div class="container-fluid mt-3 pl-0" style="flex: 1;overflow-y: auto;height: 75vh">
+						<div class="row m-0 p-0 bg-white sticky-top">
+							<div class="col-12 m-0 p-0">
+								<h4 class="d-block mt-3 font-weight-bold">รายการขอทำนัด</h4>
+								<hr class="m-0">
+							</div>
+						</div>
 						<div class="container-fluid m-0 bg-white" id="frame-list" v-for="(list , idx) in apmlist">
 							<div class="container-fluid py-1 my-2 x-card-light" style="border-radius: 10px;display: flex;" @click="openChat(list.apmid,idx)">
 								<div class="d-inline float-left text-center p-0" style="position: relative;min-width: 40px;">
@@ -132,7 +132,7 @@
 		<!-- appointment chat -->
 		<section class="row" id="chat-page" style=";flex: 1 1 auto;display: none;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
-				<div class="vl-purple my-3" style="top: 0;right: 0;	position: absolute;"></div>
+				<div class="vl-yellow my-3" style="top: 0;right: 0;	position: absolute;"></div>
 				<button class="btn btn-block x-btn-white my-3" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')">
 					<i class="far fa-user-circle align-middle" style="font-size: 1.8rem"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
@@ -164,15 +164,26 @@
 			</div>
 			<!-- chat and option zone -->
 			<div class="col-9 container text-center" style="display: flex;">
-				<div class="m-0 p-0 w-100 h-100" style="display: flex;flex-direction: column;flex: 1;">
-					<div class="row m-0 p-0">
-						<div class="col-12 m-0 p-0">
-							<h4 class="d-block mt-3 font-weight-bold">รายการขอทำนัด</h4>
-							<hr class="m-0">
+				<div class="m-0 p-0 w-100 h-100" style="display: flex;flex: 1;">
+					<div class="container-fluid mt-3 px-0" style="flex: 1;overflow-y: auto;height: 75vh;background-color: #ffffcc;position: relative;">
+						<div class="row m-0 p-0 bg-white sticky-top">
+							<div class="col-12 m-0 p-0 text-right">
+								<button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="showListPage(true)">
+									<i class="fa fa-chevron-circle-down align-middle" style="font-size: 1.8rem"></i>
+									<span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
+								</button>
+								<hr class="my-2">
+							</div>
 						</div>
-					</div>
-					<div class="container-fluid mt-3 pl-0" style="flex: 1;overflow-y: auto;height: 75vh;background-color: #ffffcc;">
-
+						<div class="input-group sticky-bottom">
+							<hr>
+							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." aria-describedby="basic-addon2" style="font-size: 1.5rem;">
+							<div class="input-group-append">
+						    	<span class="input-group-text x-btn-purple" id="basic-addon2">
+						    		<i class="fa fa-angle-double-up align-middle mx-3" style="font-size: 1.8rem"></i>
+						    	</span>
+						  	</div>
+						</div>
 					</div> <!-- end of content flex -->
 				</div> <!-- end of parent div for flex -->
 			</div>
@@ -544,10 +555,12 @@
 					'stid' : this.newapm.stid,
 				});
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
-				.then( res => {
+				.then(async res => {
 					this.apmid = res.apmid;
 					this.clearForm('newapm');
 					$('#new-appointment').modal('hide');
+					await this.listload();
+					this.selapm = this.apmlist.find(v => v.apmid == res.data.apmid);
 					Swal.fire({
 						  type: 'success',
 						  title: 'บันทึกใบขอทำนัดเสร็จสิ้น',
@@ -557,12 +570,12 @@
 						  showConfirmButton: false,
 		                  allowOutsideClick: false,
 					}).then(() => {
-						this.listload()
+						this.showChatPage();
 						// window.location = "<?php echo site_url('employee'); ?>";
 					});
 				});
 			},
-			listload(){
+			async listload(){
 				// $('#frame-list').hide("slide", { direction: "left" }, 500);
 				Swal.fire({
 	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
@@ -575,12 +588,15 @@
 					'tdate' : this.dateformysql(this.stdate),
 					'ptid' : this.ptid,
 				});
-	            axios.post("<?php echo site_url('appointment/listload'); ?>",params)
+	            await axios.post("<?php echo site_url('appointment/listload'); ?>",params)
 	            .then(res => {
 	            	this.apmlist = [];
 	            	Swal.close();
 	            	this.apmlist = res.data.row;
-	            	// $('#frame-list').show("slide", { direction: "right" }, 500);
+	            	this.apmlist.forEach((item,idx) =>{
+	            		// console.log(item);
+	            		item.apmdate = this.dateforth(item.apmdate);
+	            	});
 	            });
 
 			},
