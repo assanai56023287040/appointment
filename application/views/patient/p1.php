@@ -272,10 +272,31 @@
 					<div class="container-fluid">
 						<div class="row justify-content-center" style="min-height: 10px;overflow: auto;">
 							<div class="col-sm-6">
+
 								<div class="form-group">
+									<label class="small font-weight-bold" for="sicktxt">รายละเอียดอาการ : </label>
+									<textarea class="form-control" id="sicktxt" v-model="newapm.sicktxt" placeholder="แจ้งรายละเอียดอาการป่วยสำหรับการขอทำนัด" rows="5"></textarea>
+								</div>
+								<div class="form-group">
+									<label class="small font-weight-bold" for="header">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
+									<input class="form-control" type="text" id="header" v-model="newapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
+								</div>
+
+
+								<div class="form-group" v-show="false">
 									<label class="small font-weight-bold" for="header">หัวข้อเรื่อง : </label>
 									<input class="form-control" type="text" id="header" v-model="newapm.header" placeholder="ระบุหัวข้อเรื่อง">
 								</div>
+								
+								<div class="alert alert-danger small" v-show="false">
+									<strong>เวลาทำการ : วันและเวลาราชการ     </strong>
+									<br/>จันทร์ - ศุกร์  |  8.00 - 16.00
+									<br/>ติดต่อคลีนิกในเวลา : 02-926-9991
+									<br/>ติดต่อคลีนิกนอกเวลา : 02-926-9860
+								</div>
+							</div>
+							<div class="col-sm-6">
+								
 								<div class="form-row align-item-center justify-content-center">
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
@@ -288,22 +309,7 @@
 										</select> 
 									</div>
 								</div> <!-- end div of sub form-row -->
-								<div class="alert alert-danger small">
-									<strong>เวลาทำการ : วันและเวลาราชการ     </strong>
-									<br/>จันทร์ - ศุกร์  |  8.00 - 16.00
-									<br/>ติดต่อคลีนิกในเวลา : 02-926-9991
-									<br/>ติดต่อคลีนิกนอกเวลา : 02-926-9860
-								</div>
-							</div>
-							<div class="col-sm-6">
-								<div class="form-group">
-									<label class="small font-weight-bold" for="sicktxt">รายละเอียดอาการ : </label>
-									<textarea class="form-control" id="sicktxt" v-model="newapm.sicktxt" placeholder="แจ้งรายละเอียดอาการป่วยสำหรับการขอทำนัด" rows="5"></textarea>
-								</div>
-								<div class="form-group">
-									<label class="small font-weight-bold" for="header">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
-									<input class="form-control" type="text" id="header" v-model="newapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
-								</div>
+
 							</div>
 						</div>
 					</div>
