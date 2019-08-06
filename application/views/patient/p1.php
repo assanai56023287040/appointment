@@ -16,6 +16,7 @@
   			background-image: linear-gradient(to top, #8500aa, #9a31bf, #b050d4, #c56ce9, #db87ff);
   			background-repeat: no-repeat;
   			background-attachment: fixed;
+  			overflow: hidden;
   		}
 
   	</style>
@@ -130,7 +131,7 @@
 		</section>
 
 		<!-- appointment chat -->
-		<section class="row" id="chat-page" style=";flex: 1 1 auto;display: none;">
+		<section class="row" id="chat-page" style="flex: 1 1 auto;display: none;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
 				<div class="vl-yellow my-3" style="top: 0;right: 0;	position: absolute;"></div>
 				<button class="btn btn-block x-btn-white my-3" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')">
@@ -165,22 +166,83 @@
 			<!-- chat and option zone -->
 			<div class="col-9 container text-center" style="display: flex;">
 				<div class="m-0 p-0 w-100 h-100" style="display: flex;flex: 1;">
-					<div class="container-fluid mt-3 px-0" style="flex: 1;overflow-y: auto;height: 75vh;background-color: #ffffcc;position: relative;">
-						<div class="row m-0 p-0 bg-white sticky-top">
-							<div class="col-12 m-0 p-0 text-right">
-								<button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="showListPage(true)">
-									<i class="fa fa-chevron-circle-down align-middle" style="font-size: 1.8rem"></i>
-									<span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
-								</button>
-								<hr class="my-2">
+					<div class="container-fluid mt-3 px-0" style="flex: 1;height: 75vh;background-color: #ffffcc;position: relative;padding-bottom: 60px;">
+						<div class="row m-0 p-0 sticky-top h-100" style="display: flex;flex-direction: column;">
+							<div class="container-fluid px-0 col-12" style="align-self: stretch;overflow-y: auto;">
+								<div class="row m-0 p-0 sticky-top">
+									<div class="col-12 m-0 p-0 text-right bg-white">
+										<button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="showListPage(true)">
+											<i class="fa fa-chevron-circle-down align-middle" style="font-size: 1.8rem"></i>
+											<span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
+										</button>
+										<hr class="my-2">
+									</div>
+								</div>
+								11111
+								<br/>
+								22222
+								<br/>
+								33333
+								<br/>
+								44444
+								<br/>
+								55555
+								<br/>
+								66666
+								<br/>
+								77777
+								<br/>
+								88888
+								<br/>
+								99999
+								<br/> 
+								101010
+								<br/>
+								111111
+								<br/>
+								121212
+								<br/>
+								131313
+								<br/>
+								141414
+								<br/>
+								151515
+								<br/>
+								161616
+								<br/>
+								171717
+								<br/>
+								181818
+								<br/>
+								191919
+								<br/>
+								202020
+								<br/>
+								212121
+								<br/>
+								222222
+								<br/>
+								232323
+								<br/>
+								242424
+								<br/>
+								252525
+								<br/>
+								262626
+								<br/>
+								272727
+								<br/>
+								282828
+								<br/>
+								<hr style="bottom: 10px;">
 							</div>
 						</div>
-						<div class="input-group sticky-bottom">
-							<hr>
-							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." aria-describedby="basic-addon2" style="font-size: 1.5rem;">
+
+						<div class="input-group sticky-bottom" style="height: 55px;"><!-- min-height: 30px; -->
+							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." aria-describedby="basic-addon2" style="font-size: 24px;height: auto;">
 							<div class="input-group-append">
-						    	<span class="input-group-text x-btn-purple" id="basic-addon2">
-						    		<i class="fa fa-angle-double-up align-middle mx-3" style="font-size: 1.8rem"></i>
+						    	<span class="input-group-text x-btn-purple">
+						    		<i class="fa fa-angle-double-up align-middle mx-3" style="font-size: 24px"></i>
 						    	</span>
 						  	</div>
 						</div>
@@ -237,7 +299,7 @@
 								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">วันเดือนปี เกิด : </p>
 								<input type="text" class="form-control non-edit" v-model="ptdata.BIRTHDATE">
 								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">แพ้ยา : </p>
-								<input type="text" class="form-control non-edit" :value="ptdata.ALLERGY? 'แพ้ยา' : ptdata.ALLERGY">
+								<input type="text" class="form-control non-edit" :value="ptdata.ALLERGY? ptdata.ALLERGY : ''">
 							</div>
 						</div>
 					</div>
@@ -296,7 +358,27 @@
 								</div>
 							</div>
 							<div class="col-sm-6">
-								
+								<div class="input-group my-2">
+									<div class="input-group-prepend">
+										<div class="input-group-text">
+									    	<div class="form-check form-check-inline">
+												<input class="form-check-input" type="checkbox" value="" v-model="newapm.isseldct" id="defaultCheck1">
+												<label class="form-check-label" for="defaultCheck1">ระบุแพทย์</label>
+											</div>
+										</div>
+									</div>
+									<select class="form-control" type="text" id="apmdct" v-model="newapm.apmdct" :disabled="!newapm.isseldct">
+										<option value="" disabled selected>เลือกแพทย์</option>										
+										<option value="1111111111">11111 | นพ.ทดสอบระบบแพทย์</option>
+										<!-- <option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option> -->
+									</select>
+									<div class="input-group-append" >
+										<button class="btn btn-outline-secondary" type="button" :disabled="!newapm.isseldct" data-toggle="tooltip" data-placement="top" title="ตารางออกตรวจแพทย์">
+											<i class="far fa-calendar-alt align-middle" style="font-size: 1.5rem"></i>
+										</button>
+									</div>
+								</div>
+
 								<div class="form-row align-item-center justify-content-center">
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
@@ -304,12 +386,28 @@
 									</div>
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
-										<select class="form-control" type="text" id="apmtime" v-model="newapm.apmtime" placeholder="เลือกเวลา">
+										<select class="form-control" type="text" id="apmtime" v-model="newapm.apmtime">
+											<option value="" disabled selected>เลือกเวลา</option>
 											<option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
-										</select> 
+										</select>
 									</div>
 								</div> <!-- end div of sub form-row -->
 
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="newapm.lcttype">
+									<label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="newapm.lcttype">
+									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
+								</div>
+
+								<select class="form-control" type="text" id="apmlct" v-model="newapm.apmlct" v-show="newapm.lcttype == 'itlct'">
+									<option value="" disabled selected>เลือกคลีนิค</option>					
+									<option value="1111111111">100 | ทดสอบคลีนิค</option>
+								</select>
+
+								
 							</div>
 						</div>
 					</div>
@@ -361,6 +459,10 @@
 				apmtime: '',
 				tel: '',
 				stid : '01',
+				isseldct: 0,
+				apmdct: '',
+				apmlct: '',
+				lcttype: '',
 			},
 			timehr: [
 				{k: "00", v:"00.00"},
@@ -479,6 +581,10 @@
 							apmtime: '',
 							tel: '',
 							stid : '01',
+							isseldct: 0,
+							apmdct: '',
+							apmlct: '',
+							lcttype: '',
 						}; 
 						break;
 					default : break;
@@ -659,6 +765,7 @@
 				this.ptid = localStorage.getItem('ptid');
 				$('#patient-page').removeClass("d-none");
 				$('[data-toggle="popover"]').popover();
+				$('[data-toggle="tooltip"]').tooltip()
 				this.listload();
 			}else{
 				Swal.fire({
