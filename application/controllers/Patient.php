@@ -72,7 +72,7 @@ class Patient extends CI_Controller {
 				,'congenital' => $data->CONGENITAL
 				,'insurance_code' => $data->INSURANCE_CODE
 				,'insurance_name' => $data->INSURANCE_NAME
-				,'lastdatetime' => date("Y-m-d H:i:s")
+				,'lastdt' => date("Y-m-d H:i:s")
 			);
 
 		if($ex->num_rows() == 0){
@@ -88,7 +88,7 @@ class Patient extends CI_Controller {
 		$this->db->insert('ptlogin',array(
 			'ptid' => $id
 			,'cardno' => $idcard
-			,'logindatetime' => date("Y-m-d H:i:s")
+			,'logindt' => date("Y-m-d H:i:s")
 		));
 
 		// $params = array('ptid' => $id);

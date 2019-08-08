@@ -178,68 +178,14 @@
 										<hr class="my-2">
 									</div>
 								</div>
-								11111
-								<br/>
-								22222
-								<br/>
-								33333
-								<br/>
-								44444
-								<br/>
-								55555
-								<br/>
-								66666
-								<br/>
-								77777
-								<br/>
-								88888
-								<br/>
-								99999
-								<br/> 
-								101010
-								<br/>
-								111111
-								<br/>
-								121212
-								<br/>
-								131313
-								<br/>
-								141414
-								<br/>
-								151515
-								<br/>
-								161616
-								<br/>
-								171717
-								<br/>
-								181818
-								<br/>
-								191919
-								<br/>
-								202020
-								<br/>
-								212121
-								<br/>
-								222222
-								<br/>
-								232323
-								<br/>
-								242424
-								<br/>
-								252525
-								<br/>
-								262626
-								<br/>
-								272727
-								<br/>
-								282828
-								<br/>
-								<hr style="bottom: 10px;">
+								<div v-for="(msg ,idx) in messages">
+									{{ msg.txt }}
+								</div>
 							</div>
 						</div>
 
 						<div class="input-group sticky-bottom" style="height: 55px;"><!-- min-height: 30px; -->
-							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." aria-describedby="basic-addon2" style="font-size: 24px;height: auto;">
+							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." style="font-size: 24px;height: auto;">
 							<div class="input-group-append">
 						    	<span class="input-group-text x-btn-purple">
 						    		<i class="fa fa-angle-double-up align-middle mx-3" style="font-size: 24px"></i>
@@ -489,6 +435,38 @@
 				{k: "21", v:"21.00"},
 				{k: "22", v:"22.00"},
 				{k: "23", v:"23.00"},
+			],
+			messages: [
+				{txt:"1"},
+				{txt:"2"},
+				{txt:"3"},
+				{txt:"4"},
+				{txt:"5"},
+				{txt:"6"},
+				{txt:"7"},
+				{txt:"8"},
+				{txt:"9"},
+				{txt:"10"},
+				{txt:"11"},
+				{txt:"12"},
+				{txt:"13"},
+				{txt:"14"},
+				{txt:"15"},
+				{txt:"16"},
+				{txt:"17"},
+				{txt:"18"},
+				{txt:"19"},
+				{txt:"20"},
+				{txt:"21"},
+				{txt:"22"},
+				{txt:"23"},
+				{txt:"24"},
+				{txt:"25"},
+				{txt:"26"},
+				{txt:"27"},
+				{txt:"28"},
+				{txt:"29"},
+				{txt:"30"},
 			],
 
 		},
