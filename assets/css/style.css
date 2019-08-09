@@ -138,7 +138,8 @@ body {
 .x-card-light {
 	background-color: white;
 	color: black;
-	border: 3px solid #e6e6e6;
+	border: 0px;
+	/*border-top: 3px solid #e6e6e6;*/
 }
 
 .x-card-light:hover {
@@ -146,6 +147,7 @@ body {
 	color: black;
 	border: 5px solid white;
 	box-shadow: 5px 5px 15px #d9d9d9;
+	border-radius: 10px;
 }
 
 

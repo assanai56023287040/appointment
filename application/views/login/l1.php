@@ -31,13 +31,13 @@
 				<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
 				<div class="px-5 mb-4">
 					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="patientRegister()" autocomplete="off" />
-					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="patientRegister()">
+					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="patientRegister()" style="border-radius: 10px;">
 						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;"></i>
 						<br/>
 						ลงทะเบียน
 					</button>
 					<hr/>
-					<button class="btn btn-block x-btn-blue p-3" type="button" @click="onlyShowModal('em-sign')">
+					<button class="btn btn-block x-btn-blue p-3" type="button" @click="onlyShowModal('em-sign')" style="border-radius: 10px;">
 						<i class="fa fa-user-nurse m-3 align-middle" style="font-size: 2rem;"></i>
 						<br/>
 						สำหรับพนักงาน
@@ -94,7 +94,7 @@
 	var app = new Vue({
 		el: '#app',
 		data: {
-			idcard: '',
+			idcard: '1100600311926',
 			adminusername: '',
 			adminpassword: '',
 		},

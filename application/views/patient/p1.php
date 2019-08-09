@@ -103,20 +103,21 @@
 							</div>
 						</div>
 						<div class="container-fluid m-0 bg-white" id="frame-list" v-for="(list , idx) in apmlist">
-							<div class="container-fluid py-1 my-2 x-card-light" style="border-radius: 10px;display: flex;" @click="openChat(list.apmid,idx)">
+							<hr class="m-0" v-show="idx != 0">
+							<div class="container-fluid py-1 my-2 x-card-light" style="display: flex;" @click="openChat(list.apmid,idx)">
 								<div class="d-inline float-left text-center p-0" style="position: relative;min-width: 40px;">
 									<div class="vl-purple my-0" style="top: 0;right: 0;	position: absolute;"></div>
 									<span class="align-middle" >{{ idx+1 }}</span>
 								</div>
 								<div class="d-inline pl-3 w-75" style="flex: 1;">
-									<div class="d-block text-left my-1 w-100 text-truncate">
+									<!-- <div class="d-block text-left my-1 w-100 text-truncate">
 										<h5 class="font-weight-bold m-0">หัวข้อเรื่อง : {{ list.header }}</h5>
+									</div> -->
+									<div class="d-block text-left w-100 text-truncate small">
+										รายละเอียดอาการ : {{ list.sicktxt }}
 									</div>
 									<div class="d-block text-left small">
 										วันที่ขอทำนัด : {{ list.apmdate | thdate }}
-									</div>
-									<div class="d-block text-left w-100 text-truncate small">
-										รายละเอียดอาการ : {{ list.sicktxt }}
 									</div>
 									<div class="d-block text-left my-1 w-50 small">
 										<div class="alert" :class="stalertclass(list.stid)">{{ list.stname }}</div>
@@ -139,11 +140,15 @@
 					<span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
 				</button>
 				<hr/>
+				<button class="btn btn-block x-btn-orenge my-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+					<i class="fa fa-info align-middle" style="font-size: 1.8rem"></i>
+					<span class="align-middle mx-2" style="font-size: 1rem;">ดูข้อมูลการขอทำนัด</span> <!-- ขอทำนัด -->
+				</button>
 				<div class="text-center w-100 my-2">
 					<h3 class="font-weight-bold">ข้อมูลการขอทำนัด</h3>
 					<div class="form-group px-3">
-						<label class="small font-weight-bold" for="header">หัวข้อเรื่อง : </label>
-						<input class="form-control non-edit" type="text" :value="selapm.header">
+						<label class="small font-weight-bold" for="header">รายละเอียดอาการ : </label>
+						<textarea class="form-control non-edit" type="text" :value="selapm.sicktxt" rows="4"></textarea> 
 					</div>
 					<div class="form-group px-3">
 						<label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
@@ -158,17 +163,13 @@
 						<input class="form-control non-edit text-center" type="text" :value="selapm.tel">
 					</div>
 				</div>
-				<button class="btn btn-block x-btn-orenge my-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
-					<i class="fa fa-info align-middle" style="font-size: 1.8rem"></i>
-					<span class="align-middle mx-2" style="font-size: 1rem;">ดูข้อมูลการขอทำนัด</span> <!-- ขอทำนัด -->
-				</button>
 			</div>
 			<!-- chat and option zone -->
 			<div class="col-9 container text-center" style="display: flex;">
 				<div class="m-0 p-0 w-100 h-100" style="display: flex;flex: 1;">
 					<div class="container-fluid mt-3 px-0" style="flex: 1;height: 75vh;background-color: #ffffcc;position: relative;padding-bottom: 60px;">
 						<div class="row m-0 p-0 sticky-top h-100" style="display: flex;flex-direction: column;">
-							<div class="container-fluid px-0 col-12" style="align-self: stretch;overflow-y: auto;">
+							<div class="container-fluid px-0 col-12" id="messages-area" style="align-self: stretch;overflow-y: auto;">
 								<div class="row m-0 p-0 sticky-top">
 									<div class="col-12 m-0 p-0 text-right bg-white">
 										<button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="showListPage(true)">
@@ -437,36 +438,36 @@
 				{k: "23", v:"23.00"},
 			],
 			messages: [
-				{txt:"1"},
-				{txt:"2"},
-				{txt:"3"},
-				{txt:"4"},
-				{txt:"5"},
-				{txt:"6"},
-				{txt:"7"},
-				{txt:"8"},
-				{txt:"9"},
-				{txt:"10"},
-				{txt:"11"},
-				{txt:"12"},
-				{txt:"13"},
-				{txt:"14"},
-				{txt:"15"},
-				{txt:"16"},
-				{txt:"17"},
-				{txt:"18"},
-				{txt:"19"},
-				{txt:"20"},
-				{txt:"21"},
-				{txt:"22"},
-				{txt:"23"},
-				{txt:"24"},
-				{txt:"25"},
-				{txt:"26"},
-				{txt:"27"},
-				{txt:"28"},
-				{txt:"29"},
-				{txt:"30"},
+				{side:"1", txt:"1"},
+				{side:"1", txt:"2"},
+				{side:"2", txt:"3"},
+				{side:"2", txt:"4"},
+				{side:"2", txt:"5"},
+				{side:"2", txt:"6"},
+				{side:"2", txt:"7"},
+				{side:"2", txt:"8"},
+				{side:"1", txt:"9"},
+				{side:"1", txt:"10"},
+				{side:"2", txt:"11"},
+				{side:"1", txt:"12"},
+				{side:"1", txt:"13"},
+				{side:"2", txt:"14"},
+				{side:"2", txt:"15"},
+				{side:"1", txt:"16"},
+				{side:"1", txt:"17"},
+				{side:"2", txt:"18"},
+				{side:"2", txt:"19"},
+				{side:"2", txt:"20"},
+				{side:"2", txt:"21"},
+				{side:"2", txt:"22"},
+				{side:"1", txt:"23"},
+				{side:"1", txt:"24"},
+				{side:"1", txt:"25"},
+				{side:"1", txt:"26"},
+				{side:"1", txt:"27"},
+				{side:"2", txt:"28"},
+				{side:"2", txt:"29"},
+				{side:"2", txt:"30"},
 			],
 
 		},
@@ -714,6 +715,8 @@
 			openChat(apmid,idx){
 				this.showChatPage();
 				this.selapm = this.apmlist[idx];
+				let messagesArea = document.getElementById("messages-area");
+				messagesArea.scrollTop = messagesArea.scrollHeight;
 			},
 			apmload(apmid){
 				Swal.fire({
