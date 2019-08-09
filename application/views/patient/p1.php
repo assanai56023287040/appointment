@@ -716,7 +716,7 @@
 				this.showChatPage();
 				this.selapm = this.apmlist[idx];
 				let messagesArea = document.getElementById("messages-area");
-				messagesArea.scrollTop = messagesArea.scrollHeight;
+				$("#messages-area").animate({ scrollTop: messagesArea.scrollHeight }, "slow");
 			},
 			apmload(apmid){
 				Swal.fire({
