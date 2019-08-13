@@ -116,4 +116,27 @@ class Appointment extends CI_Controller {
 			,'row' => $res->result_array()
 		));
 	}
+
+	function createmsg(){
+		$msgdata = array(
+			'apmid' => $this->input->post('apmid'), 
+			'msgtxt' => $this->input->post('msgtxt'), 
+			'fromside' => ($this->input->post('side') == 'p'? 'p':'a'),
+			'toside' => ($this->input->post('side') == 'p'? 'a':'p'),
+			'msgdate' => $this->input->post('msgdate'),
+			'msgtime' => $this->input->post('msgtime'),
+			'credt' => date("Y-m-d H:i:s"),
+		);
+
+		$this->db->insert('apmchat',$msgdata);
+		$id = $this->db->insert_id();
+
+		$this->db->set('msgid',$id);
+		$this->db->insert('newchat',$msgdata);
+
+		echo json_encode(array(
+			'success' => true,
+			'msgid' => $id,
+		));
+	}
 }

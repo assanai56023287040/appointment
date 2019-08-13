@@ -175,14 +175,17 @@
 										<hr class="my-2">
 									</div>
 								</div>
-								<div v-for="(msg ,idx) in messages">
-									{{ msg.txt }}
+								<div class="d-block m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-left':'text-right'">
+									<span class="text-muted" style="font-size: 14px;">{{ msg.msgtime }}</span>
+									<div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
+										{{ msg.txt }}
+									</div>
 								</div>
 							</div>
 						</div>
 
 						<div class="input-group sticky-bottom" style="height: 55px;"><!-- min-height: 30px; -->
-							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." style="font-size: 24px;height: auto;" @keyup.enter="createmsg()" v-model="currmsg">
+							<input type="text" id="create-msg-box" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." style="font-size: 24px;height: auto;" @keyup.enter="createmsg()" v-model="currmsg">
 							<div class="input-group-append" @click="createmsg()">
 						    	<span class="input-group-text x-btn-purple">
 						    		<i class="fa fa-angle-double-up align-middle mx-3" style="font-size: 24px"></i>
@@ -434,38 +437,39 @@
 				{k: "23", v:"23.00"},
 			],
 			currmsg: "",
-			messages: [
-				{side:"a", txt:"1"},
-				{side:"a", txt:"2"},
-				{side:"a", txt:"3"},
-				{side:"a", txt:"4"},
-				{side:"a", txt:"5"},
-				{side:"a", txt:"6"},
-				{side:"a", txt:"7"},
-				{side:"a", txt:"8"},
-				{side:"a", txt:"9"},
-				{side:"a", txt:"10"},
-				{side:"a", txt:"11"},
-				{side:"a", txt:"12"},
-				{side:"a", txt:"13"},
-				{side:"a", txt:"14"},
-				{side:"a", txt:"15"},
-				{side:"a", txt:"16"},
-				{side:"a", txt:"17"},
-				{side:"a", txt:"18"},
-				{side:"a", txt:"19"},
-				{side:"a", txt:"20"},
-				{side:"a", txt:"21"},
-				{side:"a", txt:"22"},
-				{side:"a", txt:"23"},
-				{side:"a", txt:"24"},
-				{side:"a", txt:"25"},
-				{side:"a", txt:"26"},
-				{side:"a", txt:"27"},
-				{side:"a", txt:"28"},
-				{side:"a", txt:"29"},
-				{side:"a", txt:"30"},
-			],
+			messages: [],
+
+				// {side:"a", txt:"1"},
+				// {side:"p", txt:"2"},
+				// {side:"a", txt:"3"},
+				// {side:"a", txt:"4"},
+				// {side:"a", txt:"5"},
+				// {side:"p", txt:"6"},
+				// {side:"a", txt:"7"},
+				// {side:"p", txt:"8"},
+				// {side:"a", txt:"9"},
+				// {side:"a", txt:"10"},
+				// {side:"a", txt:"11"},
+				// {side:"p", txt:"12"},
+				// {side:"p", txt:"13"},
+				// {side:"p", txt:"14"},
+				// {side:"a", txt:"15"},
+				// {side:"a", txt:"16"},
+				// {side:"a", txt:"17"},
+				// {side:"a", txt:"18"},
+				// {side:"p", txt:"19"},
+				// {side:"a", txt:"20"},
+				// {side:"a", txt:"21"},
+				// {side:"a", txt:"22"},
+				// {side:"a", txt:"23"},
+				// {side:"a", txt:"24"},
+				// {side:"p", txt:"25"},
+				// {side:"p", txt:"26"},
+				// {side:"p", txt:"27"},
+				// {side:"a", txt:"28"},
+				// {side:"a", txt:"29"},
+				// {side:"a", txt:"30"},
+			
 
 		},
 		methods: {
@@ -676,6 +680,7 @@
 				this.showchatpage();
 				this.selapm = this.apmlist[idx];
 				this.scrolltobottom();
+				// $('#create-msg-box').focus();
 			},
 			apmload(apmid){
 				Swal.fire({
@@ -696,12 +701,28 @@
 				});
 			},
 			createmsg(){
+				if(!this.currmsg){return false;}
+				let dt = new Date();
+				let d = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+				let t = dt.getHours() + ':' + dt.getMinutes().toString().padStart(2,0); // + ":" + dt.getSeconds()
 				this.messages.push({
 					side:"p"
 					,txt: this.currmsg
+					,msgdate: d
+					,msgtime: t
 				});
 				this.currmsg = "";
 				this.scrolltobottom();
+				$("#create-msg-box").focus();
+
+				let params = new URLSearchParams({
+					'apmid' : this.selapm.apmid,
+					'side' : 'p',
+					'msgtxt' : this.currmsg,
+					'msgdate' : d,
+					'msgtime' : t,
+				});
+				axios.post("<?php echo site_url('appointment/createmsg'); ?>",params);
 			},
 
 		},
@@ -713,7 +734,7 @@
 				this.ptid = localStorage.getItem('ptid');
 				$('#patient-page').removeClass("d-none");
 				$('[data-toggle="popover"]').popover();
-				$('[data-toggle="tooltip"]').tooltip()
+				$('[data-toggle="tooltip"]').tooltip();
 				this.listload();
 			}else{
 				Swal.fire({
