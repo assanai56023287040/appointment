@@ -29,10 +29,6 @@
 <section id="patient-page" class="p-4 container-fluid d-none" style="display: flex; flex-flow: column; height: 100%;">
 	<div style="display: flex;">
 		<div class="container-fluid bg-white text-left d-inline-block" style="border-radius: 10px;flex: 1;">
-			<!-- <button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
-				<i class="far fa-arrow-alt-circle-left m-2 align-middle" style="font-size: 2rem;"></i>
-				<span class="align-middle">ย้อนกลับ</span> 
-			</button> -->
 			<div class="row p-3">
 				<div class="col-6">
 					<h5 class="my-auto">
@@ -49,7 +45,7 @@
 			</div>
 		</div>
 		<div class="d-inline-block text-right float-right align-middle ml-3">
-			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')" title="ข้อมูลคนไข้" data-content="ดูรายละเอียดข้อมูลคนไข้" data-toggle="popover" data-trigger="hover" data-placement="bottom">
+			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')" title="ข้อมูลคนไข้" data-content="ดูรายละเอียดข้อมูลคนไข้" data-toggle="popover" data-trigger="hover" data-placement="bottom">
 				<i class="far fa-user-circle m-2" style="font-size: 2rem;"></i>
 			</button>
 			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ" data-content="กลับสู่หน้าลงทะเบียน" data-toggle="popover" data-trigger="hover" data-placement="bottom">
@@ -65,7 +61,7 @@
 		<section class="row" id="list-page" style="flex: 1 1 auto;display: none;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
 				<div class="vl-purple my-3" style="top: 0;right: 0;	position: absolute;"></div>
-				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;" @click="actionShowModal('new-appointment')">
+				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;" @click="actionshowmodal('new-appointment')">
 					<i class="fa fa-plus align-middle" style="font-size: 1.8rem"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">เพิ่มข้อมูลใบนัด</span> <!-- ขอทำนัด -->
 				</button>
@@ -85,7 +81,7 @@
 					<span class="align-middle mx-2" style="font-size: 1rem;">ค้นหา</span>
 				</button>
 
-				<button class="btn btn-block x-btn-red my-3" style="border-radius: 10px;" @click="clearForm('searchform')">
+				<button class="btn btn-block x-btn-red my-3" style="border-radius: 10px;" @click="clearform('searchform')">
 					<i class="fa fa-times align-middle" style="font-size: 1.8rem"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">ล้าง</span>
 				</button>
@@ -135,7 +131,7 @@
 		<section class="row" id="chat-page" style="flex: 1 1 auto;display: none;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
 				<div class="vl-yellow my-3" style="top: 0;right: 0;	position: absolute;"></div>
-				<button class="btn btn-block x-btn-white my-3" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')">
+				<button class="btn btn-block x-btn-white my-3" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')">
 					<i class="far fa-user-circle align-middle" style="font-size: 1.8rem"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
 				</button>
@@ -172,7 +168,7 @@
 							<div class="container-fluid px-0 col-12" id="messages-area" style="align-self: stretch;overflow-y: auto;">
 								<div class="row m-0 p-0 sticky-top">
 									<div class="col-12 m-0 p-0 text-right bg-white">
-										<button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="showListPage(true)">
+										<button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="showlistpage(true)">
 											<i class="fa fa-chevron-circle-down align-middle" style="font-size: 1.8rem"></i>
 											<span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
 										</button>
@@ -186,8 +182,8 @@
 						</div>
 
 						<div class="input-group sticky-bottom" style="height: 55px;"><!-- min-height: 30px; -->
-							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." style="font-size: 24px;height: auto;">
-							<div class="input-group-append">
+							<input type="text" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." style="font-size: 24px;height: auto;" @keyup.enter="createmsg()" v-model="currmsg">
+							<div class="input-group-append" @click="createmsg()">
 						    	<span class="input-group-text x-btn-purple">
 						    		<i class="fa fa-angle-double-up align-middle mx-3" style="font-size: 24px"></i>
 						    	</span>
@@ -437,58 +433,59 @@
 				{k: "22", v:"22.00"},
 				{k: "23", v:"23.00"},
 			],
+			currmsg: "",
 			messages: [
-				{side:"1", txt:"1"},
-				{side:"1", txt:"2"},
-				{side:"2", txt:"3"},
-				{side:"2", txt:"4"},
-				{side:"2", txt:"5"},
-				{side:"2", txt:"6"},
-				{side:"2", txt:"7"},
-				{side:"2", txt:"8"},
-				{side:"1", txt:"9"},
-				{side:"1", txt:"10"},
-				{side:"2", txt:"11"},
-				{side:"1", txt:"12"},
-				{side:"1", txt:"13"},
-				{side:"2", txt:"14"},
-				{side:"2", txt:"15"},
-				{side:"1", txt:"16"},
-				{side:"1", txt:"17"},
-				{side:"2", txt:"18"},
-				{side:"2", txt:"19"},
-				{side:"2", txt:"20"},
-				{side:"2", txt:"21"},
-				{side:"2", txt:"22"},
-				{side:"1", txt:"23"},
-				{side:"1", txt:"24"},
-				{side:"1", txt:"25"},
-				{side:"1", txt:"26"},
-				{side:"1", txt:"27"},
-				{side:"2", txt:"28"},
-				{side:"2", txt:"29"},
-				{side:"2", txt:"30"},
+				{side:"a", txt:"1"},
+				{side:"a", txt:"2"},
+				{side:"a", txt:"3"},
+				{side:"a", txt:"4"},
+				{side:"a", txt:"5"},
+				{side:"a", txt:"6"},
+				{side:"a", txt:"7"},
+				{side:"a", txt:"8"},
+				{side:"a", txt:"9"},
+				{side:"a", txt:"10"},
+				{side:"a", txt:"11"},
+				{side:"a", txt:"12"},
+				{side:"a", txt:"13"},
+				{side:"a", txt:"14"},
+				{side:"a", txt:"15"},
+				{side:"a", txt:"16"},
+				{side:"a", txt:"17"},
+				{side:"a", txt:"18"},
+				{side:"a", txt:"19"},
+				{side:"a", txt:"20"},
+				{side:"a", txt:"21"},
+				{side:"a", txt:"22"},
+				{side:"a", txt:"23"},
+				{side:"a", txt:"24"},
+				{side:"a", txt:"25"},
+				{side:"a", txt:"26"},
+				{side:"a", txt:"27"},
+				{side:"a", txt:"28"},
+				{side:"a", txt:"29"},
+				{side:"a", txt:"30"},
 			],
 
 		},
 		methods: {
-			onlyShowModal(modal_id){
+			onlyshowmodal(modal_id){
 				$('#'+modal_id).modal();
 			},
-			actionShowModal(modal_id){
+			actionshowmodal(modal_id){
 				switch(modal_id){
 					case 'new-appointment' : 
 						this.isnewapm = true;
-						this.clearForm('newapm');
-						this.onlyShowModal('new-appointment');
+						this.clearform('newapm');
+						this.onlyshowmodal('new-appointment');
 						break;
 					case 'edit-appointment' : 
 						this.isnewapm = false;
-						this.onlyShowModal('new-appointment');
+						this.onlyshowmodal('new-appointment');
 						break;
 				}
 			},
-			showListPage(ani = false){	// ani : use animation slide 
+			showlistpage(ani = false){	// ani : use animation slide 
 				if(ani){
 					$('#list-page').show("slide", { direction: "up" }, 500);
 					$('#chat-page').hide("slide", { direction: "down" }, 500);
@@ -497,14 +494,11 @@
 				}
 				this.ptdata = JSON.parse(localStorage.getItem('patientdata'));
 			},
-			showChatPage(){ 
+			showchatpage(){ 
 				$('#chat-page').show("slide", { direction: "down" }, 500);
 				$('#list-page').hide("slide", { direction: "up" }, 500);
 			},
-			showLoginForm(){
-				window.location = "<?php echo site_url('login'); ?>";
-			},
-			activeDatePicker(){
+			activedatepicker(){
 				$('.datepicker').datepicker({
 						language:'th-th',
 						format:'dd/mm/yyyy',	
@@ -545,7 +539,7 @@
 					return "";
 				}
 			},
-			clearForm(type){
+			clearform(type){
 				switch(type){
 					case 'searchform' : 
 						this.skeyword = '';
@@ -568,44 +562,6 @@
 						break;
 					default : break;
 				}
-			},
-			emSignin(){
-				$('#em-sign').modal('hide');
-				Swal.fire({
-	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
-	                allowOutsideClick: false,
-	            });
-	            Swal.showLoading();
-	            axios.get("<?php echo site_url('login/emSignin'); ?>",{
-	            	params : {
-	            		uid: this.adminusername
-	            		,pwd: this.adminpassword
-	            	}
-	            }).then(res => {
-	            	console.log(res);
-	            	Swal.close();
-	            	res = res.data;
-
-	            	if(res.success){
-	            		Swal.fire({
-						  type: 'success',
-						  title: 'เข้าสู่ระบบเสร็จสิ้น',
-						  text: 'กรุณารอสักครู่.....',
-						  confirmButtonText: '',
-						  timer: 2000,
-						  showConfirmButton: false,
-		                  allowOutsideClick: false,
-						}).then(() => {
-							window.location = "<?php echo site_url('employee'); ?>";
-						});
-	            	}else{
-	            		Swal.fire({
-						  type: 'error',
-						  title: 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง!',
-						  confirmButtonText: 'ปิด'
-						});
-	            	}
-	            });
 			},
 			logout(){
 				Swal.fire({
@@ -648,7 +604,7 @@
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
 				.then(async res => {
 					this.apmid = res.apmid;
-					this.clearForm('newapm');
+					this.clearform('newapm');
 					$('#new-appointment').modal('hide');
 					await this.listload();
 					this.selapm = this.apmlist.find(v => v.apmid == res.data.apmid);
@@ -661,7 +617,7 @@
 						  showConfirmButton: false,
 		                  allowOutsideClick: false,
 					}).then(() => {
-						this.showChatPage();
+						this.showchatpage();
 						// window.location = "<?php echo site_url('employee'); ?>";
 					});
 				});
@@ -712,11 +668,14 @@
 						return 'alert-light';
 				}
 			},
-			openChat(apmid,idx){
-				this.showChatPage();
-				this.selapm = this.apmlist[idx];
+			scrolltobottom(){
 				let messagesArea = document.getElementById("messages-area");
 				$("#messages-area").animate({ scrollTop: messagesArea.scrollHeight }, "slow");
+			},
+			openChat(apmid,idx){
+				this.showchatpage();
+				this.selapm = this.apmlist[idx];
+				this.scrolltobottom();
 			},
 			apmload(apmid){
 				Swal.fire({
@@ -733,16 +692,24 @@
 					console.log(res);
 					this.newapm = res.data.row[0];
 					this.newapm.apmdate = this.dateforth(res.data.row[0].apmdate);
-					this.actionShowModal('edit-appointment');
+					this.actionshowmodal('edit-appointment');
 				});
+			},
+			createmsg(){
+				this.messages.push({
+					side:"p"
+					,txt: this.currmsg
+				});
+				this.currmsg = "";
+				this.scrolltobottom();
 			},
 
 		},
 		mounted() {
 			var _this = this;
 			if(localStorage.getItem('idcard') != ''){
-				this.showListPage();
-				this.activeDatePicker();
+				this.showlistpage();
+				this.activedatepicker();
 				this.ptid = localStorage.getItem('ptid');
 				$('#patient-page').removeClass("d-none");
 				$('[data-toggle="popover"]').popover();
@@ -779,12 +746,6 @@
 		watch: {
 
 		},
-		// created () {
-		// 	document.addEventListener("backbutton", this.showLoginForm(), false);
-		// },
-		// beforeDestroy () {
-		// 	document.removeEventListener("backbutton", this.showLoginForm());
-		// }
 	});
 </script>
 </body>
