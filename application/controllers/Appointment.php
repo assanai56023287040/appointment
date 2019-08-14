@@ -31,6 +31,11 @@ class Appointment extends CI_Controller {
 			,'stid' => $this->input->post('stid')
 			,'ptid' => $this->input->post('ptid')
 			,'hn' => $this->input->post('hn')
+			,'isseldct' => $this->input->post('isseldct')
+			,'apmdct' => $this->input->post('apmdct')
+			,'lcttype' => $this->input->post('lcttype')
+			,'apmlct' => $this->input->post('apmlct')
+			,'lctname' => $this->input->post('lctname')
 			,'chcnt' => 1
 			,'active' => 'A'
 			,'credt' => date("Y-m-d H:i:s")
@@ -93,10 +98,6 @@ class Appointment extends CI_Controller {
 		log_info($this->db->last_query());
 
 		$res = $res->result_array();
-		// $res1 = $res;
-		// for ($i=0; $i < 6; $i++) { 
-		// 	array_push($res,$res1[0]);
-		// }
 
 		echo json_encode(array(
 			'success' => true
@@ -138,5 +139,110 @@ class Appointment extends CI_Controller {
 			'success' => true,
 			'msgid' => $id,
 		));
+	}
+
+	function loadchat(){
+		$apmid = $this->input->get('apmid');
+		$offset = $this->input->get('offset');
+		$nowside = $this->input->get('nowside');
+
+		$sql = "
+			SELECT * 
+			FROM (
+				SELECT a.msgid
+					,a.msgtxt
+					,a.fromside AS side
+					,a.msgdate
+					,a.msgtime
+				FROM apmchat a 
+				WHERE a.apmid = {$apmid}
+				ORDER BY a.msgid DESC
+				LIMIT {$offset} ,30
+			) AS s
+			ORDER BY s.msgid ASC
+		";
+
+		$res = $this->db->query($sql);
+
+		$this->db->set('msgst','r')
+				->where('apmid',$apmid)
+				->where('toside',$nowside)
+				->where('msgst','u')
+				->update('apmchat');
+
+		$this->db->where('apmid',$apmid)
+				->where('toside',$nowside)
+				->delete('newchat');
+
+		if($res->num_rows() > 0){
+			echo json_encode(array(
+					'success' => true,
+					'cnt' => $res->num_rows(),
+					'msg' => $res->result_array(),
+			));
+		}else{
+			echo json_encode(array(
+					'success' => true,
+					'cnt' => 0,
+					'msg' => [],
+			));
+		}
+	}
+
+	function inquirychat(){
+		$apmid = $this->input->get('apmid');
+		$nowside = $this->input->get('nowside');
+
+		$this->db->where('apmid',$apmid)
+				->where('toside',$nowside)
+				->select("
+					msgid
+					,msgtxt
+					,fromside AS side
+					,msgdate
+					,msgtime
+					",false);
+		$res = $this->db->get('newchat');
+
+		$this->db->where('apmid',$apmid)
+				->where('toside',$nowside)
+				->delete('newchat');
+
+		if($res->num_rows() > 0){
+			echo json_encode(array(
+					'success' => true,
+					'cnt' => $res->num_rows(),
+					'msg' => $res->result_array(),
+			));
+		}else{
+			echo json_encode(array(
+					'success' => true,
+					'cnt' => 0,
+					'msg' => [],
+			));
+		}
+
+	}
+
+	function lctload(){
+		
+		$response = Requests::get(TUH_API.'Department?cliniclct=' ,array());
+
+		$res = json_decode($response->body);
+		$r = json_decode($res->Result);
+
+		if($res->MessageCode == 200){
+			echo json_encode(array(
+					'success' => true
+					,'code' => 'pass'
+					,'row' => $r
+				));
+		}else{
+			echo json_encode(array(
+					'success' => false
+					,'code' => 'notPass'
+				));
+		}
+
 	}
 }

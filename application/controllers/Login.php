@@ -39,7 +39,6 @@ class Login extends CI_Controller {
 				->where('active <>','I');
 		$qres = $this->db->get('user');
 		$cnt = $qres->num_rows();
-
 		
 		$response = Requests::get(TUH_API.'Login?user='.$uid.'&password='.$pwd ,array() ,array());
 

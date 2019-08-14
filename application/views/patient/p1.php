@@ -175,11 +175,16 @@
 										<hr class="my-2">
 									</div>
 								</div>
+								<div class="text-center x-btn-white px-5 mx-5 my-2" v-show="false" style="border-radius: 10px;">
+									<i class="fa fa-angle-up align-middle" style="font-size: 1.5rem"></i>
+									<span class="align-middle mx-2" style="font-size: 1rem;">โหลดเพิ่มเติม</span>
+								</div>
 								<div class="d-block m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-left':'text-right'">
-									<span class="text-muted" style="font-size: 14px;">{{ msg.msgtime }}</span>
+									<span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
 									<div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
-										{{ msg.txt }}
+										{{ msg.msgtxt }}
 									</div>
+									<span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
 								</div>
 							</div>
 						</div>
@@ -315,11 +320,11 @@
 									</div>
 									<select class="form-control" type="text" id="apmdct" v-model="newapm.apmdct" :disabled="!newapm.isseldct">
 										<option value="" disabled selected>เลือกแพทย์</option>										
-										<option value="1111111111">11111 | นพ.ทดสอบระบบแพทย์</option>
+										<option value="11001">11001 | นพ.ทดสอบระบบแพทย์</option>
 										<!-- <option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option> -->
 									</select>
 									<div class="input-group-append" >
-										<button class="btn btn-outline-secondary" type="button" :disabled="!newapm.isseldct" data-toggle="tooltip" data-placement="top" title="ตารางออกตรวจแพทย์">
+										<button class="btn btn-outline-secondary" type="button" :disabled="!newapm.isseldct" title="ตารางออกตรวจแพทย์">
 											<i class="far fa-calendar-alt align-middle" style="font-size: 1.5rem"></i>
 										</button>
 									</div>
@@ -348,11 +353,12 @@
 									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
 								</div>
 
-								<select class="form-control" type="text" id="apmlct" v-model="newapm.apmlct" v-show="newapm.lcttype == 'itlct'">
-									<option value="" disabled selected>เลือกคลีนิค</option>					
-									<option value="1111111111">100 | ทดสอบคลีนิค</option>
-								</select>
-
+								<div class="d-block">
+									<select class="form-control select2 w-100" type="text" id="apmlct" v-model="newapm.apmlct" v-show="newapm.lcttype == 'itlct'">
+										<option value="" disabled selected>เลือกคลีนิค</option>					
+										<option v-for="(l , idx) in lctlist" :value="l.lctcode">{{ l.lctcode }} | {{ l.lctname }}</option>
+									</select>
+								</div>
 								
 							</div>
 						</div>
@@ -436,40 +442,12 @@
 				{k: "22", v:"22.00"},
 				{k: "23", v:"23.00"},
 			],
+			lctlist: [],
+			listInterval: null, // interval for show bagde message in chat list
+			chatInterval: null, // for update message in chat page
 			currmsg: "",
 			messages: [],
-
-				// {side:"a", txt:"1"},
-				// {side:"p", txt:"2"},
-				// {side:"a", txt:"3"},
-				// {side:"a", txt:"4"},
-				// {side:"a", txt:"5"},
-				// {side:"p", txt:"6"},
-				// {side:"a", txt:"7"},
-				// {side:"p", txt:"8"},
-				// {side:"a", txt:"9"},
-				// {side:"a", txt:"10"},
-				// {side:"a", txt:"11"},
-				// {side:"p", txt:"12"},
-				// {side:"p", txt:"13"},
-				// {side:"p", txt:"14"},
-				// {side:"a", txt:"15"},
-				// {side:"a", txt:"16"},
-				// {side:"a", txt:"17"},
-				// {side:"a", txt:"18"},
-				// {side:"p", txt:"19"},
-				// {side:"a", txt:"20"},
-				// {side:"a", txt:"21"},
-				// {side:"a", txt:"22"},
-				// {side:"a", txt:"23"},
-				// {side:"a", txt:"24"},
-				// {side:"p", txt:"25"},
-				// {side:"p", txt:"26"},
-				// {side:"p", txt:"27"},
-				// {side:"a", txt:"28"},
-				// {side:"a", txt:"29"},
-				// {side:"a", txt:"30"},
-			
+			offsetchat: 0,
 
 		},
 		methods: {
@@ -491,6 +469,7 @@
 			},
 			showlistpage(ani = false){	// ani : use animation slide 
 				if(ani){
+					clearInterval(this.chatInterval);
 					$('#list-page').show("slide", { direction: "up" }, 500);
 					$('#chat-page').hide("slide", { direction: "down" }, 500);
 				}else{
@@ -604,6 +583,11 @@
 					'ptid' : this.ptid,
 					'hn' : this.ptdata.HN,
 					'stid' : this.newapm.stid,
+					'isseldct' : this.newapm.isseldct,
+					'apmdct' : this.newapm.apmdct,
+					'lcttype' : this.newapm.lcttype,
+					'apmlct' : this.newapm.apmlct,
+
 				});
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
 				.then(async res => {
@@ -622,12 +606,10 @@
 		                  allowOutsideClick: false,
 					}).then(() => {
 						this.showchatpage();
-						// window.location = "<?php echo site_url('employee'); ?>";
 					});
 				});
 			},
 			async listload(){
-				// $('#frame-list').hide("slide", { direction: "left" }, 500);
 				Swal.fire({
 	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
 	                allowOutsideClick: false,
@@ -676,10 +658,12 @@
 				let messagesArea = document.getElementById("messages-area");
 				$("#messages-area").animate({ scrollTop: messagesArea.scrollHeight }, "slow");
 			},
-			openChat(apmid,idx){
+			async openChat(apmid,idx){
 				this.showchatpage();
 				this.selapm = this.apmlist[idx];
+				await this.loadchat();
 				this.scrolltobottom();
+				// this.inquiryChat();
 				// $('#create-msg-box').focus();
 			},
 			apmload(apmid){
@@ -702,19 +686,17 @@
 			},
 			createmsg(){
 				if(!this.currmsg){return false;}
+				clearInterval(this.chatInterval);
 				let dt = new Date();
 				let d = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
 				let t = dt.getHours() + ':' + dt.getMinutes().toString().padStart(2,0); // + ":" + dt.getSeconds()
 				this.messages.push({
 					side:"p"
-					,txt: this.currmsg
+					,msgtxt: this.currmsg
 					,msgdate: d
 					,msgtime: t
 				});
-				this.currmsg = "";
-				this.scrolltobottom();
-				$("#create-msg-box").focus();
-
+				
 				let params = new URLSearchParams({
 					'apmid' : this.selapm.apmid,
 					'side' : 'p',
@@ -722,7 +704,72 @@
 					'msgdate' : d,
 					'msgtime' : t,
 				});
-				axios.post("<?php echo site_url('appointment/createmsg'); ?>",params);
+
+				this.currmsg = "";
+				this.scrolltobottom();
+				$("#create-msg-box").focus();
+
+				axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
+					.then(res => {
+						this.inquiryChat();
+					});
+			},
+			async loadchat(){
+				this.messages = [];
+				Swal.fire({
+	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+	                allowOutsideClick: false,
+	            });
+	            Swal.showLoading();
+	            await axios.get("<?php echo site_url("appointment/loadchat"); ?>",{
+						params : {
+							apmid : this.selapm.apmid,
+							offset : this.offsetchat,
+							nowside : 'p',
+						}
+					})
+					.then(res => {
+						Swal.close();
+						res = res.data;
+						if(res.success && res.cnt > 0){
+							res.msg.forEach((item,idx) => {
+								this.messages.push(item);
+							});
+						}
+					});
+
+			},
+			inquiryChat(){
+				this.chatInterval = setInterval(() => {
+					axios.get("<?php echo site_url("appointment/inquirychat"); ?>",{
+						params : {
+							apmid : this.selapm.apmid,
+							nowside: 'p',
+						}
+					})
+					.then(res => {
+						res = res.data;
+						if(res.success && res.cnt > 0){
+							res.msg.forEach((item,idx) => {
+								this.messages.push(item);
+							});
+							this.scrolltobottom();
+						}
+					});
+				},5000);
+			},
+			lctload(){
+				this.lctlist = [];
+				axios.get("<?php echo site_url('appointment/lctload'); ?>")
+					.then(res => {
+						res = res.data;
+						res.row.forEach((item,idx) => {
+							this.lctlist.push({
+								lctcode : item.UNIT_CODE
+								,lctname : item.UNIT_NAME
+							});
+						});
+					});
 			},
 
 		},
@@ -734,8 +781,10 @@
 				this.ptid = localStorage.getItem('ptid');
 				$('#patient-page').removeClass("d-none");
 				$('[data-toggle="popover"]').popover();
-				$('[data-toggle="tooltip"]').tooltip();
+				$('.select2').select2();
+				// $('[data-toggle="tooltip"]').tooltip();
 				this.listload();
+				this.lctload();
 			}else{
 				Swal.fire({
 				  type: 'error',
@@ -759,6 +808,14 @@
 					if(strdate.length == 3){
 						return strdate[2]+'/'+strdate[1]+'/'+(parseInt(strdate[0],10)+543);
 					}else{return v;}
+				}else{
+					return "";
+				}
+			},
+			hourminute(v){
+				let strtime = v.split(':');
+				if(strtime.length == 3 || strtime.length == 2){
+					return strtime[0]+':'+strtime[1];
 				}else{
 					return "";
 				}
