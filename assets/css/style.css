@@ -57,7 +57,7 @@ body {
 	background-color: #EE82EE;
 	color: black;
 	border: 3px solid #BA55D3;
-  	box-shadow: 5px 5px 15px #EE82EE;
+  	box-shadow: 0 0 15px #EE82EE;
 }
 
 .x-btn-blue {
@@ -71,7 +71,7 @@ body {
 	background-color: #4BF1FF;
 	color: black;
 	border: 3px solid #0668E6;
-  	box-shadow: 5px 5px 15px #4BF1FF;
+  	box-shadow: 0 0 15px #4BF1FF;
 }
 
 .x-btn-red {
@@ -85,7 +85,7 @@ body {
 	background-color: #ff471a;
 	color: black;
 	border: 3px solid #b30000;
-  	box-shadow: 5px 5px 15px #ff471a;
+  	box-shadow: 0 0 15px #ff471a;
 }
 
 .x-btn-white {
@@ -99,7 +99,7 @@ body {
 	background-color: #b3b3b3;
 	color: black;
 	border: 3px solid #ffffff;
-  	box-shadow: 5px 5px 15px #ffffff;
+  	box-shadow: 0 0 15px #ffffff;
 }
 
 .x-btn-green {
@@ -113,7 +113,7 @@ body {
 	background-color: #79ff4d;
 	color: black;
 	border: 3px solid #239023;
-  	box-shadow: 5px 5px 15px #79ff4d;
+  	box-shadow: 0 0 15px #79ff4d;
 }
 
 .x-btn-yellow {
@@ -127,7 +127,7 @@ body {
 	background-color: #e6e600;
 	color: black;
 	border: 3px solid #ffff4d;
-  	box-shadow: 5px 5px 15px #e6e600;
+  	box-shadow: 0 0 15px #e6e600;
 }
 
 .x-btn-orenge {
@@ -141,7 +141,7 @@ body {
 	background-color: #ffad33;
 	color: black;
 	border: 3px solid #e68a00;
-  	box-shadow: 5px 5px 15px #ffad33;
+  	box-shadow: 0 0 15px #ffad33;
 }
 
 .x-card-light {
@@ -155,7 +155,7 @@ body {
 	background-color: #f2f2f2;
 	color: black;
 	border: 5px solid white;
-	box-shadow: 5px 5px 15px #d9d9d9;
+	box-shadow: 0 0 15px #d9d9d9;
 	border-radius: 10px;
 }
 

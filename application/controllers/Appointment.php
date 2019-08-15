@@ -225,17 +225,27 @@ class Appointment extends CI_Controller {
 	}
 
 	function lctload(){
-		
-		$response = Requests::get(TUH_API.'Department?cliniclct=' ,array());
+		// $response = Requests::get(TUH_API.'Department?cliniclct=' ,array());
 
-		$res = json_decode($response->body);
-		$r = json_decode($res->Result);
+		// $res = json_decode($response->body);
+		// $r = json_decode($res->Result);
 
-		if($res->MessageCode == 200){
+		// $this->db->where('lctcode <>','')->delete('lct');
+
+		// foreach ($r as $k => $v) {
+		// 	$this->db->insert('lct', array(
+		// 		'lctcode' => $v->UNIT_CODE, 
+		// 		'lctname' => $v->UNIT_NAME, 
+		// 	));
+		// }
+
+		$lct = $this->db->order_by('lctcode','asc')->get('lct');
+
+		if($lct->num_rows() > 0){ //$res->MessageCode == 200
 			echo json_encode(array(
 					'success' => true
 					,'code' => 'pass'
-					,'row' => $r
+					,'row' => $lct->result_array()
 				));
 		}else{
 			echo json_encode(array(

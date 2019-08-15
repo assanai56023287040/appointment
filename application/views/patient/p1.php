@@ -353,10 +353,9 @@
 									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
 								</div>
 
-								<div class="d-block">
-									<select class="form-control select2 w-100" type="text" id="apmlct" v-model="newapm.apmlct" v-show="newapm.lcttype == 'itlct'">
-										<option value="" disabled selected>เลือกคลีนิค</option>					
-										<option v-for="(l , idx) in lctlist" :value="l.lctcode">{{ l.lctcode }} | {{ l.lctname }}</option>
+								<div v-show="newapm.lcttype == 'itlct'">
+									<select class="myselect2" id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
+										<option v-for="(l , idx) in lctlist" :value="idx">{{ l.lctcode }} | {{ l.lctname }}</option>
 									</select>
 								</div>
 								
@@ -386,6 +385,8 @@
 
 <?php $this->load->view('js/myjs'); ?>
 <script type="text/javascript">
+
+	
 	var app = new Vue({
 		el: '#app',
 		data: {
@@ -504,6 +505,25 @@
 						this.stdate = $('#stdate').val();
 					});
 			},
+			activeselect2(elid){
+				switch (elid) {
+					case 'apmlct':
+						$('.myselect2').select2({
+							theme: "bootstrap",
+							placeholder: "เลือกคลีนิค",
+							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
+						});
+
+						$('#apmlct').on("select2:closing", v => {
+							this.newapm.apmlct = $('#apmlct').val();
+						});
+						break;
+				
+					default:
+						break;
+				}
+				
+			},
 			dateformysql(strdate){
 				if(strdate){
 					strdate = strdate.split('/');
@@ -542,6 +562,7 @@
 							apmlct: '',
 							lcttype: '',
 						}; 
+						$('#apmlct').val(null).trigger('change');
 						break;
 					default : break;
 				}
@@ -586,7 +607,8 @@
 					'isseldct' : this.newapm.isseldct,
 					'apmdct' : this.newapm.apmdct,
 					'lcttype' : this.newapm.lcttype,
-					'apmlct' : this.newapm.apmlct,
+					'apmlct' : this.lctlist[this.newapm.apmlct].lctcode,
+					'lctname' : this.lctlist[this.newapm.apmlct].lctname,
 
 				});
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
@@ -765,10 +787,12 @@
 						res = res.data;
 						res.row.forEach((item,idx) => {
 							this.lctlist.push({
-								lctcode : item.UNIT_CODE
-								,lctname : item.UNIT_NAME
+								lctcode : item.lctcode,
+								lctname : item.lctname,
 							});
 						});
+						this.activeselect2('apmlct');
+						$('#apmlct').val(null).trigger('change');
 					});
 			},
 
@@ -777,14 +801,12 @@
 			var _this = this;
 			if(localStorage.getItem('idcard') != ''){
 				this.showlistpage();
-				this.activedatepicker();
 				this.ptid = localStorage.getItem('ptid');
 				$('#patient-page').removeClass("d-none");
 				$('[data-toggle="popover"]').popover();
-				$('.select2').select2();
-				// $('[data-toggle="tooltip"]').tooltip();
 				this.listload();
 				this.lctload();
+				this.activedatepicker();
 			}else{
 				Swal.fire({
 				  type: 'error',
