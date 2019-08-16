@@ -224,20 +224,36 @@ class Appointment extends CI_Controller {
 
 	}
 
+	function lctupdate(){
+		$response = Requests::get(TUH_API.'Department?cliniclct=' ,array());
+
+		$res = json_decode($response->body);
+		$r = json_decode($res->Result);
+
+		$this->db->where('lctcode <>','')->delete('lct');
+
+		foreach ($r as $k => $v) {
+			$this->db->insert('lct', array(
+				'lctcode' => $v->UNIT_CODE, 
+				'lctname' => $v->UNIT_NAME, 
+			));
+		}
+
+	}
+
 	function lctload(){
-		// $response = Requests::get(TUH_API.'Department?cliniclct=' ,array());
+		$date = date("Y-m-d");
+		$ex = $this->db->query("
+					SELECT CASE WHEN date(l.dt) = date('{$date}') 
+								THEN 1
+								ELSE 0 END AS exist
+					FROM lct l
+					LIMIT 1
+			");
 
-		// $res = json_decode($response->body);
-		// $r = json_decode($res->Result);
-
-		// $this->db->where('lctcode <>','')->delete('lct');
-
-		// foreach ($r as $k => $v) {
-		// 	$this->db->insert('lct', array(
-		// 		'lctcode' => $v->UNIT_CODE, 
-		// 		'lctname' => $v->UNIT_NAME, 
-		// 	));
-		// }
+		if($ex->row()->exist == 0){
+			$this->lctupdate();
+		}
 
 		$lct = $this->db->order_by('lctcode','asc')->get('lct');
 

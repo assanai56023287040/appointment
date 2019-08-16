@@ -17,13 +17,14 @@
   			background-repeat: no-repeat;
   			background-attachment: fixed;
   			overflow: hidden;
+  			padding: 0 0 0 0 !important;
   		}
 
   	</style>
     
 </head>
 <body>
-<div class="container-fluid" id="app">
+<div class="container-fluid m-0 p-0" id="app" style="overflow: hidden;">
 
 <!-- หนา้ลูกค้าใช้ ดูข้อมูล -->
 <section id="patient-page" class="p-4 container-fluid d-none" style="display: flex; flex-flow: column; height: 100%;">
@@ -337,8 +338,7 @@
 									</div>
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
-										<select class="form-control" type="text" id="apmtime" v-model="newapm.apmtime">
-											<option value="" disabled selected>เลือกเวลา</option>
+										<select class="myselect2 form-control" type="text" id="apmtime">
 											<option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
 										</select>
 									</div>
@@ -807,6 +807,7 @@
 				this.listload();
 				this.lctload();
 				this.activedatepicker();
+				this.activeselect2('apmtime');
 			}else{
 				Swal.fire({
 				  type: 'error',
