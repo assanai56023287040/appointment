@@ -23,7 +23,7 @@
   	</style>
     
 </head>
-<body>
+<body class="front-end">
 <div class="container-fluid m-0 p-0" id="app" style="overflow: hidden;">
 
 <!-- หนา้ลูกค้าใช้ ดูข้อมูล -->
@@ -587,6 +587,7 @@
 					  		,showConfirmButton: false
 		                  	,allowOutsideClick: false
 						}).then(() => {
+							sessionStorage.setItem('idcard','');
 							localStorage.setItem('idcard','');
 							localStorage.setItem('patientdata','');
 							window.location = "<?php echo site_url('login'); ?>";
@@ -799,7 +800,8 @@
 		},
 		mounted() {
 			var _this = this;
-			if(localStorage.getItem('idcard') != ''){
+			let ssidcard = sessionStorage.getItem('idcard');
+			if(ssidcard != null && ssidcard != ''){
 				this.showlistpage();
 				this.ptid = localStorage.getItem('ptid');
 				$('#patient-page').removeClass("d-none");
@@ -812,6 +814,7 @@
 				Swal.fire({
 				  type: 'error',
 				  title: 'ท่านไม่มีสิทธิ์เข้าใช้งานหน้านี้!',
+				  text: 'กรุณาลงทะเบียนอีกครั้ง!',
 				  timer: 2000,
 				  showConfirmButton: false,
 		          allowOutsideClick: false,

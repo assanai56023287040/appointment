@@ -8,9 +8,21 @@
   src: url(../../assets/fonts/mitr/Mitr-Light.ttf) format('truetype');
 }
 
-body {
+@font-face {
+  font-family: thsarabun;
+  src: url(../../assets/fonts/thsarabun/THSarabun.ttf) format('truetype');
+}
+
+body.front-end {
   font-family: 'mitrlight', monospace;
   font-size: 1.5rem;
+}
+
+body.admin-page {
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+	font-family: 'thsarabun', monospace;
+	font-size: 1.5rem;
 }
 
 .full-height {
@@ -154,8 +166,8 @@ body {
 .x-card-light:hover {
 	background-color: #f2f2f2;
 	color: black;
-	border: 5px solid white;
-	box-shadow: 0 0 15px #d9d9d9;
+	/*border: 5px solid white;*/
+	/*box-shadow: 0 0 10px #d9d9d9;*/
 	border-radius: 10px;
 }
 

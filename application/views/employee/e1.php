@@ -13,196 +13,39 @@
         }
   		body {
   			/* min-height: 100%; */
-  			background-image: linear-gradient(to bottom, #eeeeee, #e9e9e9, #e5e5e5, #e0e0e0, #dcdcdc, #d8d8d8, #d4d4d4, #d0d0d0, #cbcbcb, #c7c7c7, #c2c2c2, #bebebe);
+  			background-image: linear-gradient(to bottom, #e9e9e9, #e6e6e6, #e2e2e2, #dfdfdf, #dcdcdc, #d6d6d6, #d0d0d0, #cacaca, #c0c0c0, #b5b5b5, #ababab, #a1a1a1);
   		}
 
   	</style>
     
 </head>
-<body>
-<div class="container-fluid" id="app">
+<body class="admin-page p-2">
+<div class="container-fluid m-0 p-0" id="app">
 
 <!-- หนา้ลูกค้าใช้ ดูข้อมูล -->
-<section v-show="listpage" id="listpage" class="p-4 container-fluid" style="display: flex; flex-flow: column; height: 100%;">
-	<div class="row pt-3">
-		<div class="col-4 text-left">
-			<!-- <button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="showLoginForm()">
-				<i class="far fa-arrow-alt-circle-left m-2 align-middle" style="font-size: 2rem;"></i>
-				<span class="align-middle">ย้อนกลับ</span> 
-			</button> -->
+<section v-show="homepage" id="homepage" class="p-0 container-fluid" style="display: flex; flex-flow: column; height: 100%;">
+	<div style="display: flex;">
+		<div class="container-fluid text-left d-inline-block" style="border-radius: 10px;flex: 1;">
+			<div class="x-tab-light" v-for="(item,idx) in selmenu" :class="'active' : isactive">
+				<i class="d-inline-block" v-if="item.iconclass" :class="item.iconclass"></i>
+				<span class="d-inline-block" v-if="item.text" :class="">{{ item.text }}</span>
+				<i class="d-inline-block fa fa-times" v-if="item.close"></i>
+			</div>
 		</div>
-		<div class="col-4"></div>
-		<div class="col-4 text-right">
-			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyShowModal('patient-profile')" title="ข้อมูลผู้ใช้">
-				<i class="far fa-user-circle m-2" style="font-size: 2rem;"></i>
+		<div class="d-inline-block text-right float-right align-middle ml-3">
+			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')" title="ข้อมูลผู้ใช้" data-content="ดูรายละเอียดข้อมูลคนไข้" data-toggle="popover" data-trigger="hover" data-placement="bottom">
+				<!-- <i class="far fa-user-circle m-2" style="font-size: 2rem;"></i> -->
+			<span style="font-size: 15px;"> ข้อมูลผู้ใช้ </span>
 			</button>
-		</div>
-	</div>
-
-	<!-- area for show less profile -->
-	<div class="container-fluid bg-white mt-2" style="border-radius: 10px;">
-		<div class="row p-3">
-			<div class="col-6">
-				<h5 class="my-auto">
-					<span class="font-weight-bold">รหัสพนักงาน : </span>
-					{{ phn }}
-				</h5>
-			</div>
-			<div class="col-6">
-				<h5 class="my-auto">
-					<span class="font-weight-bold">ชื่อ - นามสกุล : </span>
-					{{ pname }}
-				</h5>
-			</div>
-		</div>
-
-		<!-- <div class="form-group rounded-lg">
-			<input type="text" class="form-control text-center date-picker">
-		</div> -->
-	</div>
-
-	<!-- list and search area -->
-	<div class="container-fluid" style="display: flex; flex-flow: column; flex: 1 1 auto;">
-		<div class="row mt-2 bg-white" style="border-radius: 10px;  flex: 1 1 auto;">
-			<div class="col-3 px-3 text-center" style="position: relative;">
-				<div class="vl-purple my-3" style="top: 0;right: 0;	position: absolute;"></div>
-				<button class="btn btn-block x-btn-green my-3" style="border-radius: 10px;" @click="onlyShowModal('new-appointment')">
-					<i class="fa fa-plus align-middle" style="font-size: 1.8rem"></i>
-					<span class="align-middle mx-2" style="font-size: 1rem;">เพิ่มข้อมูลใบนัด</span> <!-- ขอทำนัด -->
-				</button>
-				<hr/>
-				<!-- search form is here -->
-				<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">คำค้นหา : </p>
-				<input class="form-control text-center mt-1 mb-0" placeholder="คำค้นหา" />
-
-				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">จากวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 date-picker" v-model="stdate" />
-
-				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
-				<input class="form-control text-center mt-1 mb-0 date-picker" v-model="sfdate" />
-
-				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;">
-					<i class="fa fa-search align-middle" style="font-size: 1.8rem"></i>
-					<span class="align-middle mx-2" style="font-size: 1rem;">ค้นหา</span>
-				</button>
-
-				<button class="btn btn-block x-btn-red my-3" style="border-radius: 10px;">
-					<i class="fa fa-times align-middle" style="font-size: 1.8rem"></i>
-					<span class="align-middle mx-2" style="font-size: 1rem;">ล้าง</span>
-				</button>
-
-				<hr/>
-			</div>
-			<!-- row list of apm -->
-			<div class="col-9 text-center">
-				<h4 class="mt-3 font-weight-bold">รายการขอทำนัด</h4>
-				<hr class="m-0">
-				<div class="container-fluid m-0" style="overflow: auto;">
-					<div class="bg-white" v-for="(list , idx) in apmlist">
-						<div class="row py-2">
-							<div class="col-2 text-left">{{ idx+1 }}</div>
-							<div class="col-10">{{ list.header }}</div>
-						</div>
-						<hr class="m-0"/>
-					</div>
-				</div>
-			</div>
+			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ" data-content="กลับสู่หน้าลงทะเบียน" data-toggle="popover" data-trigger="hover" data-placement="bottom">
+				<!-- <i class="fa fa-angle-double-right m-2" style="font-size: 2rem;"></i> -->
+			<span style="font-size: 15px;"> ออกจากระบบ </span>
+			</button>
 		</div>
 	</div>
 </section>
 
 	<!-- ********************     modal zone     ******************** -->
-
-	<!-- patient-profile modal id -->
-	<div id="patient-profile" class="modal fade" data-backdrop="true" role="dialog">
-		<div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
-			<div class="modal-content">
-				<!-- modal header -->
-				<div class="modal-header">
-					<div class="row" style="min-width: 100%">
-						<div class="col-6 text-left font-weight-bold">
-							รายละเอียดข้อมูลผู้ใช้
-						</div>
-						<div class="col-6 text-right px-0">
-							<i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
-						</div>
-					</div>
-				</div>
-
-				<!-- modal body -->
-				<div class="modal-body">
-					<div class="container-fluid">
-						<div class="row justify-content-md-center" style="min-height: 10px;">
-							<div class="col-3 text-left">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อ(ไทย) : </p>
-								<input type="text" class="form-control" v-model="pp_th_fname" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อ(อังกฤษ) : </p>
-								<input type="text" class="form-control" v-model="pp_en_fname" :readonly="!isProfileEdit">
-							</div>
-							<div class="col-3">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สกุล(ไทย) : </p>
-								<input type="text" class="form-control" v-model="pp_th_lname" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สกุล(อังกฤษ) : </p>
-								<input type="text" class="form-control" v-model="pp_en_lname" :readonly="!isProfileEdit">
-							</div>
-							<div class="col-3">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เพศ : </p>
-								<input type="text" class="form-control" v-model="pp_gender" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สถานภาพ : </p>
-								<input type="text" class="form-control" v-model="pp_status" :readonly="!isProfileEdit">
-							</div>
-							<div class="col-3">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เชื้อชาติ : </p>
-								<input type="text" class="form-control" v-model="pp_origin" :readonly="!isProfileEdit">
-								<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สัญชาติ : </p>
-								<input type="text" class="form-control" v-model="pp_nationality" :readonly="!isProfileEdit">
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<!-- modal footer -->
-				<div class="modal-footer">
-				</div>
-			</div>
-		</div> <!-- end of div modal dialog -->
-	</div> <!-- end of div modal patient-profile -->
-
-	<!-- new-appointment modal id -->
-	<div id="new-appointment" class="modal fade" data-backdrop="true" role="dialog">
-		<div class="modal-dialog modal-xl modal-dialog-centered">
-			<div class="modal-content">
-				<!-- modal header -->
-				<div class="modal-header">
-					<div class="row" style="min-width: 100%">
-						<div class="col-6 text-left font-weight-bold">
-							เพิ่มข้อมูลการทำขอนัด
-						</div>
-						<div class="col-6 text-right px-0">
-							<i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
-						</div>
-					</div>
-				</div>
-
-				<!-- modal body -->
-				<div class="modal-body">
-					<div class="container-fluid">
-						<div class="row justify-content-md-center" style="min-height: 10px;">
-							
-						</div>
-					</div>
-				</div>
-
-				<!-- modal footer -->
-				<div class="modal-footer text-right">
-					<button class="btn x-btn-green my-3" style="border-radius: 10px;">
-						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
-						<span class="align-middle mx-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
-					</button>
-				</div>
-			</div>
-		</div> <!-- end of div modal dialog -->
-	</div> <!-- end of div modal new-appointment -->
 	
 </div> <!-- end of div container #app -->
 
@@ -211,9 +54,8 @@
 	var app = new Vue({
 		el: '#app',
 		data: {
-			listpage: false,
-			phn: '123456',
-			pname: 'assanai dangmin',
+			homepage: false,
+			
 			// for form search
 			skeyword: '',
 			sfdate: '',
@@ -225,47 +67,30 @@
 					header: 'ปวดหัว',
 				}
 			],
-			isProfileEdit: false,
-			pp_th_fname: 'อัศนัย',
-			pp_th_lname: 'แดงมิน',
-			pp_en_fname: 'Assanai',
-			pp_en_lname: 'Dangmin',
-			pp_gender: 'ชาย',
-			pp_status: 'โสด',
-			pp_nationality: 'ไทย',
-			pp_origin: 'ไทย',
 
 		},
 		methods: {
 			onlyShowModal(modal_id){
 				$('#'+modal_id).modal();
 			},
-			showListPage(){
-				this.listpage = true;
+			showHomePage(){
+				this.homepage = true;
 			},
 			showLoginForm(){
 				window.location = "<?php echo site_url('login'); ?>";
 			},
 			activeDatePicker(){
-				$(".date-picker").datepicker_thai({
-					dateFormat: 'dd/mm/yy',
-					buttonImage: "", // ใส่ path รุป
-					buttonImageOnly: false,
-					currentText: "วันนี้",
-					closeText: "ปิด",
-					showButtonPanel: true,
-					langTh:true,
-					yearTh:true,
-					numberOfMonths: 1,
-					// showOn: 'button',
-					// buttonText: "เลือกวันที่",
-					// showOn: "both",
-					// altField:"#h_dateinput",
-					// altFormat: "yy-mm-dd",
-					// onSelect:function(selectedDate, datePicker) {            
-		  			// 		_this.date = selectedDate;
-			  		// }
+				$('.datepicker').datepicker({
+						language:'th-th',
+						format:'dd/mm/yyyy',	
+						autoclose: true,
+						todayHighlight: true,
 				});
+
+				// $('#apmdate').datepicker()
+				// 	.on('hide', v =>{
+				// 		this.newapm.apmdate = $('#apmdate').val();
+				// 	});
 			},
 			clearForm(type){
 				switch(type){
@@ -276,7 +101,7 @@
 				$('#em-sign').modal('hide');
 				Swal.fire({
 	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
-	                allowOutsideClick: false,
+	                allowOutsideClick: false,	
 	            });
 	            Swal.showLoading();
 	            axios.get("<?php echo site_url('login/emSignin'); ?>",{
@@ -310,12 +135,54 @@
 	            	}
 	            });
 			},
+			logout(){
+				Swal.fire({
+					title: 'ยืนยันการออกจากระบบ?'
+					// text: "You won't be able to revert this!",
+					,type: 'warning'
+					,showCancelButton: true
+					,confirmButtonColor: '#dd3333'
+					,confirmButtonText: 'ออกจากระบบ'
+					,cancelButtonColor: '#bfbfbf'
+					,cancelButtonText: ' ไม่'
+				}).then((result) => {
+					if (result.value) {
+						Swal.fire({
+							type: 'success'
+					  		,title: 'ออกจากระบบเรียบร้อย!'
+					  		,text: 'กรุณารอสักครู่...'
+					  		,timer: 2000
+					  		,showConfirmButton: false
+		                  	,allowOutsideClick: false
+						}).then(() => {
+							sessionStorage.setItem('adminusername',null);
+							localStorage.setItem('admindata',null);
+							window.location = "<?php echo site_url('login'); ?>";
+						});
+					}
+				});
+			},
 
 		},
 		mounted() {
 			var _this = this;
-			this.showListPage();
-			this.activeDatePicker();
+			let ssusername = sessionStorage.getItem('adminusername');
+			if(ssusername != null && ssusername != ''){
+				this.showHomePage();
+				this.activeDatePicker();
+			}else{
+				Swal.fire({
+				  type: 'error',
+				  title: 'ท่านไม่มีสิทธิ์เข้าใช้งานหน้านี้!',
+				  text: 'กรุณาเข้าสู่ระบบใหม่อีกครั้ง!',
+				  timer: 2000,
+				  showConfirmButton: false,
+		          allowOutsideClick: false,
+				}).then(() => {
+					window.location = "<?php echo site_url('login'); ?>";
+				});
+			}
+			
 		},
 		computed: {
 

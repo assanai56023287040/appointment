@@ -19,7 +19,7 @@
   	</style>
     
 </head>
-<body>
+<body class="front-end">
 <div class="container-fluid" id="app">
 
 <!-- หน้าแรกของการ Login -->
@@ -144,6 +144,7 @@
 
 		            	if(res.success){
 		            		var ptdata = JSON.stringify(res.row);
+							sessionStorage.setItem('idcard',this.idcard);
 							localStorage.setItem('idcard',this.idcard);
 							localStorage.setItem('ptid',res.ptid);
 							localStorage.setItem('patientdata',ptdata);
@@ -187,6 +188,9 @@
 	            	res = res.data;
 
 	            	if(res.success){
+	            		let admindetail = JSON.stringify(res.row);
+	            		sessionStorage.setItem('adminusername',this.adminusername);
+	            		localStorage.setItem('admindata',admindetail);
 	            		Swal.fire({
 						  type: 'success',
 						  title: 'เข้าสู่ระบบเสร็จสิ้น',
@@ -203,6 +207,9 @@
 						  type: 'error',
 						  title: 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง!',
 						  confirmButtonText: 'ปิด'
+						}).then(() => {
+							this.adminusername = '';
+							this.adminpassword = '';
 						});
 	            	}
 	            });
