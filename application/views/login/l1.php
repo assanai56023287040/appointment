@@ -200,7 +200,7 @@
 						  showConfirmButton: false,
 		                  allowOutsideClick: false,
 						}).then(() => {
-							window.location = "<?php echo site_url('employee'); ?>";
+							window.location = "<?php echo site_url('admin'); ?>";
 						});
 	            	}else{
 	            		Swal.fire({
