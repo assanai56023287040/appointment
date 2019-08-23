@@ -21,8 +21,9 @@ body.front-end {
 body.admin-page {
 	padding: 0 0 0 0;
 	margin: 0 0 0 0;
-	font-family: 'thsarabun', monospace;
-	font-size: 2rem;
+	/*font-family: 'thsarabun', monospace;*/
+	font-family: 'mitrlight', monospace;
+	/*font-size: 2rem;*/
 }
 
 .full-height {
