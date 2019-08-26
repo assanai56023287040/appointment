@@ -10844,6 +10844,10 @@ a:focus {
   border-left: 0.25rem solid #4e73df !important;
 }
 
+.border-left-primary:hover {
+  box-shadow: 0 0 15px #4e73df !important;
+}
+
 .border-bottom-primary {
   border-bottom: 0.25rem solid #4e73df !important;
 }
@@ -10858,6 +10862,9 @@ a:focus {
 
 .border-left-success {
   border-left: 0.25rem solid #1cc88a !important;
+}
+.border-left-success:hover {
+  box-shadow: 0 0 15px #1cc88a !important;
 }
 
 .border-bottom-success {
@@ -10874,6 +10881,10 @@ a:focus {
 
 .border-left-warning {
   border-left: 0.25rem solid #f6c23e !important;
+}
+
+.border-left-warning:hover {
+  box-shadow: 0 0 15px #f6c23e !important;
 }
 
 .border-bottom-warning {
