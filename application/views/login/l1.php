@@ -144,10 +144,10 @@
 
 		            	if(res.success){
 		            		var ptdata = JSON.stringify(res.row);
-							sessionStorage.setItem('idcard',this.idcard);
-							localStorage.setItem('idcard',this.idcard);
-							localStorage.setItem('ptid',res.ptid);
-							localStorage.setItem('patientdata',ptdata);
+							ssset('idcard',this.idcard);
+							lcset('idcard',this.idcard);
+							lcset('ptid',res.ptid);
+							lcset('patientdata',ptdata);
 							Swal.fire({
 			                		title: 'ลงทะเบียนเสร็จสิ้น',
 			                		text: 'กรุณารอสักครู่...',
@@ -189,8 +189,8 @@
 
 	            	if(res.success){
 	            		let admindetail = JSON.stringify(res.row);
-	            		sessionStorage.setItem('adminusername',this.adminusername);
-	            		localStorage.setItem('admindata',admindetail);
+	            		ssset('adminusername',this.adminusername);
+	            		lcset('admindata',admindetail);
 	            		Swal.fire({
 						  type: 'success',
 						  title: 'เข้าสู่ระบบเสร็จสิ้น',
@@ -218,7 +218,7 @@
 		},
 		mounted() {
 			var _this = this;
-			this.idcard = (localStorage.getItem('idcard') ? localStorage.getItem('idcard') : '');
+			this.idcard = (lcget('idcard') ? lcget('idcard') : '');
 			$('#signin').removeClass('d-none');
 		},
 		computed: {

@@ -31,7 +31,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="#" @click="changepage('home')">
         <!-- <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div> -->
@@ -67,7 +67,7 @@
 
       <li class="nav-item" :class="{active : currentpage == 'dctschedule'}">
         <a class="nav-link" @click="changepage('dctschedule')">
-          <i class="fas fa-calendar-alt"></i>
+          <i class="far fa-calendar-alt"></i>
           <span>ตารางออกตรวจแพทย์</span></a>
       </li>
 
@@ -81,7 +81,7 @@
 
       <li class="nav-item" :class="{active : currentpage == 'report'}">
         <a class="nav-link" @click="changepage('report')">
-          <i class="fas fa-folder-open"></i>
+          <i class="far fa-folder-open"></i>
           <span>รายงาน</span>
         </a>
       </li>
@@ -112,38 +112,14 @@
 
           <!-- Topbar Search -->
           <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-            <div class="input-group">
-              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="button">
-                  <i class="fas fa-search fa-sm"></i>
-                </button>
-              </div>
+            <div class="d-sm-flex">
+              <i class="fa-2x text-gray-800 ml-2 mr-4" :class="currentpage.iconclass"></i>
+              <h1 class="h3 font-weight-bold mb-0 text-gray-800">{{ currentpage.txt }}</h1>
             </div>
           </form>
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
-
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <li class="nav-item dropdown no-arrow d-sm-none">
-              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-search fa-fw"></i>
-              </a>
-              <!-- Dropdown - Messages -->
-              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                <form class="form-inline mr-auto w-100 navbar-search">
-                  <div class="input-group">
-                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                      <button class="btn btn-primary" type="button">
-                        <i class="fas fa-search fa-sm"></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </li>
 
             <!-- Nav Item - Alerts -->
             <li class="nav-item dropdown no-arrow mx-1">
@@ -255,27 +231,24 @@
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
-                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                <span class="mr-3 d-none d-lg-inline text-gray-600 small">{{ admindata.STAFF_NAME }}</span>
+                <i class="fas fa-crown fa-2x text-gray-600"></i>
+                <!-- <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60"> -->
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
                   <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profile
+                  ข้อมูลส่วนตัว
                 </a>
                 <a class="dropdown-item" href="#">
                   <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Settings
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Activity Log
+                  ตั้งค่า
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" @click="logout()">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Logout
+                  ออกจากระบบ
                 </a>
               </div>
             </li>
@@ -286,84 +259,82 @@
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
-        <section id="home" v-show="currentpage == 'home'">
-        <div class="container-fluid">
+        <section id="home" v-show="currentpage.kw == 'home'" style="display: none;">
+          <div class="container-fluid">
+            <div class="row mt-4">
 
-          <!-- Page Heading -->
-          <!-- <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">หน้าหลัก</h1>
-            <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-          </div> -->
-
-          <!-- Content Row -->
-          <div class="row mt-4">
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-primary shadow h-100 py-2" @click="changepage('apmlist')">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <!-- <div class="text-xs font-weight-bold text-gray-800 text-uppercase mb-1">Earnings (Monthly)</div> -->
-                      <div class="h5 mb-0 font-weight-bold text-primary">รายการขอทำนัด</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2" @click="changepage('dctschedule')">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <!-- <div class="text-xs font-weight-bold text-success text-gray-800 text-uppercase mb-1">Earnings (Annual)</div> -->
-                      <div class="h5 mb-0 font-weight-bold text-success">ตารางออกตรวจแพทย์</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-table fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            
-
-          </div>
-
-          <div class="row mt-4">
-
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-warning shadow h-100 py-2" @click="changepage('report')">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="row no-gutters align-items-center">
-                        <div class="col-auto">
-                          <!-- <div class="text-xs font-weight-bold text-gray-800 text-uppercase mb-1">Tasks</div> -->
-                          <div class="h5 mb-0 mr-3 font-weight-bold text-warning">รายงาน</div>
-                        </div>
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2 shadow-primary" @click="changepage('apmlist')">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <!-- <div class="text-xs font-weight-bold text-gray-800 text-uppercase mb-1">Earnings (Monthly)</div> -->
+                        <div class="h5 mb-0 font-weight-bold text-primary">รายการขอทำนัด</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="far fa-list-alt fa-2x text-gray-300"></i>
                       </div>
                     </div>
-                    <div class="col-auto">
-                      <i class="fas fa-folder-open fa-2x text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2 shadow-success" @click="changepage('dctschedule')">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <!-- <div class="text-xs font-weight-bold text-success text-gray-800 text-uppercase mb-1">Earnings (Annual)</div> -->
+                        <div class="h5 mb-0 font-weight-bold text-success">ตารางออกตรวจแพทย์</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="far fa-calendar-alt fa-2x text-gray-300"></i>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+
+              
+
+            </div>
+
+            <div class="row mt-4">
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2 shadow-warning" @click="changepage('report')">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="row no-gutters align-items-center">
+                          <div class="col-auto">
+                            <!-- <div class="text-xs font-weight-bold text-gray-800 text-uppercase mb-1">Tasks</div> -->
+                            <div class="h5 mb-0 mr-3 font-weight-bold text-warning">รายงาน</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="far fa-folder-open fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
           </div>
-
-        </div>
         </section>
         <!-- /.container-fluid -->
+
+        <!-- start appointment page -->
+        <section id="apmlist" v-show="currentpage.kw == 'apmlist'" style="display: none;">
+          <div class="container-fluid">
+          </div>
+        </section>
 
       </div>
       <!-- End of Main Content -->
@@ -420,14 +391,35 @@
 	var app = new Vue({
 		el: '#wrapper',
 		data: {
-			homepage: false,
-			tt: 'XXXXX Test XXXXX',
 			// for form search
 			skeyword: '',
 			sfdate: '',
 			stdate: '',
 			apmlist: [],
-      currentpage: '',
+      admindata: {},
+      currentpage: {},
+      pages: [
+        {
+          kw:'home',
+          txt:'หน้าหลัก',
+          iconclass:'fas fa-home'
+        },
+        {
+          kw:'apmlist',
+          txt:'รายการขอทำนัด',
+          iconclass:'far fa-list-alt'
+        },
+        {
+          kw:'dctschedule',
+          txt:'ตารางออกตรวจแพทย์',
+          iconclass:'far fa-calendar-alt'
+        },
+        {
+          kw:'report',
+          txt:'รายงาน',
+          iconclass:'far fa-folder-open'
+        },
+      ]
 		},
 		methods: {
 			onlyShowModal(modal_id){
@@ -435,7 +427,7 @@
 			},
 			showHomePage(){
 				this.homepage = true;
-        this.currentpage = 'home';
+        this.currentpage = this.pages.find(v => v.kw == 'home');
 			},
 			showLoginForm(){
 				window.location = "<?php echo site_url('login'); ?>";
@@ -516,8 +508,8 @@
 					  		,showConfirmButton: false
 		                  	,allowOutsideClick: false
 						}).then(() => {
-							sessionStorage.setItem('adminusername',null);
-							localStorage.setItem('admindata',null);
+							ssremove('adminusername');
+							lcremove('admindata');
 							window.location = "<?php echo site_url('login'); ?>";
 						});
 					}
@@ -572,14 +564,15 @@
 				});
 			},
       changepage(id = ''){
-        if(this.currentpage == id){return;}
-        this.currentpage = id;
+        if(this.currentpage.kw == id){return;}
+        this.currentpage = this.pages.find(v => v.kw == id);
       },
 		},
 		mounted() {
 			var _this = this;
-			let ssusername = sessionStorage.getItem('adminusername');
+			let ssusername = ssget('adminusername');
 			if(ssusername != null && ssusername != ''){
+        this.admindata = JSON.parse(lcget('admindata'));
 				this.showHomePage();
 				this.activeDatePicker();
 				this.activeEvent();

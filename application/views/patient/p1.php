@@ -476,7 +476,7 @@
 				}else{
 					$('#list-page').css('display','');
 				}
-				this.ptdata = JSON.parse(localStorage.getItem('patientdata'));
+				this.ptdata = JSON.parse(lcget('patientdata'));
 			},
 			showchatpage(){ 
 				$('#chat-page').show("slide", { direction: "down" }, 500);
@@ -587,9 +587,10 @@
 					  		,showConfirmButton: false
 		                  	,allowOutsideClick: false
 						}).then(() => {
-							sessionStorage.setItem('idcard','');
-							localStorage.setItem('idcard','');
-							localStorage.setItem('patientdata','');
+							ssremove('idcard');
+							lcremove('ptid');
+							lcremove('idcard');
+							lcremove('patientdata');
 							window.location = "<?php echo site_url('login'); ?>";
 						});
 					}
@@ -800,10 +801,10 @@
 		},
 		mounted() {
 			var _this = this;
-			let ssidcard = sessionStorage.getItem('idcard');
+			let ssidcard = ssget('idcard');
 			if(ssidcard != null && ssidcard != ''){
 				this.showlistpage();
-				this.ptid = localStorage.getItem('ptid');
+				this.ptid = lcget('ptid');
 				$('#patient-page').removeClass("d-none");
 				$('[data-toggle="popover"]').popover();
 				this.listload();
