@@ -332,7 +332,53 @@
 
         <!-- start appointment page -->
         <section id="apmlist" v-show="currentpage.kw == 'apmlist'" style="display: none;">
-          <div class="container-fluid">
+          <div class="container-fluid px-3">
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+              <!-- <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+              </div> -->
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>ลำดับ</th>
+                        <th>HN</th>
+                        <th>ชื่อ</th>
+                        <th>รายละเอียดอาการ</th>
+                        <th>วันที่ขอทำนัด</th>
+                        <th>เวลา</th>
+                        <th>สถานะ</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>ลำดับ</th>
+                        <th>HN</th>
+                        <th>ชื่อ</th>
+                        <th>รายละเอียดอาการ</th>
+                        <th>วันที่ขอทำนัด</th>
+                        <th>เวลา</th>
+                        <th>สถานะ</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+                      <tr v-for="(r,i) in apms">
+                        <td>{{ i+1 }}</td>
+                        <td>{{ r.hn }}</td>
+                        <td>{{ r.fname }}  {{ r.fname }}</td>
+                        <td>{{ r.sicktxt }}</td>
+                        <td>{{ r.apmdate }}</td>
+                        <td>{{ r.apmtime }}</td>
+                        <td>{{ r.stname }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
           </div>
         </section>
 
@@ -419,7 +465,8 @@
           txt:'รายงาน',
           iconclass:'far fa-folder-open'
         },
-      ]
+      ],
+      apms: [],
 		},
 		methods: {
 			onlyShowModal(modal_id){
@@ -563,10 +610,36 @@
 					e.preventDefault();
 				});
 			},
+      activeDataTable(){
+        $('#dataTable').DataTable();
+      },
       changepage(id = ''){
         if(this.currentpage.kw == id){return;}
         this.currentpage = this.pages.find(v => v.kw == id);
+
+        switch(id){
+          case 'home': break;
+          case 'apmlist': 
+              // this.apmlistload();
+            break;
+          case 'dctschedule': break;
+          case 'report': break;
+          default :
+        }
       },
+      apmlistload(){
+        $('#dataTable').DataTable().clear();
+        this.apms.push({
+                    hn: '11111',
+                    fname: 'assanai',
+                    lname: 'dangmin',
+                    sicktxt: 'xxx xxx xxx xxxxx xxx x x x x x',
+                    apmdate: '2019-08-29',
+                    apmtime: '15.00',
+                    stname: 'อะเคร',
+                  });
+      },
+
 		},
 		mounted() {
 			var _this = this;
@@ -574,8 +647,9 @@
 			if(ssusername != null && ssusername != ''){
         this.admindata = JSON.parse(lcget('admindata'));
 				this.showHomePage();
-				this.activeDatePicker();
 				this.activeEvent();
+				this.activeDatePicker();
+        this.activeDataTable();
 			}else{
 				Swal.fire({
 				  type: 'error',
@@ -594,7 +668,24 @@
 
 		},
 		filter: {
-
+      thdate(v){
+        if(v){
+          let strdate = v.split('-');
+          if(strdate.length == 3){
+            return strdate[2]+'/'+strdate[1]+'/'+(parseInt(strdate[0],10)+543);
+          }else{return v;}
+        }else{
+          return "";
+        }
+      },
+      hourminute(v){
+        let strtime = v.split(':');
+        if(strtime.length == 3 || strtime.length == 2){
+          return strtime[0]+':'+strtime[1];
+        }else{
+          return "";
+        }
+      },
 		},
 		watch: {
 

@@ -23,8 +23,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/apm/';
+// $config['base_url'] = 'http://localhost/apm/';
 // $config['base_url'] = 'http://172.30.231.179/apm/';
+$config['base_url'] = 'http://'.$_SERVER["HTTP_HOST"].'/apm/';
+
 
 /*
 |--------------------------------------------------------------------------

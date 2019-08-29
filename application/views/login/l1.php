@@ -56,10 +56,10 @@
 				<!-- modal header -->
 				<div class="modal-header">
 					<div class="row" style="min-width: 100%">
-						<div class="col-6 text-left font-weight-bold">
+						<div class="col-10 text-left font-weight-bold text-nowrap text-truncate d-inline-block">
 							เข้าสู่ระบบสำหรับพนักงาน
 						</div>
-						<div class="col-6 text-right px-0">
+						<div class="col-2 text-right px-0">
 							<i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
 						</div>
 					</div>
