@@ -51,10 +51,10 @@ class Appointment extends CI_Controller {
 
 	function listload(){
 
-		$ptid = $this->input->post('ptid');
-		$keyword = $this->input->post('keyword');
-		$fdate = $this->input->post('fdate');
-		$tdate = $this->input->post('tdate');
+		$ptid = $this->input->get('ptid');
+		$keyword = $this->input->get('keyword');
+		$fdate = $this->input->get('fdate');
+		$tdate = $this->input->get('tdate');
 
 		$this->db->select("a.apmid
 						,a.apmdate
@@ -270,5 +270,61 @@ class Appointment extends CI_Controller {
 				));
 		}
 
+	}
+
+	function alllistload(){
+		// $ptid = $this->input->post('ptid');
+		// $keyword = $this->input->post('keyword');
+		// $fdate = $this->input->post('fdate');
+		// $tdate = $this->input->post('tdate');
+
+		$this->db->select("a.apmid
+						,a.apmdate
+						,IF(a.apmtime = '' ,'' ,CONCAT(a.apmtime,':00')) AS apmtime
+						,a.tel
+						,a.stid
+						,a.ptid
+						,a.hn
+						,a.newcnt
+						,a.credt
+						,a.updt
+						,a.header
+						,a.sicktxt
+						,p.fname
+						,p.lname
+						,s.stname
+					",false)
+				->from('apmpt a')
+				->join('pt p','a.ptid = p.ptid','left')
+				->join('st s','s.stid = a.stid','left')
+				// ->where('a.ptid',$ptid)
+				->where('a.active <> ','I');
+
+		// if(!empty($keyword)){
+		// 	$this->db->where("CONCAT(IFNULL(a.header,'')
+		// 						,IFNULL(a.sicktxt,'')
+		// 					) LIKE '%{$keyword}%'");
+		// }
+
+		// if(!empty($fdate) && !empty($tdate)){
+		// 	$this->db->where("apmdate BETWEEN '{$fdate}' AND '{$tdate}'");
+		// }else if(!empty($fdate) && empty($tdate)){
+		// 	$this->db->where('apmdate = {$fdate}');
+		// }else if(empty($fdate) && !empty($tdate)){
+		// 	$this->db->where('apmdate = {$tdate}');
+		// }
+		$this->db->order_by('apmdate','desc');
+
+		$res = $this->db->get();
+
+		log_info($this->db->last_query());
+
+		$res = $res->result_array();
+
+
+		echo json_encode(array(
+			'success' => true
+			,'row' => $res
+		));
 	}
 }

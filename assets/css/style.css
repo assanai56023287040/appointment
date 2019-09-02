@@ -245,3 +245,13 @@ body.admin-page {
 	max-width: 500px !important;
   }
 }
+
+.table-hover-primary > tbody > tr.selrow {
+  background: #4e73df !important;/*#4e73df*/
+  color: white !important;
+}
+
+.table-hover-primary > tbody > tr:hover {
+  background: #93a9eb !important;
+  color: white !important;
+}

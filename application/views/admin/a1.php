@@ -7,7 +7,7 @@
 
   	<title>ระบบนัดหมายออนไลน์</title>
     <?php 
-    	$this->load->view('css/mycss');
+    	// $this->load->view('css/mycss');
     	$this->load->view('css/admincss');
     ?>
   	<!-- <style type="text/css">
@@ -340,7 +340,7 @@
               </div> -->
               <div class="card-body">
                 <div class="table-responsive">
-                  <table class="table table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+                  <table class="table table-striped table-hover-primary" width="100%" cellspacing="0">
                     <thead>
                       <tr>
                         <th>ลำดับ</th>
@@ -364,10 +364,10 @@
                       </tr>
                     </tfoot>
                     <tbody>
-                      <tr v-for="(r,i) in apms">
+                      <tr v-for="(r,i) in apms" @click="selectrowdetect($event,i)" :class="{ 'selrow' : selrow == i }">
                         <td>{{ i+1 }}</td>
                         <td>{{ r.hn }}</td>
-                        <td>{{ r.fname }}  {{ r.fname }}</td>
+                        <td>{{ r.fname }}  {{ r.lname }}</td>
                         <td>{{ r.sicktxt }}</td>
                         <td>{{ r.apmdate }}</td>
                         <td>{{ r.apmtime }}</td>
@@ -382,17 +382,101 @@
           </div>
         </section>
 
+        <!-- chat page -->
+        <section id="apmchat" v-show="currentpage.kw == 'apmchat'" style="display: none;">
+          <div class="container-fluid px-3">
+          <div class="card shadow">
+            <div class="card-body p-3">
+              <div class="row">
+                <div class="col-3 px-3 text-center" style="position: relative;">
+                  <div class="vl-yellow my-3" style="top: 0;right: 0; position: absolute;"></div>
+                  <button class="btn btn-block x-btn-white my-3" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')">
+                    <i class="far fa-user-circle align-middle" style="font-size: 1.8rem"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
+                  </button>
+                  <hr/>
+                  <button class="btn btn-block x-btn-orenge my-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                    <i class="fa fa-info align-middle" style="font-size: 1.8rem"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">ดูข้อมูลการขอทำนัด</span> <!-- ขอทำนัด -->
+                  </button>
+                  <div class="text-center w-100 my-2">
+                    <h3 class="font-weight-bold">ข้อมูลการขอทำนัด</h3>
+                    <div class="form-group px-3">
+                      <label class="small font-weight-bold" for="header">รายละเอียดอาการ : </label>
+                      <textarea class="form-control non-edit" type="text" :value="selapm.sicktxt" rows="4"></textarea> 
+                    </div>
+                    <div class="form-group px-3">
+                      <label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
+                      <input class="form-control non-edit text-center" type="text" :value="selapm.apmdate">
+                    </div>
+                    <div class="form-group px-3">
+                      <label class="small font-weight-bold" for="apmdate">เวลาที่ขอทำนัด : </label>
+                      <input class="form-control non-edit text-center" type="text" :value="selapm.apmtime+'.00'">
+                    </div>
+                    <div class="form-group px-3">
+                      <label class="small font-weight-bold" for="apmdate">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
+                      <input class="form-control non-edit text-center" type="text" :value="selapm.tel">
+                    </div>
+                  </div>
+                </div>
+                <!-- chat and option zone -->
+                <div class="col-9 container text-center" style="display: flex;">
+                  <div class="m-0 p-0 w-100 h-100" style="display: flex;flex: 1;">
+                    <div class="container-fluid mt-3 px-0" style="flex: 1;height: 75vh;background-color: #ffffcc;position: relative;padding-bottom: 60px;">
+                      <div class="row m-0 p-0 sticky-top h-100" style="display: flex;flex-direction: column;">
+                        <div class="container-fluid px-0 col-12" id="messages-area" style="align-self: stretch;overflow-y: auto;">
+                          <div class="row m-0 p-0 sticky-top">
+                            <div class="col-12 m-0 p-0 text-right bg-white">
+                              <button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="changepage('apmlist')">
+                                <i class="fa fa-times-circle align-middle" style="font-size: 1.8rem"></i>
+                                <span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
+                              </button>
+                              <hr class="my-2">
+                            </div>
+                          </div>
+                          <div class="text-center x-btn-white px-5 mx-5 my-2" v-show="false" style="border-radius: 10px;">
+                            <i class="fa fa-angle-up align-middle" style="font-size: 1.5rem"></i>
+                            <span class="align-middle mx-2" style="font-size: 1rem;">โหลดเพิ่มเติม</span>
+                          </div>
+                          <div class="d-block m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-right':'text-left'">
+                            <span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
+                            <div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
+                              {{ msg.msgtxt }}
+                            </div>
+                            <span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="input-group sticky-bottom" style="height: 55px;"><!-- min-height: 30px; -->
+                        <input type="text" id="create-msg-box" class="form-control form-control-lg font-weight-bold" placeholder="พิมพ์ เพื่อตอบแชท..." style="font-size: 24px;height: auto;" @keyup.enter="createmsg()" v-model="currmsg">
+                        <div class="input-group-append" @click="createmsg()">
+                            <span class="input-group-text x-btn-purple">
+                              <i class="fa fa-angle-double-up align-middle mx-3" style="font-size: 24px"></i>
+                            </span>
+                          </div>
+                      </div>
+                    </div> <!-- end of content flex -->
+                  </div> <!-- end of parent div for flex -->
+                </div>
+              </div>
+            </div> <!-- end of div card-body --> 
+          </div> <!-- end of div card -->
+          </div> <!-- end of big div container fluid -->
+        </section>
+
+
       </div>
       <!-- End of Main Content -->
 
       <!-- Footer -->
-      <footer class="sticky-footer bg-white">
+      <!-- <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
             <span>Copyright &copy; Your Website 2019</span>
           </div>
         </div>
-      </footer>
+      </footer> -->
       <!-- End of Footer -->
 
     </div>
@@ -429,7 +513,7 @@
 
 
 <?php
-	$this->load->view('js/myjs');
+	// $this->load->view('js/myjs');
 	$this->load->view('js/adminjs');
 ?>
 <script type="text/javascript">
@@ -437,6 +521,10 @@
 	var app = new Vue({
 		el: '#wrapper',
 		data: {
+      clicks: 0,
+      clickcounter: null,
+      selrow: null,
+      selapm: {},
 			// for form search
 			skeyword: '',
 			sfdate: '',
@@ -465,8 +553,18 @@
           txt:'รายงาน',
           iconclass:'far fa-folder-open'
         },
+        {
+          kw:'apmchat',
+          txt:'รายการขอทำนัด > CHAT',
+          iconclass:'far fa-list-alt'
+        },
       ],
       apms: [],
+      listInterval: null, // interval for show bagde message in chat list
+      chatInterval: null, // for update message in chat page
+      currmsg: "",
+      messages: [],
+      offsetchat: 0,
 		},
 		methods: {
 			onlyShowModal(modal_id){
@@ -610,9 +708,9 @@
 					e.preventDefault();
 				});
 			},
-      activeDataTable(){
-        $('#dataTable').DataTable();
-      },
+      // activeDataTable(){
+      //   $('#dataTable').DataTable();
+      // },
       changepage(id = ''){
         if(this.currentpage.kw == id){return;}
         this.currentpage = this.pages.find(v => v.kw == id);
@@ -620,25 +718,152 @@
         switch(id){
           case 'home': break;
           case 'apmlist': 
-              // this.apmlistload();
+              this.apmlistload();
             break;
+          case 'apmchat': break;
           case 'dctschedule': break;
           case 'report': break;
           default :
         }
       },
       apmlistload(){
-        $('#dataTable').DataTable().clear();
-        this.apms.push({
-                    hn: '11111',
-                    fname: 'assanai',
-                    lname: 'dangmin',
-                    sicktxt: 'xxx xxx xxx xxxxx xxx x x x x x',
-                    apmdate: '2019-08-29',
-                    apmtime: '15.00',
-                    stname: 'อะเคร',
-                  });
+        Swal.fire({
+            title: "กรุณารอสักครู่...",
+            allowOutsideClick: false,
+        });
+        Swal.showLoading();
+        axios.post("<?php echo site_url('appointment/alllistload'); ?>",{
+          params : {
+
+          }
+        })
+        .then(res => {
+          this.apms = [];
+          Swal.close();
+          this.apms = res.data.row;
+          this.apms.forEach((item,idx) =>{
+            item.apmdate = this.dateforth(item.apmdate);
+          });
+        });
       },
+      selectrowdetect(event,idx){
+          this.clicks++ 
+          if(this.clicks === 1) {
+            this.selrow = idx;
+            this.clickcounter = setTimeout(() => {
+              this.clicks = 0
+            }, 700);
+          } else if(this.clicks === 2) {
+            this.selrow = idx;
+            clearTimeout(this.clickcounter);
+            this.clicks = 0;
+            this.openchat(idx);
+            
+          }
+      },
+      dateforth(sqldate){
+        if(sqldate){
+          let strdate = sqldate.split('-');
+          if(strdate.length == 3){
+            return strdate[2]+'/'+strdate[1]+'/'+(parseInt(strdate[0],10)+543);
+          }else{return v;}
+        }else{
+          return "";
+        }
+      },
+      //  **********************************************************************************
+      //  ******************************  chat function zone  ******************************
+      //  **********************************************************************************
+      async openchat(idx){
+        this.changepage('apmchat');
+        this.selapm = this.apms[idx];
+        await this.loadchat();
+        this.scrolltobottom();
+        this.inquirychat();
+        // this.currentpage.txt += this.selapm.fname + "   " + this.selapm.lname;
+      },
+      async loadchat(){
+        this.messages = [];
+        Swal.fire({
+            title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+            allowOutsideClick: false,
+        });
+        Swal.showLoading();
+        await axios.get("<?php echo site_url("appointment/loadchat"); ?>",{
+            params : {
+              apmid : this.selapm.apmid,
+              offset : this.offsetchat,
+              nowside : 'a',
+            }
+        })
+        .then(res => {
+          Swal.close();
+          res = res.data;
+          if(res.success && res.cnt > 0){
+            res.msg.forEach((item,idx) => {
+              this.messages.push(item);
+            });
+          }
+        });
+      },
+      inquirychat(){
+        this.chatInterval = setInterval(() => {
+          axios.get("<?php echo site_url("appointment/inquirychat"); ?>",{
+            params : {
+              apmid : this.selapm.apmid,
+              nowside: 'a',
+            }
+          })
+          .then(res => {
+            res = res.data;
+            if(res.success && res.cnt > 0){
+              res.msg.forEach((item,idx) => {
+                this.messages.push(item);
+              });
+              this.scrolltobottom();
+            }
+          });
+        },5000);
+      },
+      createmsg(){
+        if(!this.currmsg){return false;}
+        clearInterval(this.chatInterval);
+        let dt = new Date();
+        let d = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+        let t = dt.getHours() + ':' + dt.getMinutes().toString().padStart(2,0); // + ":" + dt.getSeconds()
+        this.messages.push({
+          side:"a"
+          ,msgtxt: this.currmsg
+          ,msgdate: d
+          ,msgtime: t
+        });
+        
+        let params = new URLSearchParams({
+          'apmid' : this.selapm.apmid,
+          'side' : 'a',
+          'msgtxt' : this.currmsg,
+          'msgdate' : d,
+          'msgtime' : t,
+        });
+
+        this.currmsg = "";
+        this.scrolltobottom();
+        $("#create-msg-box").focus();
+
+        axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
+          .then(res => {
+            this.inquirychat();
+          });
+      },
+      scrolltobottom(){
+        let messagesArea = document.getElementById("messages-area");
+        $("#messages-area").animate({ scrollTop: messagesArea.scrollHeight }, "slow");
+      },
+
+      //  *****************************************************************************************
+      //  ******************************  end of chat function zone  ******************************
+      //  *****************************************************************************************
+
 
 		},
 		mounted() {
@@ -649,7 +874,7 @@
 				this.showHomePage();
 				this.activeEvent();
 				this.activeDatePicker();
-        this.activeDataTable();
+        // this.activeDataTable();
 			}else{
 				Swal.fire({
 				  type: 'error',
@@ -667,7 +892,7 @@
 		computed: {
 
 		},
-		filter: {
+		filters: {
       thdate(v){
         if(v){
           let strdate = v.split('-');

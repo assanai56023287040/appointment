@@ -101,7 +101,7 @@
 						</div>
 						<div class="container-fluid m-0 bg-white" id="frame-list" v-for="(list , idx) in apmlist">
 							<hr class="m-0" v-show="idx != 0">
-							<div class="container-fluid py-1 my-2 x-card-light" style="display: flex;" @click="openChat(list.apmid,idx)">
+							<div class="container-fluid py-1 my-2 x-card-light" style="display: flex;" @click="openchat(list.apmid,idx)">
 								<div class="d-inline float-left text-center p-0" style="position: relative;min-width: 40px;">
 									<div class="vl-purple my-0" style="top: 0;right: 0;	position: absolute;"></div>
 									<span class="align-middle" >{{ idx+1 }}</span>
@@ -639,13 +639,14 @@
 	                allowOutsideClick: false,
 	            });
 	            Swal.showLoading();
-	            let params = new URLSearchParams({
-					'keyword' : this.skeyword,
-					'fdate' : this.dateformysql(this.sfdate),
-					'tdate' : this.dateformysql(this.stdate),
-					'ptid' : this.ptid,
-				});
-	            await axios.post("<?php echo site_url('appointment/listload'); ?>",params)
+	            await axios.get("<?php echo site_url('appointment/listload'); ?>",{
+					params : {
+	            		keyword : this.skeyword,
+						fdate : this.dateformysql(this.sfdate),
+						tdate : this.dateformysql(this.stdate),
+						ptid : this.ptid,
+	            	}
+				})
 	            .then(res => {
 	            	this.apmlist = [];
 	            	Swal.close();
@@ -682,12 +683,12 @@
 				let messagesArea = document.getElementById("messages-area");
 				$("#messages-area").animate({ scrollTop: messagesArea.scrollHeight }, "slow");
 			},
-			async openChat(apmid,idx){
+			async openchat(apmid,idx){
 				this.showchatpage();
 				this.selapm = this.apmlist[idx];
 				await this.loadchat();
 				this.scrolltobottom();
-				// this.inquiryChat();
+				this.inquirychat();
 				// $('#create-msg-box').focus();
 			},
 			apmload(apmid){
@@ -735,7 +736,7 @@
 
 				axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
 					.then(res => {
-						this.inquiryChat();
+						this.inquirychat();
 					});
 			},
 			async loadchat(){
@@ -763,7 +764,7 @@
 					});
 
 			},
-			inquiryChat(){
+			inquirychat(){
 				this.chatInterval = setInterval(() => {
 					axios.get("<?php echo site_url("appointment/inquirychat"); ?>",{
 						params : {
