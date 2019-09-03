@@ -339,6 +339,9 @@
                 <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
               </div> -->
               <div class="card-body">
+                <div class="row">
+                  xxxxx
+                </div>
                 <div class="table-responsive">
                   <table class="table table-striped table-hover-primary" width="100%" cellspacing="0">
                     <thead>
@@ -427,7 +430,7 @@
                         <div class="container-fluid px-0 col-12" id="messages-area" style="align-self: stretch;overflow-y: auto;">
                           <div class="row m-0 p-0 sticky-top">
                             <div class="col-12 m-0 p-0 text-right bg-white">
-                              <button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="changepage('apmlist')">
+                              <button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="changepage('apmlist',true)">
                                 <i class="fa fa-times-circle align-middle" style="font-size: 1.8rem"></i>
                                 <span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
                               </button>
@@ -522,6 +525,7 @@
 		el: '#wrapper',
 		data: {
       clicks: 0,
+      clickidx: null,
       clickcounter: null,
       selrow: null,
       selapm: {},
@@ -614,24 +618,24 @@
 
 	            	if(res.success){
 	            		Swal.fire({
-						  type: 'success',
-						  title: 'เข้าสู่ระบบเสร็จสิ้น',
-						  text: 'กรุณารอสักครู่.....',
-						  confirmButtonText: '',
-						  timer: 2000,
-						  showConfirmButton: false,
-		                  allowOutsideClick: false,
-						}).then(() => {
-							window.location = "<?php echo site_url('employee'); ?>";
-						});
+      						  type: 'success',
+      						  title: 'เข้าสู่ระบบเสร็จสิ้น',
+      						  text: 'กรุณารอสักครู่.....',
+      						  confirmButtonText: '',
+      						  timer: 2000,
+      						  showConfirmButton: false,
+	                  allowOutsideClick: false,
+      						}).then(() => {
+      							window.location = "<?php echo site_url('employee'); ?>";
+      						});
 	            	}else{
 	            		Swal.fire({
-						  type: 'error',
-						  title: 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง!',
-						  confirmButtonText: 'ปิด'
-						});
+      						  type: 'error',
+      						  title: 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง!',
+      						  confirmButtonText: 'ปิด'
+      						});
 	            	}
-	            });
+              });
 			},
 			logout(){
 				Swal.fire({
@@ -646,12 +650,12 @@
 				}).then((result) => {
 					if (result.value) {
 						Swal.fire({
-							type: 'success'
+							  type: 'success'
 					  		,title: 'ออกจากระบบเรียบร้อย!'
 					  		,text: 'กรุณารอสักครู่...'
 					  		,timer: 2000
 					  		,showConfirmButton: false
-		                  	,allowOutsideClick: false
+              	,allowOutsideClick: false
 						}).then(() => {
 							ssremove('adminusername');
 							lcremove('admindata');
@@ -711,7 +715,7 @@
       // activeDataTable(){
       //   $('#dataTable').DataTable();
       // },
-      changepage(id = ''){
+      changepage(id = '',opt = false){
         if(this.currentpage.kw == id){return;}
         this.currentpage = this.pages.find(v => v.kw == id);
 
@@ -719,6 +723,9 @@
           case 'home': break;
           case 'apmlist': 
               this.apmlistload();
+              if(opt){
+                clearInterval(this.chatInterval);
+              }
             break;
           case 'apmchat': break;
           case 'dctschedule': break;
@@ -748,12 +755,13 @@
       },
       selectrowdetect(event,idx){
           this.clicks++ 
-          if(this.clicks === 1) {
+          if(this.clicks === 1 || idx != this.clickidx) {
             this.selrow = idx;
+            this.clickidx = idx;
             this.clickcounter = setTimeout(() => {
               this.clicks = 0
-            }, 700);
-          } else if(this.clicks === 2) {
+            }, 400);
+          } else if(this.clicks === 2 && idx == this.clickidx) {
             this.selrow = idx;
             clearTimeout(this.clickcounter);
             this.clicks = 0;
@@ -785,7 +793,7 @@
       async loadchat(){
         this.messages = [];
         Swal.fire({
-            title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+            title: "กำลังโหลดข้อมูล Chat...",
             allowOutsideClick: false,
         });
         Swal.showLoading();

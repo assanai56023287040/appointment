@@ -280,7 +280,7 @@ class Appointment extends CI_Controller {
 
 		$this->db->select("a.apmid
 						,a.apmdate
-						,IF(a.apmtime = '' ,'' ,CONCAT(a.apmtime,':00')) AS apmtime
+						,a.apmtime
 						,a.tel
 						,a.stid
 						,a.ptid
