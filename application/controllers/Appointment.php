@@ -87,9 +87,9 @@ class Appointment extends CI_Controller {
 		if(!empty($fdate) && !empty($tdate)){
 			$this->db->where("apmdate BETWEEN '{$fdate}' AND '{$tdate}'");
 		}else if(!empty($fdate) && empty($tdate)){
-			$this->db->where('apmdate = {$fdate}');
+			$this->db->where('apmdate',$fdate);
 		}else if(empty($fdate) && !empty($tdate)){
-			$this->db->where('apmdate = {$tdate}');
+			$this->db->where('apmdate' ,$tdate);
 		}
 		$this->db->order_by('apmdate','desc');
 
@@ -145,6 +145,10 @@ class Appointment extends CI_Controller {
 		$apmid = $this->input->get('apmid');
 		$offset = $this->input->get('offset');
 		$nowside = $this->input->get('nowside');
+
+		if($nowside == 'a'){
+			$this->setadminread($apmid);
+		}
 
 		$sql = "
 			SELECT * 
@@ -273,10 +277,10 @@ class Appointment extends CI_Controller {
 	}
 
 	function alllistload(){
-		// $ptid = $this->input->post('ptid');
-		// $keyword = $this->input->post('keyword');
-		// $fdate = $this->input->post('fdate');
-		// $tdate = $this->input->post('tdate');
+		$kw = $this->input->get('kw');
+		$st = $this->input->get('st');
+		$fdate = $this->input->get('fdate');
+		$tdate = $this->input->get('tdate');
 
 		$this->db->select("a.apmid
 						,a.apmdate
@@ -300,19 +304,28 @@ class Appointment extends CI_Controller {
 				// ->where('a.ptid',$ptid)
 				->where('a.active <> ','I');
 
-		// if(!empty($keyword)){
-		// 	$this->db->where("CONCAT(IFNULL(a.header,'')
-		// 						,IFNULL(a.sicktxt,'')
-		// 					) LIKE '%{$keyword}%'");
-		// }
+		if(!empty($kw)){
+			$this->db->where("CONCAT(IFNULL(a.header,'')
+								,IFNULL(a.sicktxt,'')
+								,IFNULL(p.hn,'')
+								,IFNULL(p.fname,'')
+								,IFNULL(p.lname,'')
+								,IFNULL(s.stname,'')
+								,IFNULL(a.tel,'')
+							) LIKE '%{$kw}%'");
+		}
 
-		// if(!empty($fdate) && !empty($tdate)){
-		// 	$this->db->where("apmdate BETWEEN '{$fdate}' AND '{$tdate}'");
-		// }else if(!empty($fdate) && empty($tdate)){
-		// 	$this->db->where('apmdate = {$fdate}');
-		// }else if(empty($fdate) && !empty($tdate)){
-		// 	$this->db->where('apmdate = {$tdate}');
-		// }
+		if(!empty($fdate) && !empty($tdate)){
+			$this->db->where("apmdate BETWEEN '{$fdate}' AND '{$tdate}'");
+		}else if(!empty($fdate) && empty($tdate)){
+			$this->db->where('apmdate',$fdate);
+		}else if(empty($fdate) && !empty($tdate)){
+			$this->db->where('apmdate',$tdate);
+		}
+
+		if(!empty($st)){
+			$this->db->where('a.stid',$st);
+		}
 		$this->db->order_by('apmdate','desc');
 
 		$res = $this->db->get();
@@ -326,5 +339,33 @@ class Appointment extends CI_Controller {
 			'success' => true
 			,'row' => $res
 		));
+	}
+
+	function statusload(){
+
+		$st = $this->db->order_by('stid','asc')->get('st');
+
+		if($st->num_rows() > 0){ //$res->MessageCode == 200
+			echo json_encode(array(
+					'success' => true
+					,'row' => $st->result_array()
+				));
+		}else{
+			echo json_encode(array(
+					'success' => false
+				));
+		}
+
+	}
+
+	function setadminread($apmid){
+		$apm = $this->db->get_where('apmpt',array('apmid' => $apmid));
+		if($apm->row()->stid == '01'){
+			$this->db->where('apmid',$apmid)
+					->where('stid','01')
+					->set('stid','02')
+					->update('apmpt');
+		}
+		
 	}
 }

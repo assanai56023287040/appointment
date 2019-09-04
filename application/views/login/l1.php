@@ -114,7 +114,7 @@
 				}
 				return true;
 			},
-			clearForm(type){
+			clearform(type){
 				switch(type){
 
 				}

@@ -69,7 +69,7 @@
 				<hr/>
 				<!-- search form is here -->
 				<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">คำค้นหา : </p>
-				<input class="form-control text-center mt-1 mb-0" placeholder="คำค้นหา" />
+				<input class="form-control text-center mt-1 mb-0" placeholder="คำค้นหา" v-model="skeyword" @keyup.enter="listload()"/>
 
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">จากวันที่ : </p>
 				<input class="form-control text-center mt-1 mb-0 datepicker" id="sfdate" v-model="sfdate" autocomplete="off" />
@@ -78,8 +78,8 @@
 				<input class="form-control text-center mt-1 mb-0 datepicker" id="stdate" v-model="stdate" autocomplete="off" />
 
 				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;" @click="listload()">
-					<i class="fa fa-search align-middle" style="font-size: 1.8rem"></i>
-					<span class="align-middle mx-2" style="font-size: 1rem;">ค้นหา</span>
+					<i class="align-middle" style="font-size: 1.8rem" :class="onlistload ? 'fas fa-circle-notch fa-spin' : 'fas fa-search'"></i>
+					<span class="align-middle mx-2" style="font-size: 1rem;">{{ onlistload ? 'กำลังค้นหา' : 'ค้นหา' }}</span>
 				</button>
 
 				<button class="btn btn-block x-btn-red my-3" style="border-radius: 10px;" @click="clearform('searchform')">
@@ -354,8 +354,8 @@
 								</div>
 
 								<div v-show="newapm.lcttype == 'itlct'">
-									<select class="myselect2" id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
-										<option v-for="(l , idx) in lctlist" :value="idx">{{ l.lctcode }} | {{ l.lctname }}</option>
+									<select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
+										<option v-for="(l , idx) in lctlist" :value="idx">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
 									</select>
 								</div>
 								
@@ -449,7 +449,7 @@
 			currmsg: "",
 			messages: [],
 			offsetchat: 0,
-
+			onlistload: false,
 		},
 		methods: {
 			onlyshowmodal(modal_id){
@@ -508,7 +508,7 @@
 			activeselect2(elid){
 				switch (elid) {
 					case 'apmlct':
-						$('.myselect2').select2({
+						$('#apmlct').select2({
 							theme: "bootstrap",
 							placeholder: "เลือกคลีนิค",
 							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
@@ -548,6 +548,7 @@
 						this.skeyword = '';
 						this.sfdate = '';
 						this.stdate = '';
+						this.listload();
 						break;
 					case 'newapm' :
 						this.newapm = {
@@ -634,11 +635,7 @@
 				});
 			},
 			async listload(){
-				Swal.fire({
-	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
-	                allowOutsideClick: false,
-	            });
-	            Swal.showLoading();
+				this.onlistload = true;
 	            await axios.get("<?php echo site_url('appointment/listload'); ?>",{
 					params : {
 	            		keyword : this.skeyword,
@@ -649,7 +646,7 @@
 				})
 	            .then(res => {
 	            	this.apmlist = [];
-	            	Swal.close();
+	            	this.onlistload = false;
 	            	this.apmlist = res.data.row;
 	            	this.apmlist.forEach((item,idx) =>{
 	            		// console.log(item);

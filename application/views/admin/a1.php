@@ -339,8 +339,36 @@
                 <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
               </div> -->
               <div class="card-body">
-                <div class="row">
-                  xxxxx
+                <div class="row mb-3 justify-content-md-start align-items-end">
+                  <div class="col-2">
+                    <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ค้นหา : </p>
+                    <input type="text" class="form-control" v-model="skeyword" @keyup.enter="apmsload()">
+                  </div>
+                  <div class="col-2">
+                    <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สถานะ : </p>
+                    <select id="sstatus" class="w-100">
+                      <option v-for="(s , idx) in stlist" :value="s.stid">[ {{ s.stid }} ] {{ s.stname }}</option>
+                    </select>
+                  </div>
+                  <div class="col-2">
+                    <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">จากวันที่ : </p>
+                    <input type="text" class="form-control datepicker" id="sfdate" v-model="sfdate" autocomplete="off">
+                  </div>
+                  <div class="col-2">
+                    <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
+                    <input type="text" class="form-control datepicker" id="stdate" v-model="stdate" autocomplete="off">
+                  </div>
+                  <!-- col button -->
+                  <div class="col-auto text-center">
+                    <button class="btn x-btn-blue" style="border-radius: 10px;" @click="apmsload()">
+                      <i class="align-middle" style="font-size: 1.8rem;" :class="onapmsload ? 'fas fa-circle-notch fa-spin' : 'fas fa-search'"></i>
+                      <span class="align-middle mx-2" style="font-size: 1rem;">{{ onapmsload ? 'กำลังค้นหา' : 'ค้นหา' }}</span>
+                    </button>
+                    <button class="btn x-btn-red" style="border-radius: 10px;" @click="clearform('searchform')">
+                      <i class="far fa-times-circle align-middle" style="font-size: 1.8rem"></i>
+                      <span class="align-middle mx-2" style="font-size: 1rem;">ล้าง</span>
+                    </button>
+                  </div>
                 </div>
                 <div class="table-responsive">
                   <table class="table table-striped table-hover-primary" width="100%" cellspacing="0">
@@ -431,7 +459,7 @@
                           <div class="row m-0 p-0 sticky-top">
                             <div class="col-12 m-0 p-0 text-right bg-white">
                               <button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="changepage('apmlist',true)">
-                                <i class="fa fa-times-circle align-middle" style="font-size: 1.8rem"></i>
+                                <i class="far fa-times-circle align-middle" style="font-size: 1.8rem"></i>
                                 <span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
                               </button>
                               <hr class="my-2">
@@ -533,6 +561,7 @@
 			skeyword: '',
 			sfdate: '',
 			stdate: '',
+      sstatus: '',
 			apmlist: [],
       admindata: {},
       currentpage: {},
@@ -569,6 +598,8 @@
       currmsg: "",
       messages: [],
       offsetchat: 0,
+      onapmsload: false,
+      stlist: [],
 		},
 		methods: {
 			onlyShowModal(modal_id){
@@ -581,22 +612,17 @@
 			showLoginForm(){
 				window.location = "<?php echo site_url('login'); ?>";
 			},
-			activeDatePicker(){
-				$('.datepicker').datepicker({
-						language:'th-th',
-						format:'dd/mm/yyyy',	
-						autoclose: true,
-						todayHighlight: true,
-				});
-
-				// $('#apmdate').datepicker()
-				// 	.on('hide', v =>{
-				// 		this.newapm.apmdate = $('#apmdate').val();
-				// 	});
-			},
-			clearForm(type){
+			clearform(type){
 				switch(type){
-
+          case 'searchform' : 
+            this.skeyword = '';
+            this.sstatus = '';
+            this.sfdate = '';
+            this.stdate = '';
+            $('#sstatus').val(null).trigger('change');
+            this.apmsload();
+          break;
+          default : 
 				}
 			},
 			emSignin(){
@@ -722,7 +748,7 @@
         switch(id){
           case 'home': break;
           case 'apmlist': 
-              this.apmlistload();
+              this.apmsload();
               if(opt){
                 clearInterval(this.chatInterval);
               }
@@ -733,20 +759,19 @@
           default :
         }
       },
-      apmlistload(){
-        Swal.fire({
-            title: "กรุณารอสักครู่...",
-            allowOutsideClick: false,
-        });
-        Swal.showLoading();
-        axios.post("<?php echo site_url('appointment/alllistload'); ?>",{
+      apmsload(){
+        this.onapmsload = true;
+        axios.get("<?php echo site_url('appointment/alllistload'); ?>",{
           params : {
-
+            kw: this.skeyword,
+            st: this.sstatus,
+            fdate: this.dateformysql(this.sfdate),
+            tdate: this.dateformysql(this.stdate),
           }
         })
         .then(res => {
           this.apms = [];
-          Swal.close();
+          this.onapmsload = false;
           this.apms = res.data.row;
           this.apms.forEach((item,idx) =>{
             item.apmdate = this.dateforth(item.apmdate);
@@ -775,6 +800,14 @@
           if(strdate.length == 3){
             return strdate[2]+'/'+strdate[1]+'/'+(parseInt(strdate[0],10)+543);
           }else{return v;}
+        }else{
+          return "";
+        }
+      },
+      dateformysql(strdate){
+        if(strdate){
+          strdate = strdate.split('/');
+          return (strdate[2]-543)+'-'+strdate[1]+'-'+strdate[0];
         }else{
           return "";
         }
@@ -871,7 +904,58 @@
       //  *****************************************************************************************
       //  ******************************  end of chat function zone  ******************************
       //  *****************************************************************************************
+      statusload(){
+        this.stlist = [];
+        this.activeselect2('sstatus');
+        axios.get("<?php echo site_url('appointment/statusload'); ?>")
+          .then(res => {
+            res = res.data;
+            res.row.forEach((item,idx) => {
+              this.stlist.push({
+                stid : item.stid,
+                stname : item.stname,
+              });
+            });
+            $('#sstatus').val(null).trigger('change');
+          });
+      },
+      activeselect2(elid){
+        switch (elid) {
+          case 'sstatus':
+            $('#sstatus').select2({
+              theme: "bootstrap",
+              placeholder: "เลือกสถานะ",
+              // sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
+            });
 
+            $('#sstatus').on("select2:closing", v => {
+              this.sstatus = $('#sstatus').val();
+            });
+            break;
+        
+          default:
+            break;
+        }
+        
+      },
+      activedatepicker(){
+        $('.datepicker').datepicker({
+            language:'th-th',
+            format:'dd/mm/yyyy',  
+            autoclose: true,
+            todayHighlight: true,
+        });
+
+        $('#sfdate').datepicker()
+          .on('hide', v =>{
+            this.sfdate= $('#sfdate').val();
+          });
+
+        $('#stdate').datepicker()
+          .on('hide', v =>{
+            this.stdate = $('#stdate').val();
+          });
+      },
 
 		},
 		mounted() {
@@ -880,8 +964,9 @@
 			if(ssusername != null && ssusername != ''){
         this.admindata = JSON.parse(lcget('admindata'));
 				this.showHomePage();
+        this.statusload();
 				this.activeEvent();
-				this.activeDatePicker();
+				this.activedatepicker();
         // this.activeDataTable();
 			}else{
 				Swal.fire({
