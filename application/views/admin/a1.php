@@ -426,29 +426,22 @@
                     <span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
                   </button>
                   <hr/>
-                  <button class="btn btn-block x-btn-orenge my-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
-                    <i class="fa fa-info align-middle" style="font-size: 1.8rem"></i>
-                    <span class="align-middle mx-2" style="font-size: 1rem;">ดูข้อมูลการขอทำนัด</span> <!-- ขอทำนัด -->
+                  <button class="btn btn-block x-btn-orenge mt-3 mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                    <i class="fas fa-info align-middle" style="font-size: 1.8rem"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">ดูข้อมูลการขอทำนัด</span>
                   </button>
-                  <div class="text-center w-100 my-2">
-                    <h3 class="font-weight-bold">ข้อมูลการขอทำนัด</h3>
-                    <div class="form-group px-3">
-                      <label class="small font-weight-bold" for="header">รายละเอียดอาการ : </label>
-                      <textarea class="form-control non-edit" type="text" :value="selapm.sicktxt" rows="4"></textarea> 
-                    </div>
-                    <div class="form-group px-3">
-                      <label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
-                      <input class="form-control non-edit text-center" type="text" :value="selapm.apmdate">
-                    </div>
-                    <div class="form-group px-3">
-                      <label class="small font-weight-bold" for="apmdate">เวลาที่ขอทำนัด : </label>
-                      <input class="form-control non-edit text-center" type="text" :value="selapm.apmtime+'.00'">
-                    </div>
-                    <div class="form-group px-3">
-                      <label class="small font-weight-bold" for="apmdate">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
-                      <input class="form-control non-edit text-center" type="text" :value="selapm.tel">
-                    </div>
-                  </div>
+                  <button class="btn btn-block x-btn-green mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                    <i class="fas fa-clipboard-check align-middle" style="font-size: 1.8rem"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">ยืนยันการขอทำนัด</span>
+                  </button>
+                  <button class="btn btn-block x-btn-blue mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                    <i class="fas fa-redo-alt align-middle" style="font-size: 1.8rem"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">เลื่อนการขอทำนัด</span>
+                  </button>
+                  <button class="btn btn-block x-btn-red mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                    <i class="fas fa-ban align-middle" style="font-size: 1.8rem"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">ยกเลิกการขอทำนัด</span>
+                  </button>
                 </div>
                 <!-- chat and option zone -->
                 <div class="col-9 container text-center" style="display: flex;">

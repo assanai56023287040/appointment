@@ -101,7 +101,7 @@
 						</div>
 						<div class="container-fluid m-0 bg-white" id="frame-list" v-for="(list , idx) in apmlist">
 							<hr class="m-0" v-show="idx != 0">
-							<div class="container-fluid py-1 my-2 x-card-light" style="display: flex;" @click="openchat(list.apmid,idx)">
+							<div class="container-fluid py-1 my-2 x-card-light" style="display: flex;" @click="openchat(list.apmid)">
 								<div class="d-inline float-left text-center p-0" style="position: relative;min-width: 40px;">
 									<div class="vl-purple my-0" style="top: 0;right: 0;	position: absolute;"></div>
 									<span class="align-middle" >{{ idx+1 }}</span>
@@ -338,7 +338,7 @@
 									</div>
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
-										<select class="myselect2 form-control" type="text" id="apmtime">
+										<select class="form-control" type="text" id="apmtime">
 											<option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
 										</select>
 									</div>
@@ -355,7 +355,7 @@
 
 								<div v-show="newapm.lcttype == 'itlct'">
 									<select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
-										<option v-for="(l , idx) in lctlist" :value="idx">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
+										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
 									</select>
 								</div>
 								
@@ -518,6 +518,18 @@
 							this.newapm.apmlct = $('#apmlct').val();
 						});
 						break;
+
+					case 'apmtime':
+						$('#apmtime').select2({
+							theme: "bootstrap",
+							placeholder: "เลือกเวลา",
+							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
+						});
+
+						$('#apmtime').on("select2:closing", v => {
+							this.newapm.apmtime = $('#apmtime').val();
+						});
+						break;
 				
 					default:
 						break;
@@ -598,6 +610,7 @@
 				});
 			},
 			savenewapm(){
+				let sellct = this.lctlist.find( v => v.lctcode == this.newapm.apmlct);
 				let params = new URLSearchParams({
 					'header' : this.newapm.header,
 					'apmdate' : this.dateformysql(this.newapm.apmdate),
@@ -610,8 +623,8 @@
 					'isseldct' : this.newapm.isseldct,
 					'apmdct' : this.newapm.apmdct,
 					'lcttype' : this.newapm.lcttype,
-					'apmlct' : this.lctlist[this.newapm.apmlct].lctcode,
-					'lctname' : this.lctlist[this.newapm.apmlct].lctname,
+					'apmlct' : sellct.lctcode,
+					'lctname' : sellct.lctname,
 
 				});
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
@@ -630,7 +643,7 @@
 						  showConfirmButton: false,
 		                  allowOutsideClick: false,
 					}).then(() => {
-						this.showchatpage();
+						this.openchat(this.selapm.apmid);
 					});
 				});
 			},
@@ -680,9 +693,9 @@
 				let messagesArea = document.getElementById("messages-area");
 				$("#messages-area").animate({ scrollTop: messagesArea.scrollHeight }, "slow");
 			},
-			async openchat(apmid,idx){
+			async openchat(apmid){
 				this.showchatpage();
-				this.selapm = this.apmlist[idx];
+				this.selapm = this.apmlist.find( v => v.apmid == apmid );
 				await this.loadchat();
 				this.scrolltobottom();
 				this.inquirychat();
@@ -703,6 +716,7 @@
 					console.log(res);
 					this.newapm = res.data.row[0];
 					this.newapm.apmdate = this.dateforth(res.data.row[0].apmdate);
+					$('#apmlct').val(this.newapm.apmlct).trigger('change');
 					this.actionshowmodal('edit-appointment');
 				});
 			},
@@ -739,7 +753,7 @@
 			async loadchat(){
 				this.messages = [];
 				Swal.fire({
-	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+	                title: "กำลังโหลดข้อมูล Chat...",
 	                allowOutsideClick: false,
 	            });
 	            Swal.showLoading();
