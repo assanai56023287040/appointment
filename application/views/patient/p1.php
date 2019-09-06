@@ -132,7 +132,7 @@
 		<section class="row" id="chat-page" style="flex: 1 1 auto;display: none;">
 			<div class="col-3 px-3 text-center" style="position: relative;">
 				<div class="vl-yellow my-3" style="top: 0;right: 0;	position: absolute;"></div>
-				<button class="btn btn-block x-btn-white my-3" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')">
+				<button class="btn btn-block x-btn-white-grayshadow my-3" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')">
 					<i class="far fa-user-circle align-middle" style="font-size: 1.8rem"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
 				</button>
@@ -717,6 +717,7 @@
 					this.newapm = res.data.row[0];
 					this.newapm.apmdate = this.dateforth(res.data.row[0].apmdate);
 					$('#apmlct').val(this.newapm.apmlct).trigger('change');
+					$('#apmtime').val(this.newapm.apmtime).trigger('change');
 					this.actionshowmodal('edit-appointment');
 				});
 			},
@@ -794,9 +795,10 @@
 					});
 				},5000);
 			},
-			lctload(){
+			async lctload(){
 				this.lctlist = [];
-				axios.get("<?php echo site_url('appointment/lctload'); ?>")
+				this.activeselect2('apmlct');
+				await axios.get("<?php echo site_url('appointment/lctload'); ?>")
 					.then(res => {
 						res = res.data;
 						res.row.forEach((item,idx) => {
@@ -805,9 +807,8 @@
 								lctname : item.lctname,
 							});
 						});
-						this.activeselect2('apmlct');
-						$('#apmlct').val(null).trigger('change');
 					});
+				$('#apmlct').val(null).trigger('change');
 			},
 
 		},

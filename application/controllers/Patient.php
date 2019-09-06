@@ -97,4 +97,15 @@ class Patient extends CI_Controller {
 		return $id;
 	}
 
+	function patientdata(){
+		$hn = $this->input->get('hn');
+
+		$pt = $this->db->get_where('pt',array('hn'=>$hn,'active <>' => 'I'));
+
+		echo json_encode(array(
+			'success' => true
+			,'row' => $pt->result_array()
+		));
+	}
+
 }

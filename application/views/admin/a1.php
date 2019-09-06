@@ -23,7 +23,7 @@
     
 </head>
 <body id="page-top" class="admin-page">
-<!-- <div id="app"> -->
+<div id="app">
   <!-- Page Wrapper -->
   <div id="wrapper">
 
@@ -421,24 +421,32 @@
               <div class="row">
                 <div class="col-3 px-3 text-center" style="position: relative;">
                   <div class="vl-yellow my-3" style="top: 0;right: 0; position: absolute;"></div>
-                  <button class="btn btn-block x-btn-white my-3" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')">
-                    <i class="far fa-user-circle align-middle" style="font-size: 1.8rem"></i>
-                    <span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
+                  <button class="btn btn-block x-btn-white-grayshadow my-3" style="border-radius: 10px;" 
+                          @click="onlyshowmodal('patient-profile')"
+                          :class="{'non-edit' : onptdataload}"
+                          :disabled="onptdataload"
+                  >
+                    <i class="align-middle" style="font-size: 1.8rem" :class="onptdataload ? 'fas fa-circle-notch fa-spin' : 'far fa-user-circle'"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">{{ onptdataload ? 'กำลังดาวน์โหลดข้อมูลค้นไข้' : 'ข้อมูลคนไข้' }}</span> <!-- ขอทำนัด -->
                   </button>
                   <hr/>
-                  <button class="btn btn-block x-btn-orenge mt-3 mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
-                    <i class="fas fa-info align-middle" style="font-size: 1.8rem"></i>
-                    <span class="align-middle mx-2" style="font-size: 1rem;">ดูข้อมูลการขอทำนัด</span>
+                  <button class="btn btn-block x-btn-orenge mt-3 mb-4" style="border-radius: 10px;"
+                          @click="onlyshowmodal('edit-appointment')"
+                          :class="{'non-edit' : onptapmload}"
+                          :disabled="onptapmload"
+                  >
+                    <i class="align-middle" style="font-size: 1.8rem" :class="onptapmload ? 'fas fa-circle-notch fa-spin' : 'fas fa-info'"></i>
+                    <span class="align-middle mx-2" style="font-size: 1rem;">{{ onptapmload ? 'กำลังดาวน์โหลดข้อมูลขอทำนัด' : 'ดูข้อมูลการขอทำนัด' }}</span>
                   </button>
-                  <button class="btn btn-block x-btn-green mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                  <button class="btn btn-block x-btn-green mb-4" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
                     <i class="fas fa-clipboard-check align-middle" style="font-size: 1.8rem"></i>
                     <span class="align-middle mx-2" style="font-size: 1rem;">ยืนยันการขอทำนัด</span>
                   </button>
-                  <button class="btn btn-block x-btn-blue mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                  <button class="btn btn-block x-btn-blue mb-4" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
                     <i class="fas fa-redo-alt align-middle" style="font-size: 1.8rem"></i>
                     <span class="align-middle mx-2" style="font-size: 1rem;">เลื่อนการขอทำนัด</span>
                   </button>
-                  <button class="btn btn-block x-btn-red mb-4 py-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                  <button class="btn btn-block x-btn-red mb-4" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
                     <i class="fas fa-ban align-middle" style="font-size: 1.8rem"></i>
                     <span class="align-middle mx-2" style="font-size: 1rem;">ยกเลิกการขอทำนัด</span>
                   </button>
@@ -462,7 +470,7 @@
                             <i class="fa fa-angle-up align-middle" style="font-size: 1.5rem"></i>
                             <span class="align-middle mx-2" style="font-size: 1rem;">โหลดเพิ่มเติม</span>
                           </div>
-                          <div class="d-block m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-right':'text-left'">
+                          <div class="m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-right':'text-left'">
                             <span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
                             <div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
                               {{ msg.msgtxt }}
@@ -533,7 +541,175 @@
     </div>
   </div>
 
-<!-- </div> end off div app -->
+  <!-- patient-profile modal id -->
+  <div id="patient-profile" class="modal fade" data-backdrop="true" role="dialog">
+    <div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
+      <div class="modal-content">
+        <!-- modal header -->
+        <div class="modal-header">
+          <div class="row" style="min-width: 100%">
+            <div class="col-6 text-left font-weight-bold">
+              รายละเอียดข้อมูลผู้ใช้
+            </div>
+            <div class="col-6 text-right px-0">
+              <i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- modal body -->
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row justify-content-md-center" style="min-height: 10px;">
+              <div class="col-3 text-left">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อ(ไทย) : </p>
+                <input type="text" class="form-control non-edit" v-model="ptdata.fname">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">HN : </p>
+                <input type="text" class="form-control non-edit" v-model="ptdata.hn">
+              </div>
+              <div class="col-3">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สกุล(ไทย) : </p>
+                <input type="text" class="form-control non-edit" v-model="ptdata.lname">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">AN : </p>
+                <input type="text" class="form-control non-edit" v-model="ptdata.an">
+              </div>
+              <div class="col-3">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เพศ : </p>
+                <input type="text" class="form-control non-edit" v-model="ptdata.male">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">โรคประจำตัว : </p>
+                <input type="text" class="form-control non-edit" v-model="ptdata.congenital">
+              </div>
+              <div class="col-3">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">วันเดือนปี เกิด : </p>
+                <input type="text" class="form-control non-edit" v-model="ptdata.birthdate">
+                <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">แพ้ยา : </p>
+                <input type="text" class="form-control non-edit" :value="ptdata.allergy? ptdata.allergy : ''">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- modal footer -->
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div> <!-- end of div modal dialog -->
+  </div> <!-- end of div modal patient-profile -->
+
+
+  <!-- edit-appointment modal id -->
+  <div id="edit-appointment" class="modal fade" data-backdrop="true" role="dialog">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <!-- modal header -->
+        <div class="modal-header">
+          <div class="row" style="min-width: 100%">
+            <div class="col-6 text-left font-weight-bold">
+              <h3 class="font-weight-bold"> แก้ไขข้อมูลใบนัด </h3>
+            </div>
+            <div class="col-6 text-right px-0">
+              <i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- modal body -->
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row justify-content-center" style="min-height: 10px;overflow: auto;">
+              <div class="col-sm-6">
+
+                <div class="form-group">
+                  <label class="small font-weight-bold" for="sicktxt">รายละเอียดอาการ : </label>
+                  <textarea class="form-control" id="sicktxt" v-model="ptapm.sicktxt" placeholder="แจ้งรายละเอียดอาการป่วยสำหรับการขอทำนัด" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="small font-weight-bold" for="header">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
+                  <input class="form-control" type="text" id="header" v-model="ptapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
+                </div>
+
+
+                <div class="form-group" v-show="false">
+                  <label class="small font-weight-bold" for="header">หัวข้อเรื่อง : </label>
+                  <input class="form-control" type="text" id="header" v-model="ptapm.header" placeholder="ระบุหัวข้อเรื่อง">
+                </div>
+                
+                <div class="alert alert-danger small" v-show="false">
+                  <strong>เวลาทำการ : วันและเวลาราชการ     </strong>
+                  <br/>จันทร์ - ศุกร์  |  8.00 - 16.00
+                  <br/>ติดต่อคลีนิกในเวลา : 02-926-9991
+                  <br/>ติดต่อคลีนิกนอกเวลา : 02-926-9860
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group my-2">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" value="" v-model="ptapm.isseldct" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">ระบุแพทย์</label>
+                      </div>
+                    </div>
+                  </div>
+                  <select class="form-control" type="text" id="apmdct" v-model="ptapm.apmdct" :disabled="!ptapm.isseldct">
+                    <option value="" disabled selected>เลือกแพทย์</option>                    
+                    <option value="11001">11001 | นพ.ทดสอบระบบแพทย์</option>
+                    <!-- <option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option> -->
+                  </select>
+                  <div class="input-group-append" >
+                    <button class="btn btn-outline-secondary" type="button" :disabled="!ptapm.isseldct" title="ตารางออกตรวจแพทย์">
+                      <i class="far fa-calendar-alt align-middle" style="font-size: 1.5rem"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-row align-item-center justify-content-center">
+                  <div class="col form-group">
+                    <label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
+                    <input class="form-control datepicker" type="text" id="apmdate" v-model="ptapm.apmdate" placeholder="เลือกวันที่">
+                  </div>
+                  <div class="col form-group">
+                    <label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
+                    <select class="form-control" type="text" id="apmtime">
+                      <option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
+                    </select>
+                  </div>
+                </div> <!-- end div of sub form-row -->
+
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="ptapm.lcttype">
+                  <label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="ptapm.lcttype">
+                  <label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
+                </div>
+
+                <div v-show="ptapm.lcttype == 'itlct'">
+                  <select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="ptapm.apmlct" -->
+                    <option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode  }} ] {{ l.lctname }}</option>
+                  </select>
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- modal footer --> 
+        <div class="modal-footer text-right">
+          <!-- edit apm -->
+          <button class="btn x-btn-orenge px-3" style="border-radius: 10px;" @click="saveeditapm()">
+            <i class="fa fa-pencil-alt fa-flip-horizontal align-middle" style="font-size: 2rem"></i>
+            <span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
+          </button>
+        </div>
+      </div>
+    </div> <!-- end of div modal dialog -->
+  </div> <!-- end of div modal edit-appointment -->
+
+</div>
+<!--  end off div app -->
 
 
 <?php
@@ -543,7 +719,7 @@
 <script type="text/javascript">
 
 	var app = new Vue({
-		el: '#wrapper',
+		el: '#app',
 		data: {
       clicks: 0,
       clickidx: null,
@@ -593,9 +769,40 @@
       offsetchat: 0,
       onapmsload: false,
       stlist: [],
+      ptdata: {},
+      ptapm: {},
+      onptdataload: false,
+      onptapmload: false,
+      lctlist: [],
+      timehr: [
+        {k: "00", v:"00.00"},
+        {k: "01", v:"01.00"},
+        {k: "02", v:"02.00"},
+        {k: "03", v:"03.00"},
+        {k: "04", v:"04.00"},
+        {k: "05", v:"05.00"},
+        {k: "06", v:"06.00"},
+        {k: "07", v:"07.00"},
+        {k: "08", v:"08.00"},
+        {k: "09", v:"09.00"},
+        {k: "10", v:"10.00"},
+        {k: "11", v:"11.00"},
+        {k: "12", v:"12.00"},
+        {k: "13", v:"13.00"},
+        {k: "14", v:"14.00"},
+        {k: "15", v:"15.00"},
+        {k: "16", v:"16.00"},
+        {k: "17", v:"17.00"},
+        {k: "18", v:"18.00"},
+        {k: "19", v:"19.00"},
+        {k: "20", v:"20.00"},
+        {k: "21", v:"21.00"},
+        {k: "22", v:"22.00"},
+        {k: "23", v:"23.00"},
+      ],
 		},
 		methods: {
-			onlyShowModal(modal_id){
+			onlyshowmodal(modal_id){
 				$('#'+modal_id).modal();
 			},
 			showHomePage(){
@@ -815,6 +1022,7 @@
         this.scrolltobottom();
         this.inquirychat();
         // this.currentpage.txt += this.selapm.fname + "   " + this.selapm.lname;
+        this.loadrelateapm();
       },
       async loadchat(){
         this.messages = [];
@@ -897,11 +1105,11 @@
       //  *****************************************************************************************
       //  ******************************  end of chat function zone  ******************************
       //  *****************************************************************************************
-      statusload(){
+      async statusload(){
         this.stlist = [];
         this.activeselect2('sstatus');
-        axios.get("<?php echo site_url('appointment/statusload'); ?>")
-          .then(res => {
+        await axios.get("<?php echo site_url('appointment/statusload'); ?>")
+          .then( res => {
             res = res.data;
             res.row.forEach((item,idx) => {
               this.stlist.push({
@@ -909,8 +1117,8 @@
                 stname : item.stname,
               });
             });
-            $('#sstatus').val(null).trigger('change');
           });
+        $('#sstatus').val(null).trigger('change');
       },
       activeselect2(elid){
         switch (elid) {
@@ -923,6 +1131,30 @@
 
             $('#sstatus').on("select2:closing", v => {
               this.sstatus = $('#sstatus').val();
+            });
+            break;
+
+          case 'apmlct':
+            $('#apmlct').select2({
+              theme: "bootstrap",
+              placeholder: "เลือกคลีนิค",
+              // sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
+            });
+
+            $('#apmlct').on("select2:closing", v => {
+              this.newapm.apmlct = $('#apmlct').val();
+            });
+            break;
+
+          case 'apmtime':
+            $('#apmtime').select2({
+              theme: "bootstrap",
+              placeholder: "เลือกเวลา",
+              // sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
+            });
+
+            $('#apmtime').on("select2:closing", v => {
+              this.newapm.apmtime = $('#apmtime').val();
             });
             break;
         
@@ -949,6 +1181,54 @@
             this.stdate = $('#stdate').val();
           });
       },
+      loadrelateapm(){
+        this.hnload(this.selapm.hn,true);
+        this.apmload(this.selapm.apmid,true);
+      },
+      hnload(hn,aniload = false){
+        if(aniload)  this.onptdataload = true;
+        axios.get("<?php echo site_url('patient/patientdata'); ?>",{
+          params : {
+            hn: hn,
+          }
+        })
+        .then(res => {
+          this.ptdata = {};
+          if(aniload)  this.onptdataload = false;
+          this.ptdata = res.data.row[0];
+        });
+      },
+      apmload(apmid,aniload = false){
+        if(aniload)  this.onptapmload = true;
+        axios.get("<?php echo site_url('appointment/apmload'); ?>",{
+          params : {
+            apmid: apmid,
+          }
+        })
+        .then(res => {
+          this.ptapm = {};
+          if(aniload)  this.onptapmload = false;
+          this.ptapm = res.data.row[0];
+          this.ptapm.apmdate = this.dateforth(this.ptapm.apmdate);
+          $('#apmlct').val(this.ptapm.apmlct).trigger('change');
+          $('#apmtime').val(this.ptapm.apmtime).trigger('change');
+        });
+      },
+      async lctload(){
+        this.lctlist = [];
+        this.activeselect2('apmlct');
+        await axios.get("<?php echo site_url('appointment/lctload'); ?>")
+          .then(res => {
+            res = res.data;
+            res.row.forEach((item,idx) => {
+              this.lctlist.push({
+                lctcode : item.lctcode,
+                lctname : item.lctname,
+              });
+            });
+          });
+        $('#apmlct').val(null).trigger('change');
+      },
 
 		},
 		mounted() {
@@ -958,6 +1238,7 @@
         this.admindata = JSON.parse(lcget('admindata'));
 				this.showHomePage();
         this.statusload();
+        this.lctload();
 				this.activeEvent();
 				this.activedatepicker();
         // this.activeDataTable();

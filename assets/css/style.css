@@ -157,6 +157,20 @@ body.admin-page {
   	box-shadow: 0 0 15px #ffad33;
 }
 
+.x-btn-white-grayshadow {
+	background-color: #ffffff;
+	color: black;
+	border: 3px solid #b3b3b3;
+	font-size: 1.5rem;
+}
+
+.x-btn-white-grayshadow:hover {
+	background-color: #b3b3b3;
+	color: white;
+	border: 3px solid #ffffff;
+  	box-shadow: 0 0 15px #b3b3b3;
+}
+
 .x-card-light {
 	background-color: white;
 	color: black;
