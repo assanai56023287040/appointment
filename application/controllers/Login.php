@@ -30,7 +30,7 @@ class Login extends CI_Controller {
 		$this->load->view('login/l1');
 	}
 
-	function emSignin(){
+	function emsignin(){
 		$uid = $this->input->get('uid');
 		$pwd = $this->input->get('pwd');
 

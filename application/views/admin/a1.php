@@ -45,7 +45,7 @@
       <hr class="sidebar-divider my-0">
 
       <!-- Nav Item - Dashboard --> 
-      <li class="nav-item" :class="{active : currentpage == 'home'}">
+      <li class="nav-item" :class="{'active' : currentpage.kw == 'home'}">
         <a class="nav-link" @click="changepage('home')">
           <i class="fas fa-home"></i>
           <span>หน้าหลัก</span></a>
@@ -59,13 +59,13 @@
         จัดการข้อมูล
       </div>
 
-      <li class="nav-item" :class="{active : currentpage == 'apmlist'}">
+      <li class="nav-item" :class="{'active' : currentpage.kw == 'apmlist'}">
         <a class="nav-link" @click="changepage('apmlist')">
           <i class="far fa-list-alt"></i>
           <span>รายการขอทำนัด</span></a>
       </li>
 
-      <li class="nav-item" :class="{active : currentpage == 'dctschedule'}">
+      <li class="nav-item" :class="{'active' : currentpage.kw == 'dctschedule'}">
         <a class="nav-link" @click="changepage('dctschedule')">
           <i class="far fa-calendar-alt"></i>
           <span>ตารางออกตรวจแพทย์</span></a>
@@ -79,7 +79,7 @@
         รายงาน
       </div>
 
-      <li class="nav-item" :class="{active : currentpage == 'report'}">
+      <li class="nav-item" :class="{'active' : currentpage.kw == 'report'}">
         <a class="nav-link" @click="changepage('report')">
           <i class="far fa-folder-open"></i>
           <span>รายงาน</span>
@@ -360,7 +360,11 @@
                   </div>
                   <!-- col button -->
                   <div class="col-auto text-center">
-                    <button class="btn x-btn-blue" style="border-radius: 10px;" @click="apmsload()">
+                    <button class="btn x-btn-blue" style="border-radius: 10px;" 
+                            @click="apmsload()"
+                            :class="{'non-edit' : onapmsload}"
+                            :disabled="onapmsload"
+                    >
                       <i class="align-middle" style="font-size: 1.8rem;" :class="onapmsload ? 'fas fa-circle-notch fa-spin' : 'fas fa-search'"></i>
                       <span class="align-middle mx-2" style="font-size: 1rem;">{{ onapmsload ? 'กำลังค้นหา' : 'ค้นหา' }}</span>
                     </button>
@@ -400,8 +404,8 @@
                         <td>{{ r.hn }}</td>
                         <td>{{ r.fname }}  {{ r.lname }}</td>
                         <td>{{ r.sicktxt }}</td>
-                        <td>{{ r.apmdate }}</td>
-                        <td>{{ r.apmtime }}</td>
+                        <td>{{ r.apmdate | thdate }}</td>
+                        <td>{{ r.apmtime | timewithzero }}</td>
                         <td>{{ r.stname }}</td>
                       </tr>
                     </tbody>
@@ -443,7 +447,7 @@
                     <span class="align-middle mx-2" style="font-size: 1rem;">ยืนยันการขอทำนัด</span>
                   </button>
                   <button class="btn btn-block x-btn-blue mb-4" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
-                    <i class="fas fa-redo-alt align-middle" style="font-size: 1.8rem"></i>
+                    <i class="fas fa-angle-double-right align-middle" style="font-size: 1.8rem"></i>
                     <span class="align-middle mx-2" style="font-size: 1rem;">เลื่อนการขอทำนัด</span>
                   </button>
                   <button class="btn btn-block x-btn-red mb-4" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
@@ -973,9 +977,9 @@
           this.apms = [];
           this.onapmsload = false;
           this.apms = res.data.row;
-          this.apms.forEach((item,idx) =>{
-            item.apmdate = this.dateforth(item.apmdate);
-          });
+          // this.apms.forEach((item,idx) =>{
+          //   item.apmdate = this.dateforth(item.apmdate);
+          // });
         });
       },
       selectrowdetect(event,idx){
@@ -1186,6 +1190,7 @@
         this.apmload(this.selapm.apmid,true);
       },
       hnload(hn,aniload = false){
+        if(hn == this.ptdata.hn)  return false;
         if(aniload)  this.onptdataload = true;
         axios.get("<?php echo site_url('patient/patientdata'); ?>",{
           params : {
@@ -1233,7 +1238,8 @@
 		},
 		mounted() {
 			var _this = this;
-			let ssusername = ssget('adminusername');
+      let ssusername = ssget('adminusername');
+			// let ssusername = lcget('adminusername');
 			if(ssusername != null && ssusername != ''){
         this.admindata = JSON.parse(lcget('admindata'));
 				this.showHomePage();
@@ -1276,6 +1282,11 @@
           return strtime[0]+':'+strtime[1];
         }else{
           return "";
+        }
+      },
+      timewithzero(v){
+        if(v){
+          return v + ".00";
         }
       },
 		},

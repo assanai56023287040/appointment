@@ -30,14 +30,14 @@
 
 				<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>
 				<div class="px-5 mb-4">
-					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="patientRegister()" autocomplete="off"/>
-					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="patientRegister()" style="border-radius: 10px;">
+					<input class="form-control text-center" type="text" name="idcard" v-model="idcard" id="idcard" placeholder="กรอกเลขบัตรประชาชน 13 หลัก" style="font-size: 1.5rem;" @keyup.enter="patientregister()" autocomplete="off"/>
+					<button class="btn btn-block x-btn-purple mt-3 p-3" id="btnRegister" @click="patientregister()" style="border-radius: 10px;">
 						<i class="fa fa-pen-alt fa-flip-horizontal m-3 align-middle" style="font-size: 2rem;"></i>
 						<br/>
 						ลงทะเบียน
 					</button>
 					<hr/>
-					<button class="btn btn-block x-btn-blue p-3" type="button" @click="onlyShowModal('em-sign')" style="border-radius: 10px;">
+					<button class="btn btn-block x-btn-blue p-3" type="button" @click="actionmodal('em-sign')" style="border-radius: 10px;">
 						<i class="fa fa-user-nurse m-3 align-middle" style="font-size: 2rem;"></i>
 						<br/>
 						สำหรับพนักงาน
@@ -68,10 +68,34 @@
 				<!-- modal body -->
 				<div class="modal-body">
 					<div class="text-center px-5">
-						<i class="far fa-user-circle" style="font-size: 6rem;color: #0668E6;"></i>
-						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" type="text" name="adminusername" v-model="adminusername" id="adminusername" placeholder="ชื่อผู้ใช้" style="font-size: 1.5rem;" @keyup.enter="$event.target.nextElementSibling.focus()" autocomplete="new-password"/>
-						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" type="password" name="adminpassword" v-model="adminpassword" id="adminpassword" placeholder="รหัสผ่าน" style="font-size: 1.5rem;" @keyup.enter="emSignin()" autocomplete="new-password" />
-						<button type="button" class="btn x-btn-blue btn-block mt-4 p-3" @click="emSignin()">
+						<i :class="adminicon.icon" style="font-size: 6rem;" :style="adminicon.color"></i>
+						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" 
+							   type="text" 
+							   name="adminusername" 
+							   v-model="adminusername" 
+							   id="adminusername" 
+							   placeholder="ชื่อผู้ใช้" 
+							   style="font-size: 1.5rem;" 
+							   @keyup.enter="$event.target.nextElementSibling.focus()" 
+							   autocomplete="new-password"
+							   :class="{'non-edit' : adminicon.k != 'sign' }"
+							   :disabled="adminicon.k != 'sign' "
+						/>
+						<input class="form-control form-control-lg text-center mt-4 font-weight-bold" 
+							   type="password" 
+							   name="adminpassword" 
+							   v-model="adminpassword" 
+							   id="adminpassword" 
+							   placeholder="รหัสผ่าน" 
+							   style="font-size: 1.5rem;" 
+							   @keyup.enter="emsignin()" 
+							   autocomplete="new-password" 
+							   :class="{'non-edit' : adminicon.k != 'sign' }"
+							   :disabled="adminicon.k != 'sign' "
+						/>
+						<button type="button" 
+								class="btn x-btn-blue btn-block mt-4 p-3" 
+								@click="emsignin()">
 							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
 							<br/>
 							ลงชื่อเข้าใช้
@@ -97,12 +121,48 @@
 			idcard: '1100600311926',
 			adminusername: '',
 			adminpassword: '',
+			adminicon: {},
+			adminstyle : [
+				{
+					k: 'load',
+					icon:'fas fa-circle-notch fa-spin',
+					color: 'color: #ff6600;',
+				},
+				{
+					k: 'sign',
+					icon:'far fa-user-circle',
+					color: 'color: #0668E6;',
+				},
+				{
+					k: 'pass',
+					icon:'far fa-check-circle',
+					color: 'color: #00e600;',
+				},
+			],
 		},
 		methods: {
-			onlyShowModal(modal_id){
-				$('#'+modal_id).modal();
+			actionmodal(modal_id){
+				switch(modal_id){
+					case 'em-sign' :
+						$('#'+modal_id).modal();
+						this.adminicon = this.adminstyle[0];
+						setTimeout(() => {
+							if(lcget('admindata')){
+								console.log("pass to get this admin username");
+								this.adminicon = this.adminstyle[2];
+								setTimeout(() => {
+									window.location = "<?php echo site_url('admin'); ?>";
+								},1000);
+							}else{
+								this.adminicon = this.adminstyle[1];
+							}
+						},2000);
+							
+						break;
+					default:
+				}
 			},
-			idcardChecker(id) {
+			idcardchecker(id) {
 				if(id.length != 13){
 					return false;
 				}
@@ -119,8 +179,8 @@
 
 				}
 			},
-			patientRegister(){
-				if(!this.idcardChecker(this.idcard)){
+			patientregister(){
+				if(!this.idcardchecker(this.idcard)){
 					Swal.fire({
 					  type: 'error',
 					  title: 'เลขบัตรประชาชนไม่ถูกต้อง!',
@@ -170,14 +230,14 @@
 				}
 				
 			},
-			emSignin(){
+			emsignin(){
 				$('#em-sign').modal('hide');
 				Swal.fire({
 	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
 	                allowOutsideClick: false,
 	            });
 	            Swal.showLoading();
-	            axios.get("<?php echo site_url('login/emSignin'); ?>",{
+	            axios.get("<?php echo site_url('login/emsignin'); ?>",{
 	            	params : {
 	            		uid: this.adminusername
 	            		,pwd: this.adminpassword

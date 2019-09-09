@@ -77,7 +77,11 @@
 				<p class="font-weight-bold mt-3 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
 				<input class="form-control text-center mt-1 mb-0 datepicker" id="stdate" v-model="stdate" autocomplete="off" />
 
-				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;" @click="listload()">
+				<button class="btn btn-block x-btn-blue my-3" style="border-radius: 10px;" 
+						@click="listload()"
+						:class="{'non-edit' : onlistload}"
+                        :disabled="onlistload"
+				>
 					<i class="align-middle" style="font-size: 1.8rem" :class="onlistload ? 'fas fa-circle-notch fa-spin' : 'fas fa-search'"></i>
 					<span class="align-middle mx-2" style="font-size: 1rem;">{{ onlistload ? 'กำลังค้นหา' : 'ค้นหา' }}</span>
 				</button>
