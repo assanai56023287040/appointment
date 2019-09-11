@@ -13,7 +13,8 @@
         }
   		body {
   			/* min-height: 100%; */
-  			background-image: linear-gradient(to top, #8500aa, #9a31bf, #b050d4, #c56ce9, #db87ff);
+  			background-image: linear-gradient(to bottom, #f9beff, #f3acfc, #ed9af9, #e687f5, #df74f2, #d365e8, #c655de, #ba45d4, #a736c1, #9427ae, #82179b, #700089);
+  			/*background-image: linear-gradient(to left bottom, #f9beff, #f3acfc, #ed9af9, #e687f5, #df74f2, #d365e8, #c655de, #ba45d4, #a736c1, #9427ae, #82179b, #700089);*/
   		}
 
   	</style>
@@ -95,7 +96,11 @@
 						/>
 						<button type="button" 
 								class="btn x-btn-blue btn-block mt-4 p-3" 
-								@click="emsignin()">
+								style="border-radius: 10px;" 
+								@click="emsignin()"
+								:class="{'non-edit' : adminicon.k != 'sign' }"
+							   	:disabled="adminicon.k != 'sign' "
+						>
 							<i class="fa fa-sign-in-alt" style="font-size: 2rem;"></i>
 							<br/>
 							ลงชื่อเข้าใช้
@@ -124,14 +129,14 @@
 			adminicon: {},
 			adminstyle : [
 				{
-					k: 'load',
-					icon:'fas fa-circle-notch fa-spin',
-					color: 'color: #ff6600;',
-				},
-				{
 					k: 'sign',
 					icon:'far fa-user-circle',
 					color: 'color: #0668E6;',
+				},
+				{
+					k: 'load',
+					icon:'fas fa-circle-notch fa-spin',
+					color: 'color: #ff6600;',
 				},
 				{
 					k: 'pass',
@@ -146,17 +151,17 @@
 					case 'em-sign' :
 						$('#'+modal_id).modal();
 						this.adminicon = this.adminstyle[0];
-						setTimeout(() => {
-							if(lcget('admindata')){
+						if(lcget('adminusername') && lcget('admindata')){
+							this.adminicon = this.adminstyle[1];
+							setTimeout(() => {
 								console.log("pass to get this admin username");
 								this.adminicon = this.adminstyle[2];
 								setTimeout(() => {
+									ssset('adminusername',lcget('adminusername'));
 									window.location = "<?php echo site_url('admin'); ?>";
 								},1000);
-							}else{
-								this.adminicon = this.adminstyle[1];
-							}
-						},2000);
+							},1000);
+						}
 							
 						break;
 					default:
@@ -250,6 +255,7 @@
 	            	if(res.success){
 	            		let admindetail = JSON.stringify(res.row);
 	            		ssset('adminusername',this.adminusername);
+	            		lcset('adminusername',this.adminusername);
 	            		lcset('admindata',admindetail);
 	            		Swal.fire({
 						  type: 'success',

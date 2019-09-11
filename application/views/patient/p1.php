@@ -13,7 +13,7 @@
         }
   		body {
   			/* min-height: 100%; */
-  			background-image: linear-gradient(to top, #8500aa, #9a31bf, #b050d4, #c56ce9, #db87ff);
+  			background-image: linear-gradient(to bottom, #f9beff, #f3acfc, #ed9af9, #e687f5, #df74f2, #d365e8, #c655de, #ba45d4, #a736c1, #9427ae, #82179b, #700089);
   			background-repeat: no-repeat;
   			background-attachment: fixed;
   			overflow: hidden;
