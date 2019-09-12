@@ -30,7 +30,7 @@ class Login extends CI_Controller {
 		$this->load->view('login/l1');
 	}
 
-	function emsignin(){
+	function usignin(){
 		$uid = $this->input->get('uid');
 		$pwd = $this->input->get('pwd');
 
@@ -39,19 +39,24 @@ class Login extends CI_Controller {
 		// 		->where('active <>','I');
 		// $qres = $this->db->get('user');
 		// $cnt = $qres->num_rows();
-		
+
 		$response = Requests::get(TUH_API.'Login?user='.$uid.'&password='.$pwd ,array() ,array());
 
 		$res = json_decode($response->body);
 		$r = json_decode($res->Result)[0];
 
 		if($res->MessageCode == 200){
-			echo json_encode(
-				array(
-					'success' => true
-					,'code' => 'pass'
-					,'row' => $r
-				));
+
+			$userindentify = $this->useridentify($r,'api');
+
+				echo json_encode(
+					array(
+						'success' => true
+						,'code' => 'pass'
+						,'row' => $r
+						,'userindentify' => $userindentify
+					));
+
 		}else{
 			echo json_encode(
 				array(
@@ -101,6 +106,33 @@ class Login extends CI_Controller {
 		echo '<br/>msg code => '.$res->MessageCode;
 		// echo '<br/> Staff Code => '.$r->STAFF_CODE;
 		// echo '<br/> Staff Name => '.$r->STAFF_NAME;
+	}
+
+	function useridentify($data,$from = false){
+		if($from){
+			switch ($from) {
+				case 'api':
+						$staffcode = $data->STAFF_CODE;
+					break;
+				
+				default:
+					# code...
+					break;
+			}
+		}
+
+		$res = $this->db->get_where('user',array(
+										'staffcode' => $staffcode
+										,'active' => 'A'
+										,'ustid' => '02'
+									));
+
+		if($res->num_rows() > 0){
+			return true;
+		}else{
+			return false;
+		}
+
 	}
 
 

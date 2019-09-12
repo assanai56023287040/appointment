@@ -38,7 +38,7 @@
 						ลงทะเบียน
 					</button>
 					<hr/>
-					<button class="btn btn-block x-btn-blue p-3" type="button" @click="actionmodal('em-sign')" style="border-radius: 10px;">
+					<button class="btn btn-block x-btn-blue p-3" type="button" @click="actionmodal('u-sign')" style="border-radius: 10px;">
 						<i class="fa fa-user-nurse m-3 align-middle" style="font-size: 2rem;"></i>
 						<br/>
 						สำหรับพนักงาน
@@ -50,8 +50,8 @@
 
 	<!-- ********************     modal zone     ******************** -->
 
-	<!-- em-sign modal id -->
-	<div id="em-sign" class="modal fade" data-backdrop="true" role="dialog">
+	<!-- u-sign modal id -->
+	<div id="u-sign" class="modal fade" data-backdrop="true" role="dialog">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
 				<!-- modal header -->
@@ -89,7 +89,7 @@
 							   id="adminpassword" 
 							   placeholder="รหัสผ่าน" 
 							   style="font-size: 1.5rem;" 
-							   @keyup.enter="emsignin()" 
+							   @keyup.enter="usignin()" 
 							   autocomplete="new-password" 
 							   :class="{'non-edit' : adminicon.k != 'sign' }"
 							   :disabled="adminicon.k != 'sign' "
@@ -97,7 +97,7 @@
 						<button type="button" 
 								class="btn x-btn-blue btn-block mt-4 p-3" 
 								style="border-radius: 10px;" 
-								@click="emsignin()"
+								@click="usignin()"
 								:class="{'non-edit' : adminicon.k != 'sign' }"
 							   	:disabled="adminicon.k != 'sign' "
 						>
@@ -114,8 +114,42 @@
 				</div>
 			</div>
 		</div> <!-- end of div modal dialog -->
-	</div> <!-- end of div modal em-sign -->
+	</div> <!-- end of div modal u-sign -->
 	
+
+		<!-- u-sign modal id -->
+	<div id="user-register" class="modal fade" data-backdrop="true" role="dialog">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<!-- modal header -->
+				<div class="modal-header">
+					<div class="row" style="min-width: 100%">
+						<div class="col-10 text-left font-weight-bold text-nowrap text-truncate d-inline-block">
+							ลงทะเบียนขอเข้าใช้งาน
+						</div>
+						<div class="col-2 text-right px-0">
+							<i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
+						</div>
+					</div>
+				</div>
+
+				<!-- modal body -->
+				<div class="modal-body">
+					<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">รหัส Staff : </p>
+                  	<input type="text" class="form-control non-edit" v-model="staffcode">
+                  	<p class="font-weight-bold mt-4 mb-0" style="font-size: 1rem">ชื่อผู้ใช้ : </p>
+                  	<input type="text" class="form-control non-edit" v-model="staffname">
+                  	<p class="font-weight-bold mt-4 mb-0" style="font-size: 1rem">เบอร์โทรศัพท์ติดต่อภายใน : </p>
+                  	<input type="text" class="form-control" v-model="tel">
+				</div>
+
+				<!-- modal footer -->
+				<div class="modal-footer">
+				</div>
+			</div>
+		</div> <!-- end of div modal dialog -->
+	</div> <!-- end of div modal u-sign -->
+
 </div> <!-- end of div container #app -->
 
 <?php $this->load->view('js/myjs'); ?>
@@ -124,8 +158,8 @@
 		el: '#app',
 		data: {
 			idcard: '1100600311926',
-			adminusername: '',
-			adminpassword: '',
+			adminusername: 'assanai',
+			adminpassword: '0853709109',
 			adminicon: {},
 			adminstyle : [
 				{
@@ -144,11 +178,14 @@
 					color: 'color: #00e600;',
 				},
 			],
+			staffcode: '',
+			staffname: '',
+			tel: '',
 		},
 		methods: {
 			actionmodal(modal_id){
 				switch(modal_id){
-					case 'em-sign' :
+					case 'u-sign' :
 						$('#'+modal_id).modal();
 						this.adminicon = this.adminstyle[0];
 						if(lcget('adminusername') && lcget('admindata')){
@@ -235,14 +272,14 @@
 				}
 				
 			},
-			emsignin(){
-				$('#em-sign').modal('hide');
+			usignin(){
+				$('#u-sign').modal('hide');
 				Swal.fire({
 	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
 	                allowOutsideClick: false,
 	            });
 	            Swal.showLoading();
-	            axios.get("<?php echo site_url('login/emsignin'); ?>",{
+	            axios.get("<?php echo site_url('login/usignin'); ?>",{
 	            	params : {
 	            		uid: this.adminusername
 	            		,pwd: this.adminpassword
@@ -253,31 +290,62 @@
 	            	res = res.data;
 
 	            	if(res.success){
-	            		let admindetail = JSON.stringify(res.row);
-	            		ssset('adminusername',this.adminusername);
-	            		lcset('adminusername',this.adminusername);
-	            		lcset('admindata',admindetail);
-	            		Swal.fire({
-						  type: 'success',
-						  title: 'เข้าสู่ระบบเสร็จสิ้น',
-						  text: 'กรุณารอสักครู่.....',
-						  confirmButtonText: '',
-						  timer: 2000,
-						  showConfirmButton: false,
-		                  allowOutsideClick: false,
-						}).then(() => {
-							window.location = "<?php echo site_url('admin'); ?>";
-						});
+
+	            		// res.userindentify will return as boolean type
+	            		if(res.userindentify){
+	            			let admindetail = JSON.stringify(res.row);
+		            		ssset('adminusername',this.adminusername);
+		            		lcset('adminusername',this.adminusername);
+		            		lcset('admindata',admindetail);
+		            		Swal.fire({
+							  type: 'success',
+							  title: 'เข้าสู่ระบบเสร็จสิ้น',
+							  text: 'กรุณารอสักครู่.....',
+							  confirmButtonText: '',
+							  timer: 2000,
+							  showConfirmButton: false,
+			                  allowOutsideClick: false,
+							}).then(() => {
+								window.location = "<?php echo site_url('admin'); ?>";
+							});
+	            		}else{
+            				this.newusercontrol(res.row);
+            				return false;
+	            		}
 	            	}else{
 	            		Swal.fire({
 						  type: 'error',
 						  title: 'ชื่อผู้ใช้ หรือ รหัสผ่านไม่ถูกต้อง!',
 						  confirmButtonText: 'ปิด'
 						}).then(() => {
-							$('#em-sign').modal();
+							$('#u-sign').modal();
 						});
 	            	}
 	            });
+			},
+			async newusercontrol(data){
+				let isregister = false;
+				await Swal.fire({
+          				title: 'ไม่พบข้อมูลการลงทะเบียนเข้าใช้งาน'
+						,text: "ต้องการลงทะเบียนขอเข้าใช้งานหรือไม่"
+						,type: 'question'
+						,showCancelButton: true
+						,confirmButtonColor: '#33cc33'
+						,confirmButtonText: 'ขอเข้าใช้งาน'
+						,cancelButtonColor: '#bfbfbf'
+						,cancelButtonText: 'ไม่'
+					}).then( res => {
+						if (res.value) {
+							 isregister = true;
+          				}
+	        		});
+
+	        		this.staffcode = data.STAFF_CODE;
+	        		this.staffname = data.STAFF_NAME;
+
+	        		if(isregister){
+	        			$('#user-register').modal();
+	        		}
 			},
 
 		},

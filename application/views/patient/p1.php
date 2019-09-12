@@ -166,7 +166,7 @@
 				</div>
 			</div>
 			<!-- chat and option zone -->
-			<div class="col-9 container text-center" style="display: flex;">
+			<div class="col-9 container text-center" style="display: flex;" id="chatzone">
 				<div class="m-0 p-0 w-100 h-100" style="display: flex;flex: 1;">
 					<div class="container-fluid mt-3 px-0" style="flex: 1;height: 75vh;background-color: #ffffcc;position: relative;padding-bottom: 60px;">
 						<div class="row m-0 p-0 sticky-top h-100" style="display: flex;flex-direction: column;">
@@ -594,6 +594,7 @@
 					,confirmButtonText: 'ออกจากระบบ'
 					,cancelButtonColor: '#bfbfbf'
 					,cancelButtonText: ' ไม่'
+					// ,toast: true
 				}).then((result) => {
 					if (result.value) {
 						Swal.fire({
@@ -760,6 +761,7 @@
 				Swal.fire({
 	                title: "กำลังโหลดข้อมูล Chat...",
 	                allowOutsideClick: false,
+	                // toast: true,
 	            });
 	            Swal.showLoading();
 	            await axios.get("<?php echo site_url("appointment/loadchat"); ?>",{
