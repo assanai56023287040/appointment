@@ -135,16 +135,27 @@
 
 				<!-- modal body -->
 				<div class="modal-body">
-					<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">รหัส Staff : </p>
+					<p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">รหัสพนักงาน : </p>
                   	<input type="text" class="form-control non-edit" v-model="staffcode">
-                  	<p class="font-weight-bold mt-4 mb-0" style="font-size: 1rem">ชื่อผู้ใช้ : </p>
+                  	<p class="font-weight-bold mt-4 mb-0" style="font-size: 1rem">ชื่อพนักงาน : </p>
                   	<input type="text" class="form-control non-edit" v-model="staffname">
                   	<p class="font-weight-bold mt-4 mb-0" style="font-size: 1rem">เบอร์โทรศัพท์ติดต่อภายใน : </p>
-                  	<input type="text" class="form-control" v-model="tel">
+                  	<input type="text" class="form-control" @keyup="telvalid = tel ? true : false" :class="telvalid ? '' : 'is-invalid'" v-model="tel">
+                  	<div class="alert alert-warning mt-4 mb-0" style="font-size: 1rem">
+                  		<strong>แจ้งเพื่อทราบ!</strong>
+						<br/>1 - ข้อมูล รหัสพนักงาน / ชื่อพนักงาน ถูกส่งจากระบบ e-Phis ไม่สามารถแก้ไขได้
+						<br/>2 - เบอร์ติดต่อภายใน คือเบอร์สำหรับพนักงานภายในโรงพยาบาลธรรมศาสตร์เท่านั้น
+						<br/>3 - ผู้ดูแลระบบจะติดต่อกลับไปในภายหลัง หลังจากได้รับทราบการขอลงทะเบียนเข้าใช้เว็บไซต์
+					</div>
 				</div>
 
 				<!-- modal footer -->
-				<div class="modal-footer">
+				<div class="modal-footer text-right">
+					<!-- new apm -->
+					<button class="btn x-btn-green p-3" style="border-radius: 10px;" @click="newuserregister()">
+						<i class="far fa-address-book align-middle" style="font-size: 2rem"></i>
+						<span class="align-middle ml-2" style="font-size: 1.4rem;">บันทึกการลงทะเบียน</span>
+					</button>
 				</div>
 			</div>
 		</div> <!-- end of div modal dialog -->
@@ -181,6 +192,7 @@
 			staffcode: '',
 			staffname: '',
 			tel: '',
+			telvalid : true,
 		},
 		methods: {
 			actionmodal(modal_id){
@@ -346,6 +358,32 @@
 	        		if(isregister){
 	        			$('#user-register').modal();
 	        		}
+			},
+			newuserregister(){
+				if(!this.tel)
+				{
+					this.telvalid = false;
+					return false;
+				}
+
+				Swal.fire({
+	                title: "กำลังบันทึกข้อมูลการขอลงทะเบียนเข้าใช้...",
+	                allowOutsideClick: false,
+	            });
+	            Swal.showLoading();
+	            let params = new URLSearchParams({
+					'apmid' : this.selapm.apmid,
+					'side' : 'p',
+					'msgtxt' : this.currmsg,
+					'msgdate' : d,
+					'msgtime' : t,
+				});
+
+	            axios.post("",params)
+	            	.then(res => {
+
+	            	});
+
 			},
 
 		},
