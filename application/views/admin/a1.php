@@ -340,6 +340,7 @@
           </section>
           <!-- /.container-fluid -->
 
+<<<<<<< Updated upstream
           <!-- start appointment page -->
           <section id="apmlist" v-show="currentpage.kw == 'apmlist'" style="display: none;">
             <div class="container-fluid px-3">
@@ -421,6 +422,57 @@
                       </tbody>
                     </table>
                   </div>
+=======
+          </div>
+        </section>
+        <!-- /.container-fluid -->
+
+        <!-- start appointment page -->
+        <section id="apmlist" v-show="currentpage.kw == 'apmlist'" style="display: none;">
+          <div class="container-fluid px-3">
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+              <!-- <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+              </div> -->
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>ลำดับ</th>
+                        <th>HN</th>
+                        <th>ชื่อ</th>
+                        <th>รายละเอียดอาการ</th>
+                        <th>วันที่ขอทำนัด</th>
+                        <th>เวลา</th>
+                        <th>สถานะ</th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th>ลำดับ</th>
+                        <th>HN</th>
+                        <th>ชื่อ</th>
+                        <th>รายละเอียดอาการ</th>
+                        <th>วันที่ขอทำนัด</th>
+                        <th>เวลา</th>
+                        <th>สถานะ</th>
+                      </tr>
+                    </tfoot>
+                    <tbody>
+                      <tr v-for="(r,i) in apms"  v-on:dblclick="clickcounter += 1, selectrow(i)">
+                        <td>{{ i+1 }}</td>
+                        <td>{{ r.hn }}</td>
+                        <td>{{ r.fname }}  {{ r.fname }}</td>
+                        <td>{{ r.sicktxt }}</td>
+                        <td>{{ r.apmdate }}</td>
+                        <td>{{ r.apmtime }}</td>
+                        <td>{{ r.stname }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+>>>>>>> Stashed changes
                 </div>
               </div>
             </div>
@@ -739,6 +791,7 @@
   var app = new Vue({
 		el: '#app',
 		data: {
+<<<<<<< Updated upstream
           clicks: 0,
           clickidx: null,
           clickcounter: null,
@@ -841,6 +894,46 @@
       },
       showHomePage(){
         this.homepage = true;
+=======
+      clickcounter: 0,
+			// for form search
+			skeyword: '',
+			sfdate: '',
+			stdate: '',
+			apmlist: [],
+      admindata: {},
+      currentpage: {},
+      pages: [
+        {
+          kw:'home',
+          txt:'หน้าหลัก',
+          iconclass:'fas fa-home'
+        },
+        {
+          kw:'apmlist',
+          txt:'รายการขอทำนัด',
+          iconclass:'far fa-list-alt'
+        },
+        {
+          kw:'dctschedule',
+          txt:'ตารางออกตรวจแพทย์',
+          iconclass:'far fa-calendar-alt'
+        },
+        {
+          kw:'report',
+          txt:'รายงาน',
+          iconclass:'far fa-folder-open'
+        },
+      ],
+      apms: [],
+		},
+		methods: {
+			onlyShowModal(modal_id){
+				$('#'+modal_id).modal();
+			},
+			showHomePage(){
+				this.homepage = true;
+>>>>>>> Stashed changes
         this.currentpage = this.pages.find(v => v.kw == 'home');
       },
       showLoginForm(){
@@ -983,10 +1076,14 @@
         switch(id){
           case 'home': break;
           case 'apmlist': 
+<<<<<<< Updated upstream
               this.apmsload();
               if(opt){
                 clearInterval(this.chatInterval);
               }
+=======
+              this.apmlistload();
+>>>>>>> Stashed changes
             break;
           case 'apmchat': break;
           case 'dctschedule': break;
@@ -994,6 +1091,7 @@
           default :
         }
       },
+<<<<<<< Updated upstream
       apmsload(){
         this.onapmsload = true;
         axios.get("<?php echo site_url('appointment/alllistload'); ?>",{
@@ -1265,6 +1363,22 @@
       },
       checkpermission(){
 
+=======
+      apmlistload(){
+        // $('#dataTable').DataTable().clear();
+        this.apms.push({
+                    hn: '11111',
+                    fname: 'assanai',
+                    lname: 'dangmin',
+                    sicktxt: 'xxx xxx xxx xxxxx xxx x x x x x',
+                    apmdate: '2019-08-29',
+                    apmtime: '15.00',
+                    stname: 'อะเคร',
+                  });
+>>>>>>> Stashed changes
+      },
+      selectrow(idx){
+        console.log("xxxxx test click at index "+idx+" xxxxx");
       },
 
     },
