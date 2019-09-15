@@ -120,6 +120,7 @@ class Login extends CI_Controller {
 					break;
 			}
 		}
+		$arr = array();
 
 		$res = $this->db->get_where('user',array(
 										'staffcode' => $staffcode
@@ -128,10 +129,23 @@ class Login extends CI_Controller {
 									));
 
 		if($res->num_rows() > 0){
-			return true;
+			$arr['identify'] = true;
 		}else{
-			return false;
+			$arr['identify'] = false;
+
+			$res2 = $this->db->get_where('user',array(
+										'staffcode' => $staffcode
+										,'active' => 'A'
+										,'ustid' => '01'
+									));
+			if($res2->num_rows() == 1){
+				$arr['failurecode'] = 'new_user_exist';
+			}else{
+				$arr['failurecode'] = 'new_user_register';
+			}
 		}
+
+		return $arr;
 
 	}
 

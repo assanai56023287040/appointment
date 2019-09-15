@@ -118,7 +118,7 @@
 	
 
 		<!-- u-sign modal id -->
-	<div id="user-register" class="modal fade" data-backdrop="true" role="dialog">
+	<div id="user-register" class="modal fade" data-backdrop="static" role="dialog">
 		<div class="modal-dialog modal-lg modal-dialog-centered">
 			<div class="modal-content">
 				<!-- modal header -->
@@ -304,7 +304,7 @@
 	            	if(res.success){
 
 	            		// res.userindentify will return as boolean type
-	            		if(res.userindentify){
+	            		if(res.userindentify.identify){
 	            			let admindetail = JSON.stringify(res.row);
 		            		ssset('adminusername',this.adminusername);
 		            		lcset('adminusername',this.adminusername);
@@ -321,7 +321,7 @@
 								window.location = "<?php echo site_url('admin'); ?>";
 							});
 	            		}else{
-            				this.newusercontrol(res.row);
+            				this.newusercontrol(res.row ,res.userindentify.failurecode);
             				return false;
 	            		}
 	            	}else{
@@ -335,29 +335,50 @@
 	            	}
 	            });
 			},
-			async newusercontrol(data){
+			async newusercontrol(data ,failurecode){
 				let isregister = false;
-				await Swal.fire({
-          				title: 'ไม่พบข้อมูลการลงทะเบียนเข้าใช้งาน'
-						,text: "ต้องการลงทะเบียนขอเข้าใช้งานหรือไม่"
-						,type: 'question'
-						,showCancelButton: true
-						,confirmButtonColor: '#33cc33'
-						,confirmButtonText: 'ขอเข้าใช้งาน'
-						,cancelButtonColor: '#bfbfbf'
-						,cancelButtonText: 'ไม่'
-					}).then( res => {
-						if (res.value) {
-							 isregister = true;
-          				}
-	        		});
 
-	        		this.staffcode = data.STAFF_CODE;
-	        		this.staffname = data.STAFF_NAME;
+				switch(failurecode){
+					case 'new_user_register' : 
 
-	        		if(isregister){
-	        			$('#user-register').modal();
-	        		}
+							await Swal.fire({
+		          				title: 'ไม่พบข้อมูลการลงทะเบียนเข้าใช้งาน'
+								,text: "ต้องการลงทะเบียนขอเข้าใช้งานหรือไม่"
+								,type: 'question'
+								,showCancelButton: true
+								,confirmButtonColor: '#33cc33'
+								,confirmButtonText: 'ขอเข้าใช้งาน'
+								,cancelButtonColor: '#bfbfbf'
+								,cancelButtonText: 'ไม่'
+							}).then( res => {
+								if (res.value) {
+									 isregister = true;
+		          				}
+			        		});
+
+			        		this.staffcode = data.STAFF_CODE;
+			        		this.staffname = data.STAFF_NAME;
+
+			        		if(isregister){
+			        			$('#user-register').modal();
+			        		}
+
+						break;
+
+					case 'new_user_exist' : 
+							Swal.fire({
+								type: 'warning'
+								,title: 'อยู่ในระหว่างดำเนินการอนุมัติ'
+								,text: "ตอนนี้ อยู่ในระหว่างตรวจสอบ และอนุมัติโดยผู้ดูแลระบบ เมื่อผู้ดูแลระบบอนุมัติแล้ว จะแจ้งกลับไปให้ทราบในภายหลัง"
+								,confirmButtonText: 'ปิด'
+							});
+						break;
+
+					default : 
+						break;
+				}
+
+				
 			},
 			newuserregister(){
 				if(!this.tel)
@@ -367,20 +388,39 @@
 				}
 
 				Swal.fire({
-	                title: "กำลังบันทึกข้อมูลการขอลงทะเบียนเข้าใช้...",
+	                title: "กำลังบันทึกข้อมูลลงทะเบียนขอเข้าใช้งาน...",
 	                allowOutsideClick: false,
 	            });
 	            Swal.showLoading();
 	            let params = new URLSearchParams({
-					'apmid' : this.selapm.apmid,
-					'side' : 'p',
-					'msgtxt' : this.currmsg,
-					'msgdate' : d,
-					'msgtime' : t,
+					'username' : this.adminusername,
+					'password' : this.adminpassword,
+					'staffcode' : this.staffcode,
+					'staffname' : this.staffname,
 				});
 
-	            axios.post("",params)
+	            axios.post("<?php echo site_url('admin/newuserregister'); ?>",params)
 	            	.then(res => {
+	            		Swal.close();
+	            		res = res.data;
+
+	            		if(res.success){
+	            			$('#user-register').modal('hide');
+	            			Swal.fire({
+									type: 'success',
+									title: 'บันทึกข้อมูลเรียบร้อยแล้ว!',
+									confirmButtonText: 'ปิด'
+								});
+	            		}else{
+	            			if(res.errcode == 'new_staff_exist'){
+	            				Swal.fire({
+									type: 'error',
+									title: 'ข้อมูลขอลงทะเบียนนี้ อยู่ระหว่างการอนุมัติ!',
+									text: 'ข้อมูลนี้ มีลงทะเบียนขอเข้าใช้งานแล้ว เมื่อผู้ดูแลระบบอนุมัติแล้ว จะแจ้งกลับไปให้ทราบ',
+									confirmButtonText: 'ปิด'
+								});
+	            			}
+	            		}
 
 	            	});
 

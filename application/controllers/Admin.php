@@ -24,33 +24,32 @@ class Admin extends CI_Controller {
 		$this->load->view('admin/a1'); 
 	}
 
-	function emSignin(){
-		$uid = $this->input->get('uid');
-		$pwd = $this->input->get('pwd');
-
-		$this->db->where('userid',$uid)
-				->where('password',$pwd)
-				->where('active <>','I');
-		$qres = $this->db->get('user');
-		$cnt = $qres->num_rows();
-		if($cnt == 1){
-			$res = array(
-				'success' => true
-				,'code' => 'pass'
-				,'row' => $qres->result_array()
-			);
-		}else if($cnt > 1){
-			$res = array(
-				'success' => false
-				,'code' => 'moreOne'
-			);
+	function newuserregister(){
+		$ex = $this->db->get_where('user',array(
+											'staffcode' => $this->input->post('staffcode')
+											,'active' => 'A'
+											,'ustid' => '01'
+										));
+		if($ex->num_rows() == 1){
+			echo json_encode(array(
+								'success' => false
+								,'errcode' => 'new_staff_exist'
+							));
 		}else{
-			$res = array(
-				'success' => false
-				,'code' => 'notPass'
-			);
+			$this->db->insert('user',array(
+								'username' => $this->input->post('username')	
+								,'password' => $this->input->post('password')
+								,'staffcode' => $this->input->post('staffcode')
+								,'staffname' => $this->input->post('staffname')
+								,'ustid' => '01'
+								,'active' => 'A'
+								,'lastlogin' => date("Y-m-d H:i:s")
+							));
+			echo json_encode(
+				array(
+					'success' => true
+				));
 		}
-
-		echo json_encode($res);
+			
 	}
 }

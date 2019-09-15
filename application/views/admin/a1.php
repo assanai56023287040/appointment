@@ -9,16 +9,16 @@
    <?php 
       $this->load->view('css/admincss');
    ?>
-  	<!-- <style type="text/css">
+    <!-- <style type="text/css">
         html{
             height: 100%;
         }
-  		body {
-  			/* min-height: 100%; */
-  			background-image: linear-gradient(to bottom, #e9e9e9, #e6e6e6, #e2e2e2, #dfdfdf, #dcdcdc, #d6d6d6, #d0d0d0, #cacaca, #c0c0c0, #b5b5b5, #ababab, #a1a1a1);
-  		}
+      body {
+        /* min-height: 100%; */
+        background-image: linear-gradient(to bottom, #e9e9e9, #e6e6e6, #e2e2e2, #dfdfdf, #dcdcdc, #d6d6d6, #d0d0d0, #cacaca, #c0c0c0, #b5b5b5, #ababab, #a1a1a1);
+      }
 
-  	</style> -->
+    </style> -->
     
 </head>
 <body id="page-top" class="admin-page">
@@ -340,7 +340,6 @@
           </section>
           <!-- /.container-fluid -->
 
-<<<<<<< Updated upstream
           <!-- start appointment page -->
           <section id="apmlist" v-show="currentpage.kw == 'apmlist'" style="display: none;">
             <div class="container-fluid px-3">
@@ -422,57 +421,6 @@
                       </tbody>
                     </table>
                   </div>
-=======
-          </div>
-        </section>
-        <!-- /.container-fluid -->
-
-        <!-- start appointment page -->
-        <section id="apmlist" v-show="currentpage.kw == 'apmlist'" style="display: none;">
-          <div class="container-fluid px-3">
-            <!-- DataTales Example -->
-            <div class="card shadow mb-4">
-              <!-- <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-              </div> -->
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-striped table-hover" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                      <tr>
-                        <th>ลำดับ</th>
-                        <th>HN</th>
-                        <th>ชื่อ</th>
-                        <th>รายละเอียดอาการ</th>
-                        <th>วันที่ขอทำนัด</th>
-                        <th>เวลา</th>
-                        <th>สถานะ</th>
-                      </tr>
-                    </thead>
-                    <tfoot>
-                      <tr>
-                        <th>ลำดับ</th>
-                        <th>HN</th>
-                        <th>ชื่อ</th>
-                        <th>รายละเอียดอาการ</th>
-                        <th>วันที่ขอทำนัด</th>
-                        <th>เวลา</th>
-                        <th>สถานะ</th>
-                      </tr>
-                    </tfoot>
-                    <tbody>
-                      <tr v-for="(r,i) in apms"  v-on:dblclick="clickcounter += 1, selectrow(i)">
-                        <td>{{ i+1 }}</td>
-                        <td>{{ r.hn }}</td>
-                        <td>{{ r.fname }}  {{ r.fname }}</td>
-                        <td>{{ r.sicktxt }}</td>
-                        <td>{{ r.apmdate }}</td>
-                        <td>{{ r.apmtime }}</td>
-                        <td>{{ r.stname }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
->>>>>>> Stashed changes
                 </div>
               </div>
             </div>
@@ -783,24 +731,23 @@
 
 
   <?php
-  	// $this->load->view('js/myjs');
+    // $this->load->view('js/myjs');
   $this->load->view('js/adminjs');
   ?>
   <script type="text/javascript">
 
   var app = new Vue({
-		el: '#app',
-		data: {
-<<<<<<< Updated upstream
+    el: '#app',
+    data: {
           clicks: 0,
           clickidx: null,
           clickcounter: null,
           selrow: null,
           selapm: {},
-    			// for form search
-    			skeyword: '',
-    			sfdate: '',
-    			stdate: '',
+          // for form search
+          skeyword: '',
+          sfdate: '',
+          stdate: '',
           sstatus: '',
           apmlist: [],
           admindata: {},
@@ -894,46 +841,6 @@
       },
       showHomePage(){
         this.homepage = true;
-=======
-      clickcounter: 0,
-			// for form search
-			skeyword: '',
-			sfdate: '',
-			stdate: '',
-			apmlist: [],
-      admindata: {},
-      currentpage: {},
-      pages: [
-        {
-          kw:'home',
-          txt:'หน้าหลัก',
-          iconclass:'fas fa-home'
-        },
-        {
-          kw:'apmlist',
-          txt:'รายการขอทำนัด',
-          iconclass:'far fa-list-alt'
-        },
-        {
-          kw:'dctschedule',
-          txt:'ตารางออกตรวจแพทย์',
-          iconclass:'far fa-calendar-alt'
-        },
-        {
-          kw:'report',
-          txt:'รายงาน',
-          iconclass:'far fa-folder-open'
-        },
-      ],
-      apms: [],
-		},
-		methods: {
-			onlyShowModal(modal_id){
-				$('#'+modal_id).modal();
-			},
-			showHomePage(){
-				this.homepage = true;
->>>>>>> Stashed changes
         this.currentpage = this.pages.find(v => v.kw == 'home');
       },
       showLoginForm(){
@@ -956,7 +863,7 @@
         $('#em-sign').modal('hide');
         Swal.fire({
           title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
-          allowOutsideClick: false,	
+          allowOutsideClick: false, 
         });
         Swal.showLoading();
         axios.get("<?php echo site_url('login/emSignin'); ?>",{
@@ -993,16 +900,16 @@
       logout(){
         Swal.fire({
           title: 'ยืนยันการออกจากระบบ?'
-					// text: "You won't be able to revert this!",
-					,type: 'warning'
-					,showCancelButton: true
-					,confirmButtonColor: '#dd3333'
-					,confirmButtonText: 'ออกจากระบบ'
-					,cancelButtonColor: '#bfbfbf'
-					,cancelButtonText: ' ไม่'
-				}).then((result) => {
-					if (result.value) {
-						Swal.fire({
+          // text: "You won't be able to revert this!",
+          ,type: 'warning'
+          ,showCancelButton: true
+          ,confirmButtonColor: '#dd3333'
+          ,confirmButtonText: 'ออกจากระบบ'
+          ,cancelButtonColor: '#bfbfbf'
+          ,cancelButtonText: ' ไม่'
+        }).then((result) => {
+          if (result.value) {
+            Swal.fire({
               type: 'success'
               ,title: 'ออกจากระบบเรียบร้อย!'
               ,text: 'กรุณารอสักครู่...'
@@ -1017,55 +924,55 @@
             });
           }
         });
-			},
-			activeEvent(){
+      },
+      activeEvent(){
         "use strict"; // Start of use strict
 
-				// Toggle the side navigation
-				$("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
-					$("body").toggleClass("sidebar-toggled");
-					$(".sidebar").toggleClass("toggled");
-					if ($(".sidebar").hasClass("toggled")) {
+        // Toggle the side navigation
+        $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
+          $("body").toggleClass("sidebar-toggled");
+          $(".sidebar").toggleClass("toggled");
+          if ($(".sidebar").hasClass("toggled")) {
             $('.sidebar .collapse').collapse('hide');
           };
         });
 
-				// Close any open menu accordions when window is resized below 768px
-				$(window).resize(function() {
-					if ($(window).width() < 768) {
+        // Close any open menu accordions when window is resized below 768px
+        $(window).resize(function() {
+          if ($(window).width() < 768) {
             $('.sidebar .collapse').collapse('hide');
           }
         });
 
-				// Prevent the content wrapper from scrolling when the fixed side navigation hovered over
-				$('body.fixed-nav .sidebar').on('mousewheel DOMMouseScroll wheel', function(e) {
-					if ($(window).width() > 768) {
-						var e0 = e.originalEvent,
-						delta = e0.wheelDelta || -e0.detail;
-						this.scrollTop += (delta < 0 ? 1 : -1) * 30;
-						e.preventDefault();
-					}
-				});
+        // Prevent the content wrapper from scrolling when the fixed side navigation hovered over
+        $('body.fixed-nav .sidebar').on('mousewheel DOMMouseScroll wheel', function(e) {
+          if ($(window).width() > 768) {
+            var e0 = e.originalEvent,
+            delta = e0.wheelDelta || -e0.detail;
+            this.scrollTop += (delta < 0 ? 1 : -1) * 30;
+            e.preventDefault();
+          }
+        });
 
-				// Scroll to top button appear
-				$(document).on('scroll', function() {
-					var scrollDistance = $(this).scrollTop();
-					if (scrollDistance > 100) {
+        // Scroll to top button appear
+        $(document).on('scroll', function() {
+          var scrollDistance = $(this).scrollTop();
+          if (scrollDistance > 100) {
             $('.scroll-to-top').fadeIn();
           } else {
             $('.scroll-to-top').fadeOut();
           }
         });
 
-				// Smooth scrolling using jQuery easing
-				$(document).on('click', 'a.scroll-to-top', function(e) {
-					var $anchor = $(this);
-					$('html, body').stop().animate({
+        // Smooth scrolling using jQuery easing
+        $(document).on('click', 'a.scroll-to-top', function(e) {
+          var $anchor = $(this);
+          $('html, body').stop().animate({
             scrollTop: ($($anchor.attr('href')).offset().top)
           }, 1000, 'easeInOutExpo');
-					e.preventDefault();
-				});
-			},
+          e.preventDefault();
+        });
+      },
       // activeDataTable(){
       //   $('#dataTable').DataTable();
       // },
@@ -1076,14 +983,10 @@
         switch(id){
           case 'home': break;
           case 'apmlist': 
-<<<<<<< Updated upstream
               this.apmsload();
               if(opt){
                 clearInterval(this.chatInterval);
               }
-=======
-              this.apmlistload();
->>>>>>> Stashed changes
             break;
           case 'apmchat': break;
           case 'dctschedule': break;
@@ -1091,7 +994,6 @@
           default :
         }
       },
-<<<<<<< Updated upstream
       apmsload(){
         this.onapmsload = true;
         axios.get("<?php echo site_url('appointment/alllistload'); ?>",{
@@ -1363,22 +1265,6 @@
       },
       checkpermission(){
 
-=======
-      apmlistload(){
-        // $('#dataTable').DataTable().clear();
-        this.apms.push({
-                    hn: '11111',
-                    fname: 'assanai',
-                    lname: 'dangmin',
-                    sicktxt: 'xxx xxx xxx xxxxx xxx x x x x x',
-                    apmdate: '2019-08-29',
-                    apmtime: '15.00',
-                    stname: 'อะเคร',
-                  });
->>>>>>> Stashed changes
-      },
-      selectrow(idx){
-        console.log("xxxxx test click at index "+idx+" xxxxx");
       },
 
     },
@@ -1438,13 +1324,13 @@
         this.sessioncheck();
       },
     },
-		// created () {
-		// 	document.addEventListener("backbutton", this.showLoginForm(), false);
-		// },
-		// beforeDestroy () {
-		// 	document.removeEventListener("backbutton", this.showLoginForm());
-		// }
-	});
+    // created () {
+    //  document.addEventListener("backbutton", this.showLoginForm(), false);
+    // },
+    // beforeDestroy () {
+    //  document.removeEventListener("backbutton", this.showLoginForm());
+    // }
+  });
   </script>
 </body>
 </html>
