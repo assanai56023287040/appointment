@@ -90,6 +90,20 @@
 
         <hr class="sidebar-divider">
 
+        <!-- Heading -->
+        <div class="sidebar-heading">
+          ตั้งค่า
+        </div>
+
+        <li class="nav-item" :class="{'active' : currentpage.kw == 'usermaster'}">
+          <a class="nav-link" @click="changepage('usermaster')">
+            <i class="fas fa-users-cog"></i>
+            <span>ข้อมูลผู้ใช้</span>
+          </a>
+        </li>
+
+        <hr class="sidebar-divider">
+
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
           <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -251,10 +265,6 @@
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     ข้อมูลส่วนตัว
                   </a>
-                  <a class="dropdown-item" href="#">
-                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                    ตั้งค่า
-                  </a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" @click="logout()">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -336,6 +346,30 @@
 
               </div>
 
+              <div class="row mt-4">
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                  <div class="card border-left-info shadow h-100 py-2 shadow-info" @click="changepage('usermaster')">
+                    <div class="card-body">
+                      <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                          <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                              <!-- <div class="text-xs font-weight-bold text-gray-800 text-uppercase mb-1">Tasks</div> -->
+                              <div class="h5 mb-0 mr-3 font-weight-bold text-info">ข้อมูลผู้ใช้</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-auto">
+                          <i class="fas fa-users-cog fa-2x text-gray-300"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
           </section>
           <!-- /.container-fluid -->
@@ -409,7 +443,7 @@
                         </tr>
                       </tfoot>
                       <tbody>
-                        <tr v-for="(r,i) in apms" @click="selectrowdetect($event,i)" :class="{ 'selrow' : selrow == i }">
+                        <tr v-for="(r,i) in apms" @click="apmlistselectrowdetect($event,i)" :class="{ 'selrow' : apmselrow == i }">
                           <td>{{ i+1 }}</td>
                           <td>{{ r.hn }}</td>
                           <td>{{ r.fname }}  {{ r.lname }}</td>
@@ -517,6 +551,94 @@
             </div> <!-- end of big div container fluid -->
           </section>
 
+          <section id="usermaster" v-show="currentpage.kw == 'usermaster'" style="display: none;">
+            <div class="container-fluid px-3">
+                <!-- DataTales Example -->
+              <div class="card shadow mb-4">
+                <!-- <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                </div> -->
+                <div class="card-body">
+                  <div class="row mb-3 justify-content-md-start align-items-end">
+                    <div class="col-2">
+                      <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ค้นหา : </p>
+                      <input type="text" class="form-control" v-model="skeyword" @keyup.enter="apmsload()">
+                    </div>
+                    <div class="col-2">
+                      <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สถานะ : </p>
+                      <select id="sstatus" class="w-100">
+                        <option v-for="(s , idx) in stlist" :value="s.stid">[ {{ s.stid }} ] {{ s.stname }}</option>
+                      </select>
+                    </div>
+                    <div class="col-2">
+                      <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">จากวันที่ : </p>
+                      <input type="text" class="form-control datepicker" id="sfdate" v-model="sfdate" autocomplete="off">
+                    </div>
+                    <div class="col-2">
+                      <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
+                      <input type="text" class="form-control datepicker" id="stdate" v-model="stdate" autocomplete="off">
+                    </div>
+                    <!-- col button -->
+                    <div class="col-auto text-center">
+                      <button class="btn x-btn-blue" style="border-radius: 10px;" 
+                              @click="apmsload()"
+                              :class="{'non-edit' : onapmsload}"
+                              :disabled="onapmsload"
+                      >
+                        <i class="align-middle" style="font-size: 1.8rem;" :class="onapmsload ? 'fas fa-circle-notch fa-spin' : 'fas fa-search'"></i>
+                        <span class="align-middle mx-2" style="font-size: 1rem;">{{ onapmsload ? 'กำลังค้นหา' : 'ค้นหา' }}</span>
+                      </button>
+                      <button class="btn x-btn-red" style="border-radius: 10px;" @click="clearform('searchform')">
+                        <i class="far fa-times-circle align-middle" style="font-size: 1.8rem"></i>
+                        <span class="align-middle mx-2" style="font-size: 1rem;">ล้าง</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-striped table-hover-info" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>ลำดับ</th>
+                          <th>Staff code</th>
+                          <th>ชื่อ</th>
+                          <th>รายละเอียดอาการ</th>
+                          <th>บันทีกโดย</th>
+                          <th>บันทีกล่าสุด</th>
+                          <th>อนุมัติโดย</th>
+                          <th>อนุมัติล่าสุด</th>
+                        </tr>
+                      </thead>
+                      <tfoot>
+                        <tr>
+                          <th>ลำดับ</th>
+                          <th>Staff code</th>
+                          <th>ชื่อ</th>
+                          <th>รายละเอียดอาการ</th>
+                          <th>บันทีกโดย</th>
+                          <th>บันทีกล่าสุด</th>
+                          <th>อนุมัติโดย</th>
+                          <th>อนุมัติล่าสุด</th>
+                        </tr>
+                      </tfoot>
+                      <tbody>
+                        <tr v-for="(r,i) in users" @click="usermasterselectrowdetect($event,i)" :class="{ 'selrow' : userselrow == i }">
+                          <td>{{ i+1 }}</td>
+                          <td>{{ r.hn }}</td>
+                          <td>{{ r.fname }}  {{ r.lname }}</td>
+                          <td>{{ r.sicktxt }}</td>
+                          <td>{{ r.apmdate | thdate }}</td>
+                          <td>{{ r.apmtime | timewithzero }}</td>
+                          <td>{{ r.stname }}</td>
+                          <td>{{ r.stname }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
 
         </div>
         <!-- End of Main Content -->
@@ -541,6 +663,13 @@
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
+
+
+    <!-- *********************************************************************************************************************** -->
+    <!-- *********************************************************************************************************************** -->
+    <!-- ***********************************************  Modal Zone  ********************************************************** -->
+    <!-- *********************************************************************************************************************** -->
+    <!-- *********************************************************************************************************************** -->
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -742,7 +871,8 @@
           clicks: 0,
           clickidx: null,
           clickcounter: null,
-          selrow: null,
+          apmselrow: null,
+          userselrow: null,
           selapm: {},
           // for form search
           skeyword: '',
@@ -778,14 +908,21 @@
               txt:'รายการขอทำนัด > CHAT',
               iconclass:'far fa-list-alt'
             },
+            {
+              kw:'usermaster',
+              txt:'ข้อมูลผู้ใช้',
+              iconclass:'fas fa-users-cog'
+            },
           ],
           apms: [],
-          listInterval: null, // interval for show bagde message in chat list
-          chatInterval: null, // for update message in chat page
+          users: [],
+          listinterval: null, // interval for show bagde message in chat list
+          chatinterval: null, // for update message in chat page
           currmsg: "",
           messages: [],
           offsetchat: 0,
           onapmsload: false,
+          onusersload: false,
           stlist: [],
           ptdata: {},
           ptapm: {},
@@ -985,18 +1122,21 @@
           case 'apmlist': 
               this.apmsload();
               if(opt){
-                clearInterval(this.chatInterval);
+                clearInterval(this.chatinterval);
               }
             break;
           case 'apmchat': break;
           case 'dctschedule': break;
           case 'report': break;
+          case 'usermaster': 
+              this.usersload();
+            break;
           default :
         }
       },
       apmsload(){
         this.onapmsload = true;
-        axios.get("<?php echo site_url('appointment/alllistload'); ?>",{
+        axios.get("<?php echo site_url('appointment/apmsload'); ?>",{
           params : {
             kw: this.skeyword,
             st: this.sstatus,
@@ -1013,16 +1153,16 @@
           // });
         });
       },
-      selectrowdetect(event,idx){
+      apmlistselectrowdetect(event,idx){
         this.clicks++ 
         if(this.clicks === 1 || idx != this.clickidx) {
-          this.selrow = idx;
+          this.apmselrow = idx;
           this.clickidx = idx;
           this.clickcounter = setTimeout(() => {
             this.clicks = 0
           }, 400);
         } else if(this.clicks === 2 && idx == this.clickidx) {
-          this.selrow = idx;
+          this.apmselrow = idx;
           clearTimeout(this.clickcounter);
           this.clicks = 0;
           this.openchat(idx);
@@ -1083,7 +1223,7 @@
         });
       },
       inquirychat(){
-        this.chatInterval = setInterval(() => {
+        this.chatinterval = setInterval(() => {
           axios.get("<?php echo site_url("appointment/inquirychat"); ?>",{
             params : {
               apmid : this.selapm.apmid,
@@ -1103,7 +1243,7 @@
       },
       createmsg(){
         if(!this.currmsg){return false;}
-        clearInterval(this.chatInterval);
+        clearInterval(this.chatinterval);
         let dt = new Date();
         let d = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
         let t = dt.getHours() + ':' + dt.getMinutes().toString().padStart(2,0); // + ":" + dt.getSeconds()
@@ -1265,6 +1405,40 @@
       },
       checkpermission(){
 
+      },
+      usersload(){
+        this.onusersload = true;
+        axios.get("<?php echo site_url('admin/usersload'); ?>",{
+          params : {
+            kw: this.skeyword,
+            st: this.sstatus,
+            fdate: this.dateformysql(this.sfdate),
+            tdate: this.dateformysql(this.stdate),
+          }
+        })
+        .then(res => {
+          this.users = [];
+          this.onusersload = false;
+          this.users = res.data.row;
+          // this.apms.forEach((item,idx) =>{
+          //   item.apmdate = this.dateforth(item.apmdate);
+          // });
+        });
+      },
+      usermasterselectrowdetect(event,idx){
+        this.clicks++ 
+        if(this.clicks === 1 || idx != this.clickidx) {
+          this.userselrow = idx;
+          this.clickidx = idx;
+          this.clickcounter = setTimeout(() => {
+            this.clicks = 0
+          }, 400);
+        } else if(this.clicks === 2 && idx == this.clickidx) {
+          this.userselrow = idx;
+          clearTimeout(this.clickcounter);
+          this.clicks = 0;
+          this.openchat(idx);
+        }
       },
 
     },

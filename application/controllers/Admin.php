@@ -49,7 +49,7 @@ class Admin extends CI_Controller {
 				array(
 					'success' => true
 				));
-		}
-			
+		}	
 	}
+
 }

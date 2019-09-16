@@ -269,3 +269,14 @@ body.admin-page {
   background: #93a9eb !important;
   color: white !important;
 }
+
+
+.table-hover-info > tbody > tr.selrow {
+  background: #288b9a !important; /*#4e73df*/
+  color: white !important;
+}
+
+.table-hover-info > tbody > tr:hover {
+  background: #36b8cb !important;/*#93a9eb*/ 
+  color: white !important;
+}

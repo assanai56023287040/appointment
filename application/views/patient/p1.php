@@ -50,7 +50,7 @@
 				<i class="far fa-user-circle m-2" style="font-size: 2rem;"></i>
 			</button>
 			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ" data-content="กลับสู่หน้าลงทะเบียน" data-toggle="popover" data-trigger="hover" data-placement="bottom">
-				<i class="fa fa-angle-double-right m-2" style="font-size: 2rem;"></i>
+				<i class="fas fa-power-off m-2" style="font-size: 2rem;"></i>
 			</button>
 		</div>
 	</div>
