@@ -369,20 +369,4 @@ class Appointment extends CI_Controller {
 		
 	}
 
-	function usersload(){
-		$kw = $this->input->get('kw');
-		$st = $this->input->get('st');
-		$fdate = $this->input->get('fdate');
-		$tdate = $this->input->get('tdate');
-
-		$this->db->select("",false)
-				->from('user')
-				->;
-
-		echo json_encode(array(
-			'success' => true
-			,'row' => $res
-		));
-	}
-
 }

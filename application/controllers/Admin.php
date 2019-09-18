@@ -41,6 +41,7 @@ class Admin extends CI_Controller {
 								,'password' => $this->input->post('password')
 								,'staffcode' => $this->input->post('staffcode')
 								,'staffname' => $this->input->post('staffname')
+								,'tel' => $this->input->post('tel')
 								,'ustid' => '01'
 								,'active' => 'A'
 								,'lastlogin' => date("Y-m-d H:i:s")
@@ -50,6 +51,78 @@ class Admin extends CI_Controller {
 					'success' => true
 				));
 		}	
+	}
+
+
+	function usersstatusload(){
+
+		$st = $this->db->order_by('ustid','asc')->get('userst');
+
+		if($st->num_rows() > 0){ //$res->MessageCode == 200
+			echo json_encode(array(
+					'success' => true
+					,'row' => $st->result_array()
+				));
+		}else{
+			echo json_encode(array(
+					'success' => false
+				));
+		}
+
+	}
+
+	function usersload(){
+		$kw = $this->input->get('kw');
+		$st = $this->input->get('st');
+		$fdate = $this->input->get('fdate');
+		$tdate = $this->input->get('tdate');
+
+		$this->db->select("u.usid
+						,u.username
+						,u.staffcode
+						,u.staffname
+						,u.tel
+						,u.updateby
+						,u.updatedt
+						,u.approveby
+						,u.approvedt
+						,s.stname",false)
+				->from('user u')
+				->join('userst s','u.ustid = s.ustid','left')
+				->where('u.active <> ','I');
+
+		if(!empty($kw)){
+			$this->db->where("CONCAT(IFNULL(u.username,'')
+								,IFNULL(u.staffcode,'')
+								,IFNULL(u.staffname,'')
+								,IFNULL(u.tel,'')
+								,IFNULL(s.stname,'')
+							) LIKE '%{$kw}%'");
+		}
+
+		if(!empty($fdate) && !empty($tdate)){
+			$this->db->where("(DATE(u.updatedt) BETWEEN '{$fdate}' AND '{$tdate}' OR DATE(u.approvedt) BETWEEN '{$fdate}' AND '{$tdate}')");
+		}else if(!empty($fdate) && empty($tdate)){
+			$this->db->where("(DATE(u.updatedt) OR DATE(u.approvedt)= '{$fdate}')");
+		}else if(empty($fdate) && !empty($tdate)){
+			$this->db->where("(DATE(u.updatedt) OR DATE(u.approvedt)= '{$tdate}')");
+		}
+
+		if(!empty($st)){
+			$this->db->where('u.ustid',$st);
+		}
+		$this->db->order_by('u.ustid','asc');
+
+		$res = $this->db->get();
+
+		log_info($this->db->last_query());
+
+		$res = $res->result_array();
+
+		echo json_encode(array(
+			'success' => true
+			,'row' => $res
+		));
 	}
 
 }

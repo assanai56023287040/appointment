@@ -562,33 +562,33 @@
                   <div class="row mb-3 justify-content-md-start align-items-end">
                     <div class="col-2">
                       <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ค้นหา : </p>
-                      <input type="text" class="form-control" v-model="skeyword" @keyup.enter="apmsload()">
+                      <input type="text" class="form-control" v-model="ukeyword" @keyup.enter="usersload()">
                     </div>
                     <div class="col-2">
                       <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สถานะ : </p>
-                      <select id="sstatus" class="w-100">
-                        <option v-for="(s , idx) in stlist" :value="s.stid">[ {{ s.stid }} ] {{ s.stname }}</option>
+                      <select id="ustatus" class="w-100">
+                        <option v-for="(s , idx) in ustlist" :value="s.ustid">[ {{ s.ustid }} ] {{ s.stname }}</option>
                       </select>
                     </div>
                     <div class="col-2">
                       <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">จากวันที่ : </p>
-                      <input type="text" class="form-control datepicker" id="sfdate" v-model="sfdate" autocomplete="off">
+                      <input type="text" class="form-control datepicker" id="ufdate" v-model="ufdate" autocomplete="off">
                     </div>
                     <div class="col-2">
                       <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ถึงวันที่ : </p>
-                      <input type="text" class="form-control datepicker" id="stdate" v-model="stdate" autocomplete="off">
+                      <input type="text" class="form-control datepicker" id="utdate" v-model="utdate" autocomplete="off">
                     </div>
                     <!-- col button -->
                     <div class="col-auto text-center">
                       <button class="btn x-btn-blue" style="border-radius: 10px;" 
-                              @click="apmsload()"
-                              :class="{'non-edit' : onapmsload}"
-                              :disabled="onapmsload"
+                              @click="usersload()"
+                              :class="{'non-edit' : onusersload}"
+                              :disabled="onusersload"
                       >
-                        <i class="align-middle" style="font-size: 1.8rem;" :class="onapmsload ? 'fas fa-circle-notch fa-spin' : 'fas fa-search'"></i>
-                        <span class="align-middle mx-2" style="font-size: 1rem;">{{ onapmsload ? 'กำลังค้นหา' : 'ค้นหา' }}</span>
+                        <i class="align-middle" style="font-size: 1.8rem;" :class="onusersload ? 'fas fa-circle-notch fa-spin' : 'fas fa-search'"></i>
+                        <span class="align-middle mx-2" style="font-size: 1rem;">{{ onusersload ? 'กำลังค้นหา' : 'ค้นหา' }}</span>
                       </button>
-                      <button class="btn x-btn-red" style="border-radius: 10px;" @click="clearform('searchform')">
+                      <button class="btn x-btn-red" style="border-radius: 10px;" @click="clearform('userssearchform')">
                         <i class="far fa-times-circle align-middle" style="font-size: 1.8rem"></i>
                         <span class="align-middle mx-2" style="font-size: 1rem;">ล้าง</span>
                       </button>
@@ -600,8 +600,10 @@
                         <tr>
                           <th>ลำดับ</th>
                           <th>Staff code</th>
+                          <th>Username</th>
                           <th>ชื่อ</th>
-                          <th>รายละเอียดอาการ</th>
+                          <th>โทร</th>
+                          <th>สถานะ</th>
                           <th>บันทีกโดย</th>
                           <th>บันทีกล่าสุด</th>
                           <th>อนุมัติโดย</th>
@@ -612,8 +614,10 @@
                         <tr>
                           <th>ลำดับ</th>
                           <th>Staff code</th>
+                          <th>Username</th>
                           <th>ชื่อ</th>
-                          <th>รายละเอียดอาการ</th>
+                          <th>โทร</th>
+                          <th>สถานะ</th>
                           <th>บันทีกโดย</th>
                           <th>บันทีกล่าสุด</th>
                           <th>อนุมัติโดย</th>
@@ -621,15 +625,17 @@
                         </tr>
                       </tfoot>
                       <tbody>
-                        <tr v-for="(r,i) in users" @click="usermasterselectrowdetect($event,i)" :class="{ 'selrow' : userselrow == i }">
+                        <tr v-for="(r,i) in users" @click="usersselectrowdetect($event,i)" :class="{ 'selrow' : userselrow == i }">
                           <td>{{ i+1 }}</td>
-                          <td>{{ r.hn }}</td>
-                          <td>{{ r.fname }}  {{ r.lname }}</td>
-                          <td>{{ r.sicktxt }}</td>
-                          <td>{{ r.apmdate | thdate }}</td>
-                          <td>{{ r.apmtime | timewithzero }}</td>
+                          <td>{{ r.staffcode }}</td>
+                          <td>{{ r.username }}</td>
+                          <td>{{ r.staffname }}</td>
+                          <td>{{ r.tel }}</td>
                           <td>{{ r.stname }}</td>
-                          <td>{{ r.stname }}</td>
+                          <td>{{ r.updateby }}</td>
+                          <td>{{ r.updatedt }}</td>
+                          <td>{{ r.approveby }}</td>
+                          <td>{{ r.approvedt }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -671,25 +677,6 @@
     <!-- *********************************************************************************************************************** -->
     <!-- *********************************************************************************************************************** -->
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-          </div>
-          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-          <div class="modal-footer">
-            <button class="btn btn-secondary" type="button" data-dismiss="modal" >Cancel</button>
-            <button class="btn btn-primary" type="button" @click="logout()">Logout</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- patient-profile modal id -->
     <div id="patient-profile" class="modal fade" data-backdrop="true" role="dialog">
       <div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
@@ -698,7 +685,7 @@
           <div class="modal-header">
             <div class="row" style="min-width: 100%">
               <div class="col-6 text-left font-weight-bold">
-                รายละเอียดข้อมูลผู้ใช้
+                รายละเอียดข้อมูลคนไข้
               </div>
               <div class="col-6 text-right px-0">
                 <i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
@@ -855,6 +842,44 @@
       </div> <!-- end of div modal dialog -->
     </div> <!-- end of div modal edit-appointment -->
 
+        <!-- patient-profile modal id -->
+    <div id="edit-user" class="modal fade" data-backdrop="true" role="dialog">
+      <div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
+        <div class="modal-content">
+          <!-- modal header -->
+          <div class="modal-header">
+            <div class="row" style="min-width: 100%">
+              <div class="col-6 text-left font-weight-bold">
+                ข้อมูลผู้ใช้
+              </div>
+              <div class="col-6 text-right px-0">
+                <i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- modal body -->
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row justify-content-md-center">
+                <div class="col-6">
+                  
+                </div>
+                <div class="col-6">
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- modal footer -->
+          <div class="modal-footer text-right">
+            <button></button>
+          </div>
+        </div>
+      </div> <!-- end of div modal dialog -->
+    </div> <!-- end of div modal patient-profile -->
+
   </div>
   <!--  end off div app -->
 
@@ -867,19 +892,8 @@
 
   var app = new Vue({
     el: '#app',
-    data: {
-          clicks: 0,
-          clickidx: null,
-          clickcounter: null,
-          apmselrow: null,
-          userselrow: null,
-          selapm: {},
-          // for form search
-          skeyword: '',
-          sfdate: '',
-          stdate: '',
-          sstatus: '',
-          apmlist: [],
+    data: {          
+          // global var
           admindata: {},
           currentpage: {},
           pages: [
@@ -914,21 +928,6 @@
               iconclass:'fas fa-users-cog'
             },
           ],
-          apms: [],
-          users: [],
-          listinterval: null, // interval for show bagde message in chat list
-          chatinterval: null, // for update message in chat page
-          currmsg: "",
-          messages: [],
-          offsetchat: 0,
-          onapmsload: false,
-          onusersload: false,
-          stlist: [],
-          ptdata: {},
-          ptapm: {},
-          onptdataload: false,
-          onptapmload: false,
-          lctlist: [],
           timehr: [
             {k: "00", v:"00.00"},
             {k: "01", v:"01.00"},
@@ -955,6 +954,42 @@
             {k: "22", v:"22.00"},
             {k: "23", v:"23.00"},
           ],
+          listinterval: null, // interval for show bagde message in chat list
+          clicks: 0,
+          clickidx: null,
+          clickcounter: null,
+
+          // apms var
+          apms: [],
+          apmselrow: null,
+          selapm: {},
+          ptdata: {},
+          stlist: [],
+          lctlist: [],
+          ptapm: {},
+          onapmsload: false,
+          onptdataload: false,
+          onptapmload: false,
+          skeyword: '',
+          sfdate: '',
+          stdate: '',
+          sstatus: '',
+
+          // users var
+          users: [],
+          userselrow: null,
+          onusersload: false,
+          ukeyword: '',
+          ufdate: '',
+          utdate: '',
+          ustatus: '',
+          ustlist: [],
+
+          // chat var
+          currmsg: "",
+          messages: [],
+          chatinterval: null, // for update message in chat page
+          offsetchat: 0,
     },
     methods: {
       sessioncheck(){
@@ -992,6 +1027,14 @@
               this.stdate = '';
               $('#sstatus').val(null).trigger('change');
               this.apmsload();
+            break;
+          case 'userssearchform' : 
+              this.ukeyword = '';
+              this.ustatus = '';
+              this.ufdate = '';
+              this.utdate = '';
+              $('#ustatus').val(null).trigger('change');
+              this.usersload();
             break;
           default : 
         }
@@ -1062,7 +1105,7 @@
           }
         });
       },
-      activeEvent(){
+      activeevent(){
         "use strict"; // Start of use strict
 
         // Toggle the side navigation
@@ -1294,6 +1337,21 @@
         });
         $('#sstatus').val(null).trigger('change');
       },
+      async usersstatusload(){
+        this.ustlist = [];
+        this.activeselect2('ustatus');
+        await axios.get("<?php echo site_url('admin/usersstatusload'); ?>")
+        .then( res => {
+          res = res.data;
+          res.row.forEach((item,idx) => {
+            this.ustlist.push({
+              ustid : item.ustid,
+              stname : item.stname,
+            });
+          });
+        });
+        $('#ustatus').val(null).trigger('change');
+      },
       activeselect2(elid){
         switch (elid) {
           case 'sstatus':
@@ -1329,6 +1387,18 @@
 
               $('#apmtime').on("select2:closing", v => {
                 this.newapm.apmtime = $('#apmtime').val();
+              });
+            break;
+
+          case 'ustatus':
+              $('#ustatus').select2({
+                theme: "bootstrap",
+                placeholder: "เลือกสถานะ",
+                // sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
+              });
+
+              $('#ustatus').on("select2:closing", v => {
+                  this.ustatus = $('#ustatus').val();
               });
             break;
           
@@ -1410,10 +1480,10 @@
         this.onusersload = true;
         axios.get("<?php echo site_url('admin/usersload'); ?>",{
           params : {
-            kw: this.skeyword,
-            st: this.sstatus,
-            fdate: this.dateformysql(this.sfdate),
-            tdate: this.dateformysql(this.stdate),
+            kw: this.ukeyword,
+            st: this.ustatus,
+            fdate: this.dateformysql(this.ufdate),
+            tdate: this.dateformysql(this.utdate),
           }
         })
         .then(res => {
@@ -1425,7 +1495,7 @@
           // });
         });
       },
-      usermasterselectrowdetect(event,idx){
+      usersselectrowdetect(event,idx){
         this.clicks++ 
         if(this.clicks === 1 || idx != this.clickidx) {
           this.userselrow = idx;
@@ -1437,7 +1507,7 @@
           this.userselrow = idx;
           clearTimeout(this.clickcounter);
           this.clicks = 0;
-          this.openchat(idx);
+          this.openedituser(idx);
         }
       },
 
@@ -1447,8 +1517,9 @@
         this.admindata = JSON.parse(lcget('admindata'));
         this.showHomePage();
         this.statusload();
+        this.usersstatusload();
         this.lctload();
-        this.activeEvent();
+        this.activeevent();
         this.activedatepicker();
             // this.activeDataTable();
       }else{

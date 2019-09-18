@@ -397,6 +397,7 @@
 					'password' : this.adminpassword,
 					'staffcode' : this.staffcode,
 					'staffname' : this.staffname,
+					'tel' : this.tel,
 				});
 
 	            axios.post("<?php echo site_url('admin/newuserregister'); ?>",params)
