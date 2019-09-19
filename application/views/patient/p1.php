@@ -586,15 +586,15 @@
 			},
 			logout(){
 				Swal.fire({
-					title: 'ยืนยันการออกจากระบบ?'
-					// text: "You won't be able to revert this!",
+					toast: true
+					,position: 'top-end'
+					,title: 'ยืนยันการออกจากระบบ?'
 					,type: 'warning'
 					,showCancelButton: true
 					,confirmButtonColor: '#dd3333'
 					,confirmButtonText: 'ออกจากระบบ'
 					,cancelButtonColor: '#bfbfbf'
 					,cancelButtonText: ' ไม่'
-					// ,toast: true
 				}).then((result) => {
 					if (result.value) {
 						Swal.fire({
@@ -630,7 +630,6 @@
 					'lcttype' : this.newapm.lcttype,
 					'apmlct' : sellct.lctcode,
 					'lctname' : sellct.lctname,
-
 				});
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
 				.then(async res => {
@@ -719,8 +718,8 @@
 				}).then(res => {
 					Swal.close();
 					console.log(res);
-					this.newapm = res.data.row[0];
-					this.newapm.apmdate = this.dateforth(res.data.row[0].apmdate);
+					this.newapm = res.data.row;
+					this.newapm.apmdate = this.dateforth(res.data.row.apmdate);
 					$('#apmlct').val(this.newapm.apmlct).trigger('change');
 					$('#apmtime').val(this.newapm.apmtime).trigger('change');
 					this.actionshowmodal('edit-appointment');

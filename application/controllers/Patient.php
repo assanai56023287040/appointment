@@ -104,7 +104,7 @@ class Patient extends CI_Controller {
 
 		echo json_encode(array(
 			'success' => true
-			,'row' => $pt->result_array()
+			,'row' => $pt->first_row()
 		));
 	}
 

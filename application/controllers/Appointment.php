@@ -114,7 +114,7 @@ class Appointment extends CI_Controller {
 
 		echo json_encode(array(
 			'success' => true
-			,'row' => $res->result_array()
+			,'row' => $res->first_row()
 		));
 	}
 

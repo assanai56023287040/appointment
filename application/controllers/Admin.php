@@ -86,6 +86,7 @@ class Admin extends CI_Controller {
 						,u.updatedt
 						,u.approveby
 						,u.approvedt
+						,u.lastlogin
 						,s.stname",false)
 				->from('user u')
 				->join('userst s','u.ustid = s.ustid','left')
@@ -122,6 +123,19 @@ class Admin extends CI_Controller {
 		echo json_encode(array(
 			'success' => true
 			,'row' => $res
+		));
+	}
+
+	function userload(){
+		$usid = $this->input->get('usid');
+
+		$this->db->where('usid',$usid)
+				->where('active <>','I');
+		$res = $this->db->get('user');
+
+		echo json_encode(array(
+			'success' => true
+			,'row' => $res->first_row()
 		));
 	}
 

@@ -863,10 +863,21 @@
             <div class="container-fluid">
               <div class="row justify-content-md-center">
                 <div class="col-6">
-                  
+                  <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">รหัสพนักงาน : </p>
+                  <input type="text" class="form-control my-2" v-model="seluser.staffcode" />
+                  <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">ชื่อพนักงาน : </p>
+                  <input type="text" class="form-control my-2" v-model="seluser.staffname" />
+                  <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">Username : </p>
+                  <input type="text" class="form-control my-2" v-model="seluser.username" />
                 </div>
                 <div class="col-6">
-                  
+                  <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">เข้าใช้งานล่าสุด : </p>
+                  <input type="text" class="form-control my-2" v-model="seluser.lastlogin" />
+
+                  <p class="font-weight-bold mt-1 mb-0" style="font-size: 1rem">สถานะ : </p>
+                  <select id="userst" class="w-100">
+                    <option v-for="(s , idx) in ustlist" :value="s.ustid">[ {{ s.ustid }} ] {{ s.stname }}</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -874,7 +885,10 @@
 
           <!-- modal footer -->
           <div class="modal-footer text-right">
-            <button></button>
+            <button class="btn x-btn-green mb-4" style="border-radius: 10px;" @click="">
+              <i class="far fa-save align-middle" style="font-size: 1.8rem"></i>
+              <span class="align-middle mx-2" style="font-size: 1rem;">บันทึก</span>
+            </button>
           </div>
         </div>
       </div> <!-- end of div modal dialog -->
@@ -984,6 +998,7 @@
           utdate: '',
           ustatus: '',
           ustlist: [],
+          seluser: {},
 
           // chat var
           currmsg: "",
@@ -1079,8 +1094,9 @@
       },
       logout(){
         Swal.fire({
-          title: 'ยืนยันการออกจากระบบ?'
-          // text: "You won't be able to revert this!",
+          toast: true
+          ,position: 'top-end'
+          ,title: 'ยืนยันการออกจากระบบ?'
           ,type: 'warning'
           ,showCancelButton: true
           ,confirmButtonColor: '#dd3333'
@@ -1401,6 +1417,18 @@
                   this.ustatus = $('#ustatus').val();
               });
             break;
+
+            case 'userst':
+              $('#userst').select2({
+                theme: "bootstrap",
+                placeholder: "เลือกสถานะ",
+                // sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
+              });
+
+              $('#userst').on("select2:closing", v => {
+                  this.seluser.ustid = $('#userst').val();
+              });
+            break;
           
           default:
         }
@@ -1439,7 +1467,7 @@
         .then(res => {
           this.ptdata = {};
           if(aniload)  this.onptdataload = false;
-          this.ptdata = res.data.row[0];
+          this.ptdata = res.data.row;
         });
       },
       apmload(apmid,aniload = false){
@@ -1452,7 +1480,7 @@
         .then(res => {
           this.ptapm = {};
           if(aniload)  this.onptapmload = false;
-          this.ptapm = res.data.row[0];
+          this.ptapm = res.data.row;
           this.ptapm.apmdate = this.dateforth(this.ptapm.apmdate);
           $('#apmlct').val(this.ptapm.apmlct).trigger('change');
           $('#apmtime').val(this.ptapm.apmtime).trigger('change');
@@ -1510,7 +1538,40 @@
           this.openedituser(idx);
         }
       },
+      async openedituser(idx){
+        this.activeselect2('userst');
+        await this.userload(this.users[idx].usid);
+        $('#edit-user').modal();
+      },
+      userload(id){
+        if(!id){return false;}
+        Swal.fire({
+          title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+          allowOutsideClick: false, 
+        });
+        Swal.showLoading();
+        axios.get("<?php echo site_url("admin/userload") ?>",{
+          params: {
+            usid : id,
+          }
+        })
+        .then(res => {
+          Swal.close();
+          this.seluser = res.data.row;
+          this.seluser.lastlogin = this.thdatetime(this.seluser.lastlogin);
+          $('#userst').val(this.seluser.ustid).trigger('change');
+        });
+      },
+      thdatetime(v){
+        // if syntax v = 2019-09-09 15:15
+        if(!v){return v;}
+        let dt = v.split(' ');
+        if(dt.length == 2 && v[4] == '-' && v[7] == '-' && v[13] == ':' && v[16] == ':'){
+          let d = dt[0].split('-');
 
+          return d[2]+'/'+d[1]+'/'+(parseInt(d[0],10)+543)+'  '+dt[1];
+        }
+      },
     },
     mounted() {
       if(ssget('adminusername') && lcget('admindata') && lcget('adminusername')){
