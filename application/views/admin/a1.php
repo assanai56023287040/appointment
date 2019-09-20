@@ -885,7 +885,7 @@
 
           <!-- modal footer -->
           <div class="modal-footer text-right">
-            <button class="btn x-btn-green mb-4" style="border-radius: 10px;" @click="">
+            <button class="btn x-btn-green" style="border-radius: 10px;" @click="saveedituser()">
               <i class="far fa-save align-middle" style="font-size: 1.8rem"></i>
               <span class="align-middle mx-2" style="font-size: 1rem;">บันทึก</span>
             </button>
@@ -1518,9 +1518,10 @@
           this.users = [];
           this.onusersload = false;
           this.users = res.data.row;
-          // this.apms.forEach((item,idx) =>{
-          //   item.apmdate = this.dateforth(item.apmdate);
-          // });
+          this.users.forEach((item,idx) =>{
+            item.updatedt = this.thdatetime(item.updatedt);
+            item.approvedt = this.thdatetime(item.approvedt);
+          });
         });
       },
       usersselectrowdetect(event,idx){
@@ -1571,6 +1572,33 @@
 
           return d[2]+'/'+d[1]+'/'+(parseInt(d[0],10)+543)+'  '+dt[1];
         }
+      },
+      saveedituser(){
+
+        let params = new URLSearchParams({
+          'usid' : this.seluser.usid,
+          'staffcode' : this.seluser.staffcode,
+          'ustid' : this.seluser.ustid,
+          'updateby' : this.admindata.STAFF_CODE,
+        });
+
+        axios.post("<?php echo site_url('admin/saveedituser'); ?>",params)
+          .then(res => {
+            if(res.data.success){
+              Swal.fire({
+                type: 'success',
+                title: 'บันทึกข้อมูลเสร็จสิ้น',
+                text: 'กรุณารอสักครู่.....',
+                confirmButtonText: '',
+                timer: 2000,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+              }).then(() => {
+                $('#edit-user').modal('hide');
+                this.usersload();
+             });
+            }
+          });
       },
     },
     mounted() {

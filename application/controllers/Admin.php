@@ -139,4 +139,26 @@ class Admin extends CI_Controller {
 		));
 	}
 
+	function saveedituser(){
+		$usid = $this->input->post('usid');
+		$staffcode = $this->input->post('staffcode');
+		$ustid = $this->input->post('ustid');
+		$updateby = $this->input->post('updateby');
+
+		$this->db->set('ustid',$ustid)
+				->set('updateby',$updateby)
+				->set('updatedt',date('Y-m-d H:i:s'));
+		if($ustid == '02'){
+			$this->db->set('approveby',$updateby)
+					->set('approvedt',date('Y-m-d H:i:s'));
+		}
+		$this->db->where('usid',$usid)
+				->where('staffcode',$staffcode)
+				->update('user');
+
+		echo json_encode(array(
+			'success' => true
+		));
+	}
+
 }

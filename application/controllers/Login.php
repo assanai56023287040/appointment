@@ -47,15 +47,16 @@ class Login extends CI_Controller {
 
 		if($res->MessageCode == 200){
 
-			$userindentify = $this->useridentify($r,'api');
+			$useridentify = $this->useridentify($r->STAFF_CODE);
+			$this->loginhistory($uid ,$r->STAFF_CODE ,$r->STAFF_NAME ,$useridentify['identify']);
 
-				echo json_encode(
-					array(
-						'success' => true
-						,'code' => 'pass'
-						,'row' => $r
-						,'userindentify' => $userindentify
-					));
+			echo json_encode(
+				array(
+					'success' => true
+					,'code' => 'pass'
+					,'row' => $r
+					,'useridentify' => $useridentify
+				));
 
 		}else{
 			echo json_encode(
@@ -108,18 +109,8 @@ class Login extends CI_Controller {
 		// echo '<br/> Staff Name => '.$r->STAFF_NAME;
 	}
 
-	function useridentify($data,$from = false){
-		if($from){
-			switch ($from) {
-				case 'api':
-						$staffcode = $data->STAFF_CODE;
-					break;
-				
-				default:
-					# code...
-					break;
-			}
-		}
+	function useridentify($staffcode = ''){
+		if($staffcode == ''){return false;}
 		$arr = array();
 
 		$res = $this->db->get_where('user',array(
@@ -149,5 +140,19 @@ class Login extends CI_Controller {
 
 	}
 
+	function loginhistory($username ,$staffcode ,$staffname ,$useridentify){
+		$dt = date('Y-m-d H:i:s');
+		$this->db->insert('loginhis',array(
+									'username' => $username
+									,'staffcode' => $staffcode
+									,'staffname' => $staffname
+									,'useridentify' => $useridentify
+									,'logindt' => $dt
+								));
+
+		$this->db->where('staffcode',$staffcode)
+				->set('lastlogin',$dt)
+				->update('user');
+	}
 
 }

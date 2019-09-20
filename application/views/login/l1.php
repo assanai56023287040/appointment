@@ -303,8 +303,8 @@
 
 	            	if(res.success){
 
-	            		// res.userindentify will return as boolean type
-	            		if(res.userindentify.identify){
+	            		// res.useridentify will return as boolean type
+	            		if(res.useridentify.identify){
 	            			let admindetail = JSON.stringify(res.row);
 		            		ssset('adminusername',this.adminusername);
 		            		lcset('adminusername',this.adminusername);
@@ -321,7 +321,7 @@
 								window.location = "<?php echo site_url('admin'); ?>";
 							});
 	            		}else{
-            				this.newusercontrol(res.row ,res.userindentify.failurecode);
+            				this.newusercontrol(res.row ,res.useridentify.failurecode);
             				return false;
 	            		}
 	            	}else{
