@@ -185,6 +185,14 @@
 									<span class="align-middle mx-2" style="font-size: 1rem;">โหลดเพิ่มเติม</span>
 								</div>
 								<div class="d-block m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-left':'text-right'">
+									<div class="d-block text-center text-muted"
+                                      style="font-size: 1rem;" 
+                                      v-if="idx == 0 ? true : messages[idx-1].msgdate == msg.msgdate ? false : true"
+                                    >{{ msg.msgdate | thdate }}</div>
+									<div class="d-block text-muted" 
+										style="font-size: 1rem;" 
+										v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"
+											>{{ msg.crebyname }}</div>
 									<span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
 									<div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
 										{{ msg.msgtxt }}

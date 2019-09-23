@@ -518,6 +518,14 @@
                                 <span class="align-middle mx-2" style="font-size: 1rem;">โหลดเพิ่มเติม</span>
                               </div>
                               <div class="m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-right':'text-left'">
+                                <div class="d-block text-center text-muted mt-3 mb-1"
+                                      v-if="idx == 0 ? true : messages[idx-1].msgdate == msg.msgdate ? false : true"
+                                    >
+                                  <span class="small px-4 py-1" style="border: 1px solid #bfbfbf;border-radius: 10px;background-color: #ffff80">{{ msg.msgdate | thdate }}</span>
+                                </div>
+                                <div class="d-block small text-muted mt-2"
+                                    v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"
+                                  >{{ msg.crebyname }}</div>
                                 <span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
                                 <div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
                                   {{ msg.msgtxt }}
@@ -1311,6 +1319,8 @@
           ,msgtxt: this.currmsg
           ,msgdate: d
           ,msgtime: t
+          ,creby: this.admindata.STAFF_CODE
+          ,crebyname : this.admindata.STAFF_NAME
         });
         
         let params = new URLSearchParams({
@@ -1319,6 +1329,7 @@
           'msgtxt' : this.currmsg,
           'msgdate' : d,
           'msgtime' : t,
+          'creby' : this.admindata.STAFF_CODE
         });
 
         this.currmsg = "";
@@ -1574,6 +1585,11 @@
         }
       },
       saveedituser(){
+        Swal.fire({
+          title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
+          allowOutsideClick: false, 
+        });
+        Swal.showLoading();
 
         let params = new URLSearchParams({
           'usid' : this.seluser.usid,
@@ -1585,6 +1601,7 @@
         axios.post("<?php echo site_url('admin/saveedituser'); ?>",params)
           .then(res => {
             if(res.data.success){
+              Swal.close();
               Swal.fire({
                 type: 'success',
                 title: 'บันทึกข้อมูลเสร็จสิ้น',

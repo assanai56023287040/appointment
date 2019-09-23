@@ -127,6 +127,7 @@ class Appointment extends CI_Controller {
 			'msgdate' => $this->input->post('msgdate'),
 			'msgtime' => $this->input->post('msgtime'),
 			'credt' => date("Y-m-d H:i:s"),
+			'creby' => $this->input->post('creby'),
 		);
 
 		$this->db->insert('apmchat',$msgdata);
@@ -158,13 +159,18 @@ class Appointment extends CI_Controller {
 					,a.fromside AS side
 					,a.msgdate
 					,a.msgtime
+					,a.creby
+					,u.staffname AS crebyname
+					,date(a.credt) AS cred
 				FROM apmchat a 
+				LEFT JOIN user u ON a.creby = u.staffcode
 				WHERE a.apmid = {$apmid}
 				ORDER BY a.msgid DESC
-				LIMIT {$offset} ,30
+				
 			) AS s
 			ORDER BY s.msgid ASC
 		";
+		// LIMIT {$offset} ,30
 
 		$res = $this->db->query($sql);
 
@@ -197,16 +203,21 @@ class Appointment extends CI_Controller {
 		$apmid = $this->input->get('apmid');
 		$nowside = $this->input->get('nowside');
 
-		$this->db->where('apmid',$apmid)
-				->where('toside',$nowside)
+		$this->db->where('a.apmid',$apmid)
+				->where('a.toside',$nowside)
 				->select("
-					msgid
-					,msgtxt
-					,fromside AS side
-					,msgdate
-					,msgtime
-					",false);
-		$res = $this->db->get('newchat');
+					a.msgid
+					,a.msgtxt
+					,a.fromside AS side
+					,a.msgdate
+					,a.msgtime
+					,a.creby
+					,u.staffname AS crebyname
+					,date(a.credt) AS cred
+					",false)
+				->from('newchat a')
+				->join('user u','a.creby = u.staffcode','left');
+		$res = $this->db->get();
 
 		$this->db->where('apmid',$apmid)
 				->where('toside',$nowside)
