@@ -185,10 +185,13 @@
 									<span class="align-middle mx-2" style="font-size: 1rem;">โหลดเพิ่มเติม</span>
 								</div>
 								<div class="d-block m-2" v-for="(msg ,idx) in messages" :class="msg.side == 'a'? 'text-left':'text-right'">
-									<div class="d-block text-center text-muted"
-                                      style="font-size: 1rem;" 
+									<div class="d-block text-center text-muted mt-3 mb-1"
                                       v-if="idx == 0 ? true : messages[idx-1].msgdate == msg.msgdate ? false : true"
-                                    >{{ msg.msgdate | thdate }}</div>
+	                                    >
+	                                  <span class="px-4 py-1" style="border: 1px solid #bfbfbf;border-radius: 10px;background-color: #ffff80;font-size: 1rem;">
+	                                  	{{ msg.msgdate | thdate }}
+	                                  </span>
+	                                </div>
 									<div class="d-block text-muted" 
 										style="font-size: 1rem;" 
 										v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"

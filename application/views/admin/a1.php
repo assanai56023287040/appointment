@@ -485,7 +485,7 @@
                         <i class="align-middle" style="font-size: 1.8rem" :class="onptapmload ? 'fas fa-circle-notch fa-spin' : 'fas fa-info'"></i>
                         <span class="align-middle mx-2" style="font-size: 1rem;">{{ onptapmload ? 'กำลังดาวน์โหลดข้อมูลขอทำนัด' : 'ดูข้อมูลการขอทำนัด' }}</span>
                       </button>
-                      <button class="btn btn-block x-btn-green mb-4" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
+                      <button class="btn btn-block x-btn-green mb-4" style="border-radius: 10px;" @click="onlyshowmodal('confirm-apm')">
                         <i class="fas fa-clipboard-check align-middle" style="font-size: 1.8rem"></i>
                         <span class="align-middle mx-2" style="font-size: 1rem;">ยืนยันการขอทำนัด</span>
                       </button>
@@ -850,7 +850,7 @@
       </div> <!-- end of div modal dialog -->
     </div> <!-- end of div modal edit-appointment -->
 
-        <!-- patient-profile modal id -->
+    <!-- edit-user modal id -->
     <div id="edit-user" class="modal fade" data-backdrop="true" role="dialog">
       <div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
         <div class="modal-content">
@@ -888,6 +888,40 @@
                   </select>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- modal footer -->
+          <div class="modal-footer text-right">
+            <button class="btn x-btn-green" style="border-radius: 10px;" @click="saveedituser()">
+              <i class="far fa-save align-middle" style="font-size: 1.8rem"></i>
+              <span class="align-middle mx-2" style="font-size: 1rem;">บันทึก</span>
+            </button>
+          </div>
+        </div>
+      </div> <!-- end of div modal dialog -->
+    </div> <!-- end of div modal edit-user -->
+
+    <!-- edit-user modal id -->
+    <div id="confirm-apm" class="modal fade" data-backdrop="true" role="dialog">
+      <div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
+        <div class="modal-content">
+          <!-- modal header -->
+          <div class="modal-header">
+            <div class="row" style="min-width: 100%">
+              <div class="col-6 text-left font-weight-bold">
+                ยืนยันการทำนัด
+              </div>
+              <div class="col-6 text-right px-0">
+                <i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- modal body -->
+          <div class="modal-body">
+            <div class="container-fluid">
+              
             </div>
           </div>
 
@@ -1617,6 +1651,9 @@
             }
           });
       },
+      confirmapm(apmid){
+
+      }
     },
     mounted() {
       if(ssget('adminusername') && lcget('admindata') && lcget('adminusername')){

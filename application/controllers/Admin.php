@@ -161,4 +161,11 @@ class Admin extends CI_Controller {
 		));
 	}
 
+	function tuhdbtest(){
+		$otherdb = $this->load->database('tuhdb', TRUE);
+		$p = $otherdb->get('prscst');
+
+		var_dump($p); 
+	}
+
 }

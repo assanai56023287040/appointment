@@ -161,7 +161,6 @@ class Appointment extends CI_Controller {
 					,a.msgtime
 					,a.creby
 					,u.staffname AS crebyname
-					,date(a.credt) AS cred
 				FROM apmchat a 
 				LEFT JOIN user u ON a.creby = u.staffcode
 				WHERE a.apmid = {$apmid}
@@ -213,7 +212,6 @@ class Appointment extends CI_Controller {
 					,a.msgtime
 					,a.creby
 					,u.staffname AS crebyname
-					,date(a.credt) AS cred
 					",false)
 				->from('newchat a')
 				->join('user u','a.creby = u.staffcode','left');
