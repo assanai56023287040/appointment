@@ -86,3 +86,5 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 
 // api constants value 
 define('TUH_API','http://192.168.199.9/absWS/api/');
+define('TUH_SW_API','http://192.168.200.237/ORAWService.asmx?wsdl');
+define('TUH_SW_API_LOCAL','http://localhost:1113/ORAWservice.asmx?wsdl');

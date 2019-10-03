@@ -202,6 +202,8 @@
 						this.adminicon = this.adminstyle[0];
 						if(lcget('adminusername') && lcget('admindata')){
 							this.adminicon = this.adminstyle[1];
+							this.adminusername = '';
+							this.adminpassword = '';
 							setTimeout(() => {
 								console.log("pass to get this admin username");
 								this.adminicon = this.adminstyle[2];
@@ -373,6 +375,17 @@
 								,confirmButtonText: 'ปิด'
 							});
 						break;
+
+					case 'new_user_reject' : 
+							Swal.fire({
+								type: 'error'
+								,title: 'ไม่อนุมัติให้เข้าใช้งาน'
+								,html: "ผู้ดูแลระบบ ไม่อนุมัติให้เข้าใช้งาน สามารถติดต่อสอบถามได้ที่ <br/>- ศูนย์บริการสุขภาพบุคลากรและนัดหมายผู้รับบริการ <br/>หมายเลขติดต่อภายใน : 9860 , 8488 <br/>- งานสารสนเทศ หมวดดูแลและพัฒนาซอฟต์แวร์ <br/>หมายเลขติดต่อภายใน : 8495"
+								,text: ""
+								,confirmButtonText: 'ปิด'
+							});
+						break;
+
 
 					default : 
 						break;

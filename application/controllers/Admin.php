@@ -168,4 +168,20 @@ class Admin extends CI_Controller {
 		var_dump($p); 
 	}
 
+	function swapi(){
+		$options = array(
+	        'soap_version'=>SOAP_1_2,
+	        'exceptions'=>true,
+	        'trace'=>1,
+	        'cache_wsdl'=>WSDL_CACHE_NONE
+	    );
+
+	    $client = new SoapClient(TUH_SW_API_LOCAL,$options);
+
+	    $params = array('hn' => 1621101);
+
+	    $data = $client->dtApmLoadByHN($params)->dtApmLoadByHNResult;
+		echo $data;
+	}
+
 }

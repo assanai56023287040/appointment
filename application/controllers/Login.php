@@ -127,10 +127,16 @@ class Login extends CI_Controller {
 			$res2 = $this->db->get_where('user',array(
 										'staffcode' => $staffcode
 										,'active' => 'A'
-										,'ustid' => '01'
+										// ,'ustid <>' => '02'
 									));
 			if($res2->num_rows() == 1){
-				$arr['failurecode'] = 'new_user_exist';
+				$st = $res2->row()->ustid;
+
+				if($st == '01'){
+					$arr['failurecode'] = 'new_user_exist';
+				}else{ // $st = '03' สถานะ คือ ไม่อนุมัติ
+					$arr['failurecode'] = 'new_user_reject';
+				}	
 			}else{
 				$arr['failurecode'] = 'new_user_register';
 			}
