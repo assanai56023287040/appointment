@@ -378,4 +378,29 @@ class Appointment extends CI_Controller {
 		
 	}
 
+	function loadoapplist(){
+		$hn = $this->input->get('hn');
+
+		$client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
+
+	    $params = array('hn' => $hn);
+
+	    $data = $client->dtApmLoadByHN($params)->dtApmLoadByHNResult;
+
+	    $res = json_decode($data);
+
+	    if(count($res) > 0){
+	    	log_info("load oapp list res pass to true");
+	    	echo json_encode(array(
+	    		'success' => true
+	    		,'row' => $res
+	    	));
+	    }else{
+	    	log_info("load oapp list res pass to false");
+	    	echo json_encode(array(
+	    		'success' => false
+	    	));
+	    }
+	}
+
 }

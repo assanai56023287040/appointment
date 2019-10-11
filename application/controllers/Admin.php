@@ -169,18 +169,27 @@ class Admin extends CI_Controller {
 	}
 
 	function swapi(){
-		$options = array(
-	        'soap_version'=>SOAP_1_2,
-	        'exceptions'=>true,
-	        'trace'=>1,
-	        'cache_wsdl'=>WSDL_CACHE_NONE
-	    );
 
-	    $client = new SoapClient(TUH_SW_API_LOCAL,$options);
+	    $client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
 
-	    $params = array('hn' => 1621101);
+	    $params = array('hn' => '1621101');
 
 	    $data = $client->dtApmLoadByHN($params)->dtApmLoadByHNResult;
+		echo $data;
+	}
+
+	function swapi2(){
+
+	    $client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
+
+	    $params = array(
+	    	'hn' => '1621101'
+	    	,'oappdate' => '2019-09-28'
+	    	,'oapptime' => '133411'
+	    	,'itemno' => '1'
+		);
+
+	    $data = $client->dtApmLoadDetail($params)->dtApmLoadDetailResult;
 		echo $data;
 	}
 

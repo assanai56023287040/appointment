@@ -272,11 +272,21 @@ body.admin-page {
 
 
 .table-hover-info > tbody > tr.selrow {
-  background: #288b9a !important; /*#4e73df*/
+  background: #288b9a !important;
   color: white !important;
 }
 
 .table-hover-info > tbody > tr:hover {
-  background: #36b8cb !important;/*#93a9eb*/ 
+  background: #36b8cb !important;
+  color: white !important;
+}
+
+.table-hover-success > tbody > tr.selrow {
+  background: #159165 !important;
+  color: white !important;
+}
+
+.table-hover-success > tbody > tr:hover {
+  background: #1cc588 !important;
   color: white !important;
 }

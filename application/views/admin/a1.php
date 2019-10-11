@@ -422,7 +422,7 @@
                     <table class="table table-striped table-hover-primary" width="100%" cellspacing="0">
                       <thead>
                         <tr>
-                          <th>ลำดับ</th>
+                          <th>#</th>
                           <th>HN</th>
                           <th>ชื่อ</th>
                           <th>รายละเอียดอาการ</th>
@@ -433,7 +433,7 @@
                       </thead>
                       <tfoot>
                         <tr>
-                          <th>ลำดับ</th>
+                          <th>#</th>
                           <th>HN</th>
                           <th>ชื่อ</th>
                           <th>รายละเอียดอาการ</th>
@@ -485,7 +485,7 @@
                         <i class="align-middle" style="font-size: 1.8rem" :class="onptapmload ? 'fas fa-circle-notch fa-spin' : 'fas fa-info'"></i>
                         <span class="align-middle mx-2" style="font-size: 1rem;">{{ onptapmload ? 'กำลังดาวน์โหลดข้อมูลขอทำนัด' : 'ดูข้อมูลการขอทำนัด' }}</span>
                       </button>
-                      <button class="btn btn-block x-btn-green mb-4" style="border-radius: 10px;" @click="onlyshowmodal('confirm-apm')">
+                      <button class="btn btn-block x-btn-green mb-4" style="border-radius: 10px;" @click="loadoapplist()">
                         <i class="fas fa-clipboard-check align-middle" style="font-size: 1.8rem"></i>
                         <span class="align-middle mx-2" style="font-size: 1rem;">ยืนยันการขอทำนัด</span>
                       </button>
@@ -606,7 +606,7 @@
                     <table class="table table-striped table-hover-info" width="100%" cellspacing="0">
                       <thead>
                         <tr>
-                          <th>ลำดับ</th>
+                          <th>#</th>
                           <th>Staff code</th>
                           <th>Username</th>
                           <th>ชื่อ</th>
@@ -620,7 +620,7 @@
                       </thead>
                       <tfoot>
                         <tr>
-                          <th>ลำดับ</th>
+                          <th>#</th>
                           <th>Staff code</th>
                           <th>Username</th>
                           <th>ชื่อ</th>
@@ -902,15 +902,16 @@
       </div> <!-- end of div modal dialog -->
     </div> <!-- end of div modal edit-user -->
 
-    <!-- edit-user modal id -->
-    <div id="confirm-apm" class="modal fade" data-backdrop="true" role="dialog">
+    <!-- confirm-oapplist modal id -->
+    <div id="confirm-oapplist" class="modal fade" data-backdrop="true" role="dialog">
       <div class="modal-dialog modal-xl modal-dialog-centered vw-fit">
         <div class="modal-content">
           <!-- modal header -->
           <div class="modal-header">
             <div class="row" style="min-width: 100%">
               <div class="col-6 text-left font-weight-bold">
-                ยืนยันการทำนัด
+                เลือกรายการทำนัดของ HN : {{ selapm.hn }} เพื่อยืนยัน
+                <br/><span class="text-muted small">ดับเบิ้ลที่รายการเพื่อยืนยันรายการนัดหมาย</span>
               </div>
               <div class="col-6 text-right px-0">
                 <i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
@@ -919,19 +920,42 @@
           </div>
 
           <!-- modal body -->
-          <div class="modal-body">
-            <div class="container-fluid">
-              
+          <div class="modal-body p-2">
+            <div class="container-fluid px-1">
+              <div class="table-responsive">
+                    <table class="table table-striped table-hover-success" width="100%" cellspacing="0">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>วันที่</th>
+                          <th>เวลา</th>
+                          <th>คลีนิค</th>
+                          <th>รายละเอียด</th>
+                          <th>สถานะ</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="(r,i) in oapplist" @click="oappselectrowdetect($event,i)" :class="{ 'selrow' : oappselrow == i }">
+                          <td>{{ i+1 }}</td>
+                          <td>{{ r.NEXTDATE | thdate }}</td>
+                          <td>{{ r.TIMESPANNAME }}</td>
+                          <td>{{ r.NEXTLCTNAME }} <br/>=> {{ r.SUBLCTNAME }}</td>
+                          <td>{{ r.SUGGESTNAME }}</td>
+                          <td>{{ r.STATUSNAME }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
             </div>
           </div>
 
           <!-- modal footer -->
-          <div class="modal-footer text-right">
+          <!-- <div class="modal-footer text-right">
             <button class="btn x-btn-green" style="border-radius: 10px;" @click="saveedituser()">
               <i class="far fa-save align-middle" style="font-size: 1.8rem"></i>
               <span class="align-middle mx-2" style="font-size: 1rem;">บันทึก</span>
             </button>
-          </div>
+          </div> -->
         </div>
       </div> <!-- end of div modal dialog -->
     </div> <!-- end of div modal patient-profile -->
@@ -1030,6 +1054,8 @@
           sfdate: '',
           stdate: '',
           sstatus: '',
+          oapplist: [],
+          oappselrow: null,
 
           // users var
           users: [],
@@ -1651,9 +1677,50 @@
             }
           });
       },
+      loadoapplist(){
+        Swal.fire({
+          title: "กำลังตรวจสอบข้อมูลนัด กรุณารอสักครู่...",
+          allowOutsideClick: false, 
+        });
+        Swal.showLoading();
+
+        axios.get("<?php echo site_url("appointment/loadoapplist"); ?>",{
+          params : {
+            hn: this.selapm.hn
+          }
+        }).then(res => {
+            Swal.close();
+            res = res.data;
+            if(res.success){
+              this.oapplist = res.row;
+              $('#confirm-oapplist').modal();
+            }else{
+              Swal.fire({
+                type: 'error',
+                title: 'ไม่พบข้อมูลการทำนัด!',
+                confirmButtonText: 'ปิด'
+              });
+            }
+        });
+      },
       confirmapm(apmid){
 
-      }
+      },
+      oappselectrowdetect(event,idx){
+        this.clicks++ 
+        if(this.clicks === 1 || idx != this.clickidx) {
+          this.oappselrow = idx;
+          this.clickidx = idx;
+          this.clickcounter = setTimeout(() => {
+            this.clicks = 0
+          }, 400);
+        } else if(this.clicks === 2 && idx == this.clickidx) {
+          this.oappselrow = idx;
+          clearTimeout(this.clickcounter);
+          this.clicks = 0;
+          $('#confirm-oapplist').modal('hide');
+        }
+      },
     },
     mounted() {
       if(ssget('adminusername') && lcget('admindata') && lcget('adminusername')){
