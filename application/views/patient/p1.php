@@ -197,7 +197,7 @@
 										v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"
 											>{{ msg.crebyname }}</div>
 									<span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
-									<div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
+									<div class="d-inline-block bg-light py-2 px-4 text-wrap text-left" :class="msg.msgcl ? msg.msgcl : 'chat-msg-area'">
 										{{ msg.msgtxt }}
 									</div>
 									<span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
@@ -755,6 +755,7 @@
 					'msgtxt' : this.currmsg,
 					'msgdate' : d,
 					'msgtime' : t,
+					'msgcl' : '',
 				});
 
 				this.currmsg = "";

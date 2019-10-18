@@ -527,7 +527,7 @@
                                     v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"
                                   >{{ msg.crebyname }}</div>
                                 <span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
-                                <div class="d-inline-block bg-light py-2 px-4 text-wrap chat-msg-area text-left">
+                                <div class="d-inline-block bg-light py-2 px-4 text-wrap text-left" :class="msg.msgcl ? msg.msgcl : 'chat-msg-area'">
                                   {{ msg.msgtxt }}
                                 </div>
                                 <span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
@@ -923,29 +923,29 @@
           <div class="modal-body p-2">
             <div class="container-fluid px-1">
               <div class="table-responsive">
-                    <table class="table table-striped table-hover-success" width="100%" cellspacing="0">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>วันที่</th>
-                          <th>เวลา</th>
-                          <th>คลีนิค</th>
-                          <th>รายละเอียด</th>
-                          <th>สถานะ</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="(r,i) in oapplist" @click="oappselectrowdetect($event,i)" :class="{ 'selrow' : oappselrow == i }">
-                          <td>{{ i+1 }}</td>
-                          <td>{{ r.NEXTDATE | thdate }}</td>
-                          <td>{{ r.TIMESPANNAME }}</td>
-                          <td>{{ r.NEXTLCTNAME }} <br/>=> {{ r.SUBLCTNAME }}</td>
-                          <td>{{ r.SUGGESTNAME }}</td>
-                          <td>{{ r.STATUSNAME }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <table class="table table-striped table-hover-success" width="100%" cellspacing="0">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>วันที่</th>
+                        <th>เวลา</th>
+                        <th>คลีนิค</th>
+                        <th>รายละเอียด</th>
+                        <th>สถานะ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(r,i) in oapplist" @click="oappselectrowdetect($event,i)" :class="{ 'selrow' : oappselrow == i }">
+                        <td>{{ i+1 }}</td>
+                        <td>{{ r.NEXTDATE | thdate }}</td>
+                        <td>{{ r.TIMESPANNAME }}</td>
+                        <td>{{ r.NEXTLCTNAME }} <br/>=> {{ r.SUBLCTNAME }}</td>
+                        <td>{{ r.SUGGESTNAME }}</td>
+                        <td>{{ r.STATUSNAME }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+              </div>
             </div>
           </div>
 
@@ -1056,6 +1056,7 @@
           sstatus: '',
           oapplist: [],
           oappselrow: null,
+          seloapp: {},
 
           // users var
           users: [],
@@ -1389,7 +1390,8 @@
           'msgtxt' : this.currmsg,
           'msgdate' : d,
           'msgtime' : t,
-          'creby' : this.admindata.STAFF_CODE
+          'creby' : this.admindata.STAFF_CODE,
+          'msgcl' : '',
         });
 
         this.currmsg = "";
@@ -1679,7 +1681,7 @@
       },
       loadoapplist(){
         Swal.fire({
-          title: "กำลังตรวจสอบข้อมูลนัด กรุณารอสักครู่...",
+          title: "กำลังตรวจสอบข้อมูลนัด...",
           allowOutsideClick: false, 
         });
         Swal.showLoading();
@@ -1703,9 +1705,6 @@
             }
         });
       },
-      confirmapm(apmid){
-
-      },
       oappselectrowdetect(event,idx){
         this.clicks++ 
         if(this.clicks === 1 || idx != this.clickidx) {
@@ -1719,7 +1718,46 @@
           clearTimeout(this.clickcounter);
           this.clicks = 0;
           $('#confirm-oapplist').modal('hide');
+          this.seloapp = this.oapplist[idx];
+          this.confirmapm(this.oappselrow);
         }
+      },
+      confirmapm(idx){ // idx = index of array's oapplist
+        let dt = new Date();
+        let d = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+        let t = dt.getHours() + ':' + dt.getMinutes().toString().padStart(2,0); // + ":" + dt.getSeconds()
+
+        let params = new URLSearchParams({
+          'apmid' : this.selapm.apmid,
+          'cfdate' : d,
+          'cftime' : t,
+          'cfby' : this.admindata.STAFF_CODE,
+          'hn' : this.seloapp.HN,
+          'oappdate' : this.seloapp.OAPPDATE,
+          'oapptime' : this.seloapp.OAPPTIME,
+          'itemno' : this.seloapp.ITEMNO,
+        });
+
+        axios.post("<?php echo site_url('appointment/confirmapm'); ?>",params)
+          .then(res => {
+            res = res.data;
+            if(res.success){
+              Swal.fire({
+                type: 'success',
+                title: 'ยืนยันการทำนัดให้เรียบร้อย',
+                // text: 'กรุณารอสักครู่.....',
+                confirmButtonText: '',
+                timer: 2000,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+              }).then(() => {
+                window.location = "<?php echo site_url('employee'); ?>";
+              });
+            }else{
+
+            }
+              
+          });
       },
     },
     mounted() {

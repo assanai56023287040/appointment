@@ -128,6 +128,7 @@ class Appointment extends CI_Controller {
 			'msgtime' => $this->input->post('msgtime'),
 			'credt' => date("Y-m-d H:i:s"),
 			'creby' => $this->input->post('creby'),
+			'msgcl' => $this->input->post('msgcl'),
 		);
 
 		$this->db->insert('apmchat',$msgdata);
@@ -161,6 +162,7 @@ class Appointment extends CI_Controller {
 					,a.msgtime
 					,a.creby
 					,u.staffname AS crebyname
+					,a.msgcl
 				FROM apmchat a 
 				LEFT JOIN user u ON a.creby = u.staffcode
 				WHERE a.apmid = {$apmid}
@@ -212,6 +214,7 @@ class Appointment extends CI_Controller {
 					,a.msgtime
 					,a.creby
 					,u.staffname AS crebyname
+					,a.msgcl
 					",false)
 				->from('newchat a')
 				->join('user u','a.creby = u.staffcode','left');
@@ -390,17 +393,68 @@ class Appointment extends CI_Controller {
 	    $res = json_decode($data);
 
 	    if(count($res) > 0){
-	    	log_info("load oapp list res pass to true");
+	    	$oappfilter = $this->oappfilter($hn ,$res);
+	    	
 	    	echo json_encode(array(
 	    		'success' => true
 	    		,'row' => $res
 	    	));
 	    }else{
-	    	log_info("load oapp list res pass to false");
 	    	echo json_encode(array(
 	    		'success' => false
 	    	));
 	    }
+	}
+
+	function confirmapm(){
+		$hn = $this->input->post('hn');
+		$oappdate = $this->input->post('oappdate');
+		$oapptime = $this->input->post('oapptime');
+		$itemno = $this->input->post('itemno');
+		$apmid = $this->input->post('apmid');
+		$cfdate = $this->input->post('cfdate');
+		$cftime = $this->input->post('cftime');
+		$cfby = $this->input->post('cfby');
+
+		$oappdate = substr($oappdate ,0 ,10);
+
+		$client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
+
+	    $params = array('hn' => $hn
+    					,'oappdate' => $oappdate
+    					,'oapptime' => $oapptime
+    					,'itemno' => $itemno
+					);
+
+	    $data = $client->dtApmLoadDetail($params)->dtApmLoadDetailResult;
+
+	    $res = json_decode($data);
+
+	    if(count($res) > 0){
+	    	//update apmpt for change status
+			$this->db->where('apmid',$apmid)
+	    		->where('active <>','I')
+	    		->set('stid','03')
+	    		->set('cfby',$cfby)
+	    		->set('cfdate',$cfdate)
+	    		->set('cftime',$cftime)
+	    		->update('apmpt');
+
+
+	    	$this->db->set('apmid',$apmid);
+	    	$this->db->insert('oapp',$res[0]);
+
+	    	echo json_encode(array(
+    			'success' => true,
+    			'data' => $res
+	    	));
+	    }else{
+	    	echo json_encode(array(
+    			'success' => false,
+	    	));
+	    }
+
+	    
 	}
 
 }
