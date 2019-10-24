@@ -393,12 +393,19 @@ class Appointment extends CI_Controller {
 	    $res = json_decode($data);
 
 	    if(count($res) > 0){
-	    	$oappfilter = $this->oappfilter($hn ,$res);
+	    	$arr = $this->oappfilter($hn ,$res);
+	    	if(count($arr) > 0){
+				echo json_encode(array(
+		    		'success' => true
+		    		,'row' => $arr
+		    		,'data' => $res
+		    	));
+	    	}else{
+	    		echo json_encode(array(
+		    		'success' => false
+		    	));
+	    	}
 	    	
-	    	echo json_encode(array(
-	    		'success' => true
-	    		,'row' => $res
-	    	));
 	    }else{
 	    	echo json_encode(array(
 	    		'success' => false
@@ -452,9 +459,29 @@ class Appointment extends CI_Controller {
 	    	echo json_encode(array(
     			'success' => false,
 	    	));
-	    }
+	    }  
+	}
 
-	    
+	function oappfilter($hn , $arr){
+		$i = 0;
+		$unset = array();
+		foreach ($arr as $k) {
+			$r = $this->db->get_where('oapp',array('hn' => $hn
+												,'oappdate' => $k->OAPPDATE
+												,'oapptime' => $k->OAPPTIME
+												,'itemno' => $k->ITEMNO
+										));
+			if($r->num_rows() > 0){
+				array_push($unset, $i);	
+			}
+			$i++;
+		}
+
+		foreach ($unset as $k => $v) {
+			unset($arr[$v]);
+		}
+
+		return $arr;
 	}
 
 }

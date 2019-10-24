@@ -485,7 +485,7 @@
                         <i class="align-middle" style="font-size: 1.8rem" :class="onptapmload ? 'fas fa-circle-notch fa-spin' : 'fas fa-info'"></i>
                         <span class="align-middle mx-2" style="font-size: 1rem;">{{ onptapmload ? 'กำลังดาวน์โหลดข้อมูลขอทำนัด' : 'ดูข้อมูลการขอทำนัด' }}</span>
                       </button>
-                      <button class="btn btn-block x-btn-green mb-4" style="border-radius: 10px;" @click="loadoapplist()">
+                      <button class="btn btn-block x-btn-green mb-4" id="confirmapm-button" style="border-radius: 10px;" @click="loadoapplist()">
                         <i class="fas fa-clipboard-check align-middle" style="font-size: 1.8rem"></i>
                         <span class="align-middle mx-2" style="font-size: 1rem;">ยืนยันการขอทำนัด</span>
                       </button>
@@ -527,7 +527,7 @@
                                     v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"
                                   >{{ msg.crebyname }}</div>
                                 <span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
-                                <div class="d-inline-block bg-light py-2 px-4 text-wrap text-left" :class="msg.msgcl ? msg.msgcl : 'chat-msg-area'">
+                                <div class="d-inline-block py-2 px-4 text-wrap text-left" :class="msg.msgcl ? 'text-muted font-italic '+msg.msgcl : 'chat-msg-area'">
                                   {{ msg.msgtxt }}
                                 </div>
                                 <span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
@@ -1253,7 +1253,9 @@
                 clearInterval(this.chatinterval);
               }
             break;
-          case 'apmchat': break;
+          case 'apmchat': 
+              this.setEnable('confirmapm-button');
+            break;
           case 'dctschedule': break;
           case 'report': break;
           case 'usermaster': 
@@ -1555,6 +1557,7 @@
           if(aniload)  this.onptapmload = false;
           this.ptapm = res.data.row;
           this.ptapm.apmdate = this.dateforth(this.ptapm.apmdate);
+          if(this.ptapm.stid == '03') this.setDisable('confirmapm-button');
           $('#apmlct').val(this.ptapm.apmlct).trigger('change');
           $('#apmtime').val(this.ptapm.apmtime).trigger('change');
         });
@@ -1723,6 +1726,12 @@
         }
       },
       confirmapm(idx){ // idx = index of array's oapplist
+        Swal.fire({
+          title: "กำลังยืนยันข้อมูลนัด...",
+          allowOutsideClick: false, 
+        });
+        Swal.showLoading();
+
         let dt = new Date();
         let d = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
         let t = dt.getHours() + ':' + dt.getMinutes().toString().padStart(2,0); // + ":" + dt.getSeconds()
@@ -1742,6 +1751,7 @@
           .then(res => {
             res = res.data;
             if(res.success){
+              Swal.close();
               Swal.fire({
                 type: 'success',
                 title: 'ยืนยันการทำนัดให้เรียบร้อย',
@@ -1750,14 +1760,61 @@
                 timer: 2000,
                 showConfirmButton: false,
                 allowOutsideClick: false,
-              }).then(() => {
-                window.location = "<?php echo site_url('employee'); ?>";
+              }).then(() => {                                                                                                                     
+                this.setDisable('confirmapm-button');
+                this.createautomsg('confirm');
               });
-            }else{
-
-            }
-              
+            } 
           });
+      },
+      setEnable(id){
+        $('#'+id).removeAttr('disabled');
+        $('#'+id).removeClass('non-edit');
+      },
+      setDisable(id){
+        $('#'+id).attr("disabled" , true);
+        $('#'+id).addClass("non-edit");
+      },
+      createautomsg(xtype){
+        let xmsg = '';
+        let msgcl = '';
+        switch(xtype){
+          case 'confirm' : 
+              xmsg = 'เจ้าหน้าที่ ' + this.admindata.STAFF_NAME + ' ได้ทำการยืนยันการทำนัดแล้ว';
+              msgcl = 'chat-msg-confirm';
+            break;
+          default : 
+        }
+        clearInterval(this.chatinterval);
+        let dt = new Date();
+        let d = dt.getFullYear()+'-'+(dt.getMonth()+1)+'-'+dt.getDate();
+        let t = dt.getHours() + ':' + dt.getMinutes().toString().padStart(2,0); // + ":" + dt.getSeconds()
+        this.messages.push({
+          side:"a"
+          ,msgtxt: xmsg
+          ,msgdate: d
+          ,msgtime: t
+          ,creby: this.admindata.STAFF_CODE
+          ,crebyname : this.admindata.STAFF_NAME
+          ,msgcl : msgcl,
+        });
+        
+        let params = new URLSearchParams({
+          'apmid' : this.selapm.apmid,
+          'side' : 'a',
+          'msgtxt' : xmsg,
+          'msgdate' : d,
+          'msgtime' : t,
+          'creby' : this.admindata.STAFF_CODE,
+          'msgcl' : msgcl,
+        });
+
+        this.scrolltobottom();
+
+        axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
+        .then(res => {
+            this.inquirychat();
+        });
       },
     },
     mounted() {

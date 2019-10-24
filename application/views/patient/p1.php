@@ -197,7 +197,7 @@
 										v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"
 											>{{ msg.crebyname }}</div>
 									<span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
-									<div class="d-inline-block bg-light py-2 px-4 text-wrap text-left" :class="msg.msgcl ? msg.msgcl : 'chat-msg-area'">
+									<div class="d-inline-block py-2 px-4 text-wrap text-left" :class="msg.msgcl ? 'text-muted font-italic '+msg.msgcl : 'chat-msg-area'">
 										{{ msg.msgtxt }}
 									</div>
 									<span class="text-muted" v-if="msg.side == 'a'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
@@ -325,6 +325,21 @@
 								</div>
 							</div>
 							<div class="col-sm-6">
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="newapm.lcttype">
+									<label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="newapm.lcttype">
+									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
+								</div>
+
+								<div class="my-3" v-show="newapm.lcttype == 'itlct'"><!--  class="collapse" -->
+									<select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
+										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
+									</select>
+								</div>
+
 								<div class="input-group my-2">
 									<div class="input-group-prepend">
 										<div class="input-group-text">
@@ -349,7 +364,7 @@
 								<div class="form-row align-item-center justify-content-center">
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
-										<input class="form-control datepicker" type="text" id="apmdate" v-model="newapm.apmdate" placeholder="เลือกวันที่">
+										<input class="form-control datepicker-forapmdate" type="text" id="apmdate" v-model="newapm.apmdate" placeholder="เลือกวันที่">
 									</div>
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
@@ -358,21 +373,6 @@
 										</select>
 									</div>
 								</div> <!-- end div of sub form-row -->
-
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="newapm.lcttype">
-									<label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="newapm.lcttype">
-									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
-								</div>
-
-								<div v-show="newapm.lcttype == 'itlct'">
-									<select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
-										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
-									</select>
-								</div>
 								
 							</div>
 						</div>
@@ -498,17 +498,49 @@
 				$('#list-page').hide("slide", { direction: "up" }, 500);
 			},
 			activedatepicker(){
+				$('.datepicker-forapmdate').datepicker({
+						language:'th-th',
+						format:'dd/mm/yyyy',	
+						autoclose: true,
+						todayHighlight: true,
+						startDate: '+3d',
+				});
+
+				$('#apmdate').datepicker()
+					.on('hide', v => {
+						let df = this.checkapmdatefromnow(this.dateformysql($('#apmdate').val()));
+						if(!df){return false;}
+						if(df >= 3){
+							this.newapm.apmdate = $('#apmdate').val();
+						}else if(df >= 0 && df < 3){
+							$('#apmdate').val('');
+							$('#apmdate').datepicker("show");
+							Swal.fire({
+							  type: 'error',
+							  title: 'วันที่ที่เลือก ไม่สามารถทำนัดได้!',
+							  html: '<center>เจ้าหน้าที่สามารถทำนัดให้ได้ 3 วัน นับจากวันที่ขอทำนัด <br> กรุณาเลือกวันที่จากปฏิทินที่เปิดให้เลือก</center>',
+							  showConfirmButton: true,
+					          allowOutsideClick: false,
+							});
+						}else{
+							$('#apmdate').val('');
+							$('#apmdate').datepicker("show");
+							Swal.fire({
+							  type: 'error',
+							  title: 'เลือกวันที่ไม่ถูกต้อง',
+							  html: '<center>ไม่สามารถทำนัดย้อนหลังให้ได้ <br> กรุณาเลือกวันที่จากปฏิทินที่เปิดให้เลือก</center>',
+							  showConfirmButton: true,
+					          allowOutsideClick: false,
+							});
+						}
+					});
+
 				$('.datepicker').datepicker({
 						language:'th-th',
 						format:'dd/mm/yyyy',	
 						autoclose: true,
 						todayHighlight: true,
 				});
-
-				$('#apmdate').datepicker()
-					.on('hide', v =>{
-						this.newapm.apmdate = $('#apmdate').val();
-					});
 
 				$('#sfdate').datepicker()
 					.on('hide', v =>{
@@ -733,6 +765,7 @@
 					this.newapm.apmdate = this.dateforth(res.data.row.apmdate);
 					$('#apmlct').val(this.newapm.apmlct).trigger('change');
 					$('#apmtime').val(this.newapm.apmtime).trigger('change');
+					
 					this.actionshowmodal('edit-appointment');
 				});
 			},
@@ -826,6 +859,12 @@
 						});
 					});
 				$('#apmlct').val(null).trigger('change');
+			},
+			checkapmdatefromnow(dt){
+				let n = moment().startOf('day'); // moment will return value for now date
+				let sd = moment(dt,"YYYY-MM-DD"); // select date 
+				let df = sd.diff(n , 'days');
+				return df;	
 			},
 
 		},

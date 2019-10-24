@@ -42,7 +42,18 @@ body.admin-page {
 
 .chat-msg-area {
 	max-width: 80%;
+	background-color: #f8f9fa !important;
 	border: 1px solid #bfbfbf;
+	border-radius: 10px;
+	overflow-wrap: break-word;
+  	word-wrap: break-word;
+  	hyphens: auto;
+}
+
+.chat-msg-confirm {
+	max-width: 80%;
+	background-color: #ccff99 !important;
+	border: 1px solid #66ff33;
 	border-radius: 10px;
 	overflow-wrap: break-word;
   	word-wrap: break-word;
