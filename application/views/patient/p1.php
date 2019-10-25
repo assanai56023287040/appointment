@@ -325,20 +325,6 @@
 								</div>
 							</div>
 							<div class="col-sm-6">
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="newapm.lcttype">
-									<label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="newapm.lcttype">
-									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
-								</div>
-
-								<div class="my-3" v-show="newapm.lcttype == 'itlct'"><!--  class="collapse" -->
-									<select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
-										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
-									</select>
-								</div>
 
 								<div class="input-group my-2">
 									<div class="input-group-prepend">
@@ -373,6 +359,22 @@
 										</select>
 									</div>
 								</div> <!-- end div of sub form-row -->
+
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="newapm.lcttype">
+									<label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="newapm.lcttype">
+									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
+								</div>
+
+								<div class="my-3" v-show="newapm.lcttype == 'itlct'"><!--  class="collapse" -->
+									<select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
+										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
+									</select>
+								</div>
+								
 								
 							</div>
 						</div>
