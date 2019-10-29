@@ -374,7 +374,7 @@
 										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
 									</select>
 								</div>
-								
+
 								
 							</div>
 						</div>
@@ -389,9 +389,15 @@
 						<span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
 					</button>
 					<!-- edit apm -->
-					<button class="btn x-btn-orenge px-3" v-if="!isnewapm" style="border-radius: 10px;" @click="saveeditapm()">
+					<button class="btn x-btn-orenge px-3" 
+							v-if="!isnewapm" 
+							style="border-radius: 10px;" 
+							@click="saveeditapm()"
+							:class="{'non-edit' : newapm.stid == '03'}"
+                        	:disabled="newapm.stid == '03'"
+					>
 						<i class="fa fa-pencil-alt fa-flip-horizontal align-middle" style="font-size: 2rem"></i>
-						<span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
+						<span class="align-middle ml-2" style="font-size: 2rem;">บันทึกการแก้ไข</span> <!-- ขอทำนัด -->
 					</button>
 				</div>
 			</div>
@@ -677,6 +683,44 @@
 					'lctname' : sellct.lctname,
 				});
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
+				.then(async res => {
+					this.apmid = res.apmid;
+					this.clearform('newapm');
+					$('#new-appointment').modal('hide');
+					await this.listload();
+					this.selapm = this.apmlist.find(v => v.apmid == res.data.apmid);
+					Swal.fire({
+						  type: 'success',
+						  title: 'บันทึกใบขอทำนัดเสร็จสิ้น',
+						  text: 'กรุณารอสักครู่.....',
+						  confirmButtonText: '',
+						  timer: 2000,
+						  showConfirmButton: false,
+		                  allowOutsideClick: false,
+					}).then(() => {
+						this.openchat(this.selapm.apmid);
+					});
+				});
+			},
+			saveeditapm(){
+				let sellct = this.lctlist.find( v => v.lctcode == this.newapm.apmlct);
+				let params = new URLSearchParams({
+					'apmid' : this.selapm.apmid,
+					'header' : this.newapm.header,
+					'apmdate' : this.dateformysql(this.newapm.apmdate),
+					'apmtime' : this.newapm.apmtime,
+					'sicktxt' : this.newapm.sicktxt,
+					'tel' : this.newapm.tel,
+					'ptid' : this.ptid,
+					'hn' : this.ptdata.HN,
+					'stid' : this.newapm.stid,
+					'isseldct' : this.newapm.isseldct,
+					'apmdct' : this.newapm.apmdct,
+					'lcttype' : this.newapm.lcttype,
+					'apmlct' : sellct.lctcode,
+					'lctname' : sellct.lctname,
+				});
+				axios.post("<?php echo site_url('appointment/editapm'); ?>",params)
 				.then(async res => {
 					this.apmid = res.apmid;
 					this.clearform('newapm');

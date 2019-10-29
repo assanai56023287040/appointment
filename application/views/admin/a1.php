@@ -841,10 +841,12 @@
           <!-- modal footer --> 
           <div class="modal-footer text-right">
             <!-- edit apm -->
-            <button class="btn x-btn-orenge px-3" style="border-radius: 10px;" @click="saveeditapm()">
+
+            <!-- <button class="btn x-btn-orenge px-3" style="border-radius: 10px;" @click="saveeditapm()">
               <i class="fa fa-pencil-alt fa-flip-horizontal align-middle" style="font-size: 2rem"></i>
-              <span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
-            </button>
+              <span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span>
+            </button> -->
+            
           </div>
         </div>
       </div> <!-- end of div modal dialog -->

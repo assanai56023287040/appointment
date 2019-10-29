@@ -49,6 +49,33 @@ class Appointment extends CI_Controller {
 		));
 	}
 
+
+	function editapm(){
+		$apmid = $this->input->post('apmid');
+
+		$this->db->where('apmid',$apmid)
+				->where('active <>','I')
+				->where('stid <>','03');
+
+		$this->db->update('apmpt',array(
+			'header' => $this->input->post('header')
+			,'apmdate' =>$this->input->post('apmdate')
+			,'apmtime' =>$this->input->post('apmtime')
+			,'sicktxt' => $this->input->post('sicktxt')
+			,'tel' => $this->input->post('tel')
+			,'isseldct' => $this->input->post('isseldct')
+			,'apmdct' => $this->input->post('apmdct')
+			,'lcttype' => $this->input->post('lcttype')
+			,'apmlct' => $this->input->post('apmlct')
+			,'lctname' => $this->input->post('lctname')
+			,'credt' => date("Y-m-d H:i:s")
+		));
+
+		echo json_encode(array(
+			'success' => true
+			,'apmid' => $apmid
+		));
+	}
 	function listload(){
 
 		$ptid = $this->input->get('ptid');
