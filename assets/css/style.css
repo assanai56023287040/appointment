@@ -301,3 +301,8 @@ body.admin-page {
   background: #1cc588 !important;
   color: white !important;
 }
+
+.icon-hover-trans-gray:hover {
+	color: #ffffff;
+	text-shadow: 0 0 15px #262626;/*#808080*/
+}

@@ -46,10 +46,10 @@
 			</div>
 		</div>
 		<div class="d-inline-block text-right float-right align-middle ml-3">
-			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')" title="ข้อมูลคนไข้" data-content="ดูรายละเอียดข้อมูลคนไข้" data-toggle="popover" data-trigger="hover" data-placement="bottom">
+			<button type="button" class="btn x-btn-white" style="border-radius: 10px;" @click="onlyshowmodal('patient-profile')" title="ข้อมูลคนไข้">
 				<i class="far fa-user-circle m-2" style="font-size: 2rem;"></i>
 			</button>
-			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ" data-content="กลับสู่หน้าลงทะเบียน" data-toggle="popover" data-trigger="hover" data-placement="bottom">
+			<button type="button" class="btn x-btn-red" style="border-radius: 10px;" @click="logout()" title="ออกจากระบบ">
 				<i class="fas fa-power-off m-2" style="font-size: 2rem;"></i>
 			</button>
 		</div>
@@ -280,7 +280,7 @@
 	</div> <!-- end of div modal patient-profile -->
 
 	<!-- new-appointment modal id -->
-	<div id="new-appointment" class="modal fade" data-backdrop="true" role="dialog">
+	<div id="new-appointment" class="modal fade" data-backdrop="static" role="dialog">
 		<div class="modal-dialog modal-xl modal-dialog-centered">
 			<div class="modal-content">
 				<!-- modal header -->
@@ -291,7 +291,7 @@
 							<h3 class="font-weight-bold" v-if="!isnewapm"> แก้ไขข้อมูลใบนัด </h3>
 						</div>
 						<div class="col-6 text-right px-0">
-							<i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
+							<i class="far fa-times-circle icon-hover-trans-gray" data-dismiss="modal" style="font-size: 2rem;"></i>
 						</div>
 					</div>
 				</div>
@@ -326,25 +326,36 @@
 							</div>
 							<div class="col-sm-6">
 
-								<div class="input-group my-2">
-									<div class="input-group-prepend">
-										<div class="input-group-text">
-									    	<div class="form-check form-check-inline">
-												<input class="form-check-input" type="checkbox" value="" v-model="newapm.isseldct" id="defaultCheck1">
-												<label class="form-check-label" for="defaultCheck1">ระบุแพทย์</label>
-											</div>
-										</div>
-									</div>
-									<select class="form-control" type="text" id="apmdct" v-model="newapm.apmdct" :disabled="!newapm.isseldct">
-										<option value="" disabled selected>เลือกแพทย์</option>										
-										<option value="11001">11001 | นพ.ทดสอบระบบแพทย์</option>
-										<!-- <option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option> -->
-									</select>
-									<div class="input-group-append" >
-										<button class="btn btn-outline-secondary" type="button" :disabled="!newapm.isseldct" title="ตารางออกตรวจแพทย์">
+								<div class="d-inline-block form-check form-check-inline text-left">
+									<input class="form-check-input" type="checkbox" value="" v-model="newapm.isseldct" id="defaultCheck1">
+									<label class="small font-weight-bold form-check-label" for="defaultCheck1">ระบุแพทย์</label>
+								</div>
+
+								<div class="d-inline-block float-right text-right mt-1">
+									<button class="btn btn-outline-secondary" type="button" title="ตารางออกตรวจแพทย์" :disabled="!newapm.apmdct && !newapm.apmlct">
 											<i class="far fa-calendar-alt align-middle" style="font-size: 1.5rem"></i>
-										</button>
-									</div>
+									</button>
+								</div>
+
+								<div class="mt-3 mb-2">
+									<select id="apmdct" :disabled="!newapm.isseldct"> <!-- v-model="newapm.apmlct" -->
+										<option value="11001">11001 | นพ.ทดสอบระบบแพทย์</option>
+									</select>
+								</div>
+
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="newapm.lcttype">
+									<label class="small font-weight-bold form-check-label" for="clinicChoice2">คลินิคในเวลา</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="newapm.lcttype">
+									<label class="small font-weight-bold form-check-label" for="clinicChoice1">คลินิคเฉพาะทาง</label>
+								</div>
+
+								<div class="my-2"> <!--  class="collapse" -->
+									<select id="apmlct" :disabled="newapm.lcttype != 'itlct'"> <!-- v-model="newapm.apmlct" -->
+										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
+									</select>
 								</div>
 
 								<div class="form-row align-item-center justify-content-center">
@@ -360,22 +371,6 @@
 									</div>
 								</div> <!-- end div of sub form-row -->
 
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="newapm.lcttype">
-									<label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="newapm.lcttype">
-									<label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
-								</div>
-
-								<div class="my-3" v-show="newapm.lcttype == 'itlct'"><!--  class="collapse" -->
-									<select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="newapm.apmlct" -->
-										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
-									</select>
-								</div>
-
-								
 							</div>
 						</div>
 					</div>
@@ -565,7 +560,7 @@
 					case 'apmlct':
 						$('#apmlct').select2({
 							theme: "bootstrap",
-							placeholder: "เลือกคลีนิค",
+							placeholder: "เลือกคลินิค",
 							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
 						});
 
@@ -583,6 +578,17 @@
 
 						$('#apmtime').on("select2:closing", v => {
 							this.newapm.apmtime = $('#apmtime').val();
+						});
+						break;
+
+					case 'apmdct':
+						$('#apmdct').select2({
+							theme: "bootstrap",
+							placeholder: "เลือกแพทย์",
+						});
+
+						$('#apmdct').on("select2:closing", v => {
+							this.newapm.apmdct = $('#apmdct').val();
 						});
 						break;
 				
@@ -631,6 +637,8 @@
 							lcttype: '',
 						}; 
 						$('#apmlct').val(null).trigger('change');
+						$('#apmtime').val(null).trigger('change');
+						$('#apmdct').val(null).trigger('change');
 						break;
 					default : break;
 				}
@@ -666,6 +674,7 @@
 				});
 			},
 			savenewapm(){
+				if(this.validnewapm()){return false;}
 				let sellct = this.lctlist.find( v => v.lctcode == this.newapm.apmlct);
 				let params = new URLSearchParams({
 					'header' : this.newapm.header,
@@ -912,6 +921,39 @@
 				let df = sd.diff(n , 'days');
 				return df;	
 			},
+			validnewapm(){
+				let npass = false;
+				let xmsg = 'ท่านกรอกข้อมูล : <br>';
+
+				if(!this.newapm.sicktxt){
+					npass = true;
+					xmsg += '-รายละเอียดอาการ<br>';
+				}
+				if(!this.newapm.tel){
+					npass = true;
+					xmsg += '-เบอร์โทรศัพท์<br>';
+				}
+				if(!this.newapm.apmdate){
+					npass = true;
+					xmsg += '-วันที่ขอทำนัด<br>';
+				}
+				if(!this.newapm.apmtime){
+					npass = true;
+					xmsg += '-เวลาที่ขอทำนัด<br>';
+				}
+
+				xmsg += 'ไม่ถูกต้อง <br> กรุณากรอกข้อมูลให้ถูกต้องครบถ้วน';
+				if(npass){
+					Swal.fire({
+						type: 'error',
+					  	html: '<center>' + xmsg + '</center>',
+					  	showConfirmButton: true,
+			          	allowOutsideClick: false,
+					});
+
+				}
+				return npass;
+			},
 
 		},
 		mounted() {
@@ -921,11 +963,11 @@
 				this.showlistpage();
 				this.ptid = lcget('ptid');
 				$('#patient-page').removeClass("d-none");
-				$('[data-toggle="popover"]').popover();
 				this.listload();
 				this.lctload();
 				this.activedatepicker();
 				this.activeselect2('apmtime');
+				this.activeselect2('apmdct');
 			}else{
 				Swal.fire({
 				  type: 'error',

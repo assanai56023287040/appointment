@@ -4623,7 +4623,7 @@ S2.define('select2/i18n/en',[],function () {
       return message;
     },
     noResults: function () {
-      return 'No results found';
+      return 'ไม่พบผลการค้นหา';
     },
     searching: function () {
       return 'Searching…';

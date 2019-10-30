@@ -821,11 +821,11 @@
 
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="ptapm.lcttype">
-                    <label class="form-check-label" for="clinicChoice2">คลีนิคในเวลา</label>
+                    <label class="form-check-label" for="clinicChoice2">คลินิคในเวลา</label>
                   </div>
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="ptapm.lcttype">
-                    <label class="form-check-label" for="clinicChoice1">คลีนิคเฉพาะทาง</label>
+                    <label class="form-check-label" for="clinicChoice1">คลินิคเฉพาะทาง</label>
                   </div>
 
                   <div v-show="ptapm.lcttype == 'itlct'">
@@ -846,7 +846,7 @@
               <i class="fa fa-pencil-alt fa-flip-horizontal align-middle" style="font-size: 2rem"></i>
               <span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span>
             </button> -->
-            
+
           </div>
         </div>
       </div> <!-- end of div modal dialog -->
@@ -931,7 +931,7 @@
                         <th>#</th>
                         <th>วันที่</th>
                         <th>เวลา</th>
-                        <th>คลีนิค</th>
+                        <th>คลินิค</th>
                         <th>รายละเอียด</th>
                         <th>สถานะ</th>
                       </tr>
@@ -1462,7 +1462,7 @@
           case 'apmlct':
               $('#apmlct').select2({
                 theme: "bootstrap",
-                placeholder: "เลือกคลีนิค",
+                placeholder: "เลือกคลินิค",
                 // sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
               });
 
