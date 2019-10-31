@@ -511,4 +511,21 @@ class Appointment extends CI_Controller {
 		return $arr;
 	}
 
+	function loadschedulelctbydct(){
+		$dct = $this->input->get('dct');
+
+		$client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
+
+	    $params = array('hn' => $hn
+    					,'oappdate' => $oappdate
+    					,'oapptime' => $oapptime
+    					,'itemno' => $itemno
+					);
+
+	    $data = $client->dtLCTScheduleByDCT($params)->dtLCTScheduleByDCTResult;
+
+	    $res = json_decode($data);
+
+	}
+
 }

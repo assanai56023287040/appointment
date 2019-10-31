@@ -462,6 +462,7 @@
 				{k: "23", v:"23.00"},
 			],
 			lctlist: [],
+			lctlist_x: [],
 			listInterval: null, // interval for show bagde message in chat list
 			chatInterval: null, // for update message in chat page
 			currmsg: "",
@@ -589,6 +590,7 @@
 
 						$('#apmdct').on("select2:closing", v => {
 							this.newapm.apmdct = $('#apmdct').val();
+							this.loadschedulelctbydct(this.newapm.apmdct);
 						});
 						break;
 				
@@ -954,7 +956,9 @@
 				}
 				return npass;
 			},
+			loadschedulelctbydct(dct){
 
+			},
 		},
 		mounted() {
 			var _this = this;
