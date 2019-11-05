@@ -411,7 +411,7 @@ class Appointment extends CI_Controller {
 	function loadoapplist(){
 		$hn = $this->input->get('hn');
 
-		$client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
 
 	    $params = array('hn' => $hn);
 
@@ -452,7 +452,7 @@ class Appointment extends CI_Controller {
 
 		$oappdate = substr($oappdate ,0 ,10);
 
-		$client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
 
 	    $params = array('hn' => $hn
     					,'oappdate' => $oappdate
@@ -514,7 +514,29 @@ class Appointment extends CI_Controller {
 	function loadschedulelctbydct(){
 		$dct = $this->input->get('dct');
 
-		$client = new SoapClient(TUH_SW_API_LOCAL,TUH_SW_API_OPTION);
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
+
+	    $params = array('dct' => $dct);
+
+	    $data = $client->dtLCTScheduleByDCT($params)->dtLCTScheduleByDCTResult;
+
+	    $res = json_decode($data);
+
+	    if(count($res) > 0){
+			echo json_encode(array(
+	    		'success' => true
+	    		,'row' => $res
+	    	));
+	    }else{
+	    	echo json_encode(array(
+	    		'success' => false
+	    	));
+	    }
+
+	}
+
+	function dctload(){
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
 
 	    $params = array('hn' => $hn
     					,'oappdate' => $oappdate
@@ -525,6 +547,19 @@ class Appointment extends CI_Controller {
 	    $data = $client->dtLCTScheduleByDCT($params)->dtLCTScheduleByDCTResult;
 
 	    $res = json_decode($data);
+
+		if($lct->num_rows() > 0){ //$res->MessageCode == 200
+			echo json_encode(array(
+					'success' => true
+					,'code' => 'pass'
+					,'row' => $lct->result_array()
+				));
+		}else{
+			echo json_encode(array(
+					'success' => false
+					,'code' => 'notPass'
+				));
+		}
 
 	}
 

@@ -339,7 +339,7 @@
 
 								<div class="mt-3 mb-2">
 									<select id="apmdct" :disabled="!newapm.isseldct"> <!-- v-model="newapm.apmlct" -->
-										<option value="11001">11001 | นพ.ทดสอบระบบแพทย์</option>
+										<option value="165">165 | นพ.อัศนีย์</option>
 									</select>
 								</div>
 
@@ -463,6 +463,8 @@
 			],
 			lctlist: [],
 			lctlist_x: [],
+			dctlist: [],
+			dctlist_x: [],
 			listInterval: null, // interval for show bagde message in chat list
 			chatInterval: null, // for update message in chat page
 			currmsg: "",
@@ -917,6 +919,21 @@
 					});
 				$('#apmlct').val(null).trigger('change');
 			},
+			async dctload(){
+				this.dctlist = [];
+				this.activeselect2('apmdct');
+				await axios.get("<?php echo site_url('appointment/dctload'); ?>")
+					.then(res => {
+						res = res.data;
+						res.row.forEach((item,idx) => {
+							this.lctlist.push({
+								dctcode : item.dctcode,
+								dctname : item.dctname,
+							});
+						});
+					});
+				$('#apmlct').val(null).trigger('change');
+			},
 			checkapmdatefromnow(dt){
 				let n = moment().startOf('day'); // moment will return value for now date
 				let sd = moment(dt,"YYYY-MM-DD"); // select date 
@@ -957,6 +974,18 @@
 				return npass;
 			},
 			loadschedulelctbydct(dct){
+				this.lctlist_x = this.lctlist; 
+				// ย้ายข้อมูลส่วนของ LCT ทั้งหมดมาไว้ที่ lctlist_x ก่อน กันหาย เพราะเดวจะมีการฟิลเตอร์ lct โดยตารางออกเวรของหมอ
+				axios.get("<?php echo site_url('appointment/loadschedulelctbydct'); ?>",{params: {dct: dct}})
+					.then(res => {
+						res = res.data;
+						if(res.success){
+							// res = res.row;
+							this.lctlist = res.row;
+							this.activeselect2('apmlct');
+						}
+					});
+
 
 			},
 		},
