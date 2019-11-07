@@ -512,15 +512,15 @@ class Appointment extends CI_Controller {
 	}
 
 	function loadschedulelctbydct(){
-		// $dct = $this->input->get('dct');
+		$dct = $this->input->get('dct');
 
-		// $client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
 
-	 //    $params = array('dct' => $dct);
+	    $params = array('dct' => $dct);
 
-	 //    $data = $client->dtLCTScheduleByDCT($params)->dtLCTScheduleByDCTResult;
+	    $data = $client->dtLCTScheduleByDCT($params)->dtLCTScheduleByDCTResult;
 
-		$data = '[ { "LCT": 200, "NAME": "ศัลยกรรม" }, { "LCT": 2800, "NAME": "พิเศษเฉพาะทาง" }, { "LCT": 5040, "NAME": "ส่องกล้อง" } ]';
+		// $data = '[ { "LCT": 200, "NAME": "ศัลยกรรม" }, { "LCT": 2800, "NAME": "พิเศษเฉพาะทาง" }, { "LCT": 5040, "NAME": "ส่องกล้อง" } ]';
 	    $res = json_decode($data);
 
 	    if(count($res) > 0){

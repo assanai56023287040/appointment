@@ -353,7 +353,7 @@
 								</div>
 
 								<div class="my-2"> <!--  class="collapse" -->
-									<select id="apmlct" :disabled="newapm.lcttype != 'itlct'"> <!-- v-model="newapm.apmlct" -->
+									<select id="apmlct" :disabled="newapm.lcttype != 'itlct'" style="width: 95% !important;"> <!-- v-model="newapm.apmlct" -->
 										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
 									</select>
 								</div>
@@ -463,6 +463,7 @@
 			],
 			lctlist: [],
 			lctlist_x: [],
+			lctlist_sel2: {},
 			dctlist: [],
 			dctlist_x: [],
 			listInterval: null, // interval for show bagde message in chat list
@@ -563,6 +564,7 @@
 					case 'apmlct':
 						$('#apmlct').select2({
 							theme: "bootstrap",
+							width: 'resolve',
 							placeholder: "เลือกคลินิค",
 							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
 						});
@@ -904,9 +906,9 @@
 					});
 				},5000);
 			},
+
 			async lctload(){
 				this.lctlist = [];
-				this.activeselect2('apmlct');
 				await axios.get("<?php echo site_url('appointment/lctload'); ?>")
 					.then(res => {
 						res = res.data;
@@ -916,7 +918,9 @@
 								lctname : item.lctname,
 							});
 						});
+						this.lctlist_sel2 = this.changeformatselect2('apmlct',this.lctlist);
 					});
+				this.activeselect2('apmlct');
 				$('#apmlct').val(null).trigger('change');
 			},
 			async dctload(){
@@ -933,6 +937,23 @@
 						});
 					});
 				$('#apmlct').val(null).trigger('change');
+			},
+			changeformatselect2(elid,arr){
+				let dt = [];
+				switch(elid){
+					case 'apmlct' : 
+							arr.forEach((item,idx) => {
+								dt.push({
+									"id" : item.lctcode
+									,"text" : item.lctcode + " | " + item.lctname
+								});
+							});
+						break;
+					default : 
+						break;
+				}
+
+				return {"results" : dt};
 			},
 			checkapmdatefromnow(dt){
 				let n = moment().startOf('day'); // moment will return value for now date
@@ -981,6 +1002,7 @@
 						res = res.data;
 						if(res.success){
 							// res = res.row;
+							$('#apmlct').select2("destroy").select2();
 							this.lctlist = res.row;
 							this.activeselect2('apmlct');
 						}
