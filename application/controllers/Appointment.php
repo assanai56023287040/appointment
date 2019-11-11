@@ -545,7 +545,7 @@ class Appointment extends CI_Controller {
     					,'itemno' => $itemno
 					);
 
-	    $data = $client->dtLCTScheduleByDCT($params)->dtLCTScheduleByDCTResult;
+	    $data = $client->dtDCTScheduleByLCT($params)->dtDCTScheduleByLCTResult;
 
 	    $res = json_decode($data);
 

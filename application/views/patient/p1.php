@@ -354,7 +354,7 @@
 
 								<div class="my-2"> <!--  class="collapse" -->
 									<select id="apmlct" :disabled="newapm.lcttype != 'itlct'" style="width: 95% !important;"> <!-- v-model="newapm.apmlct" -->
-										<option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option>
+										<!-- <option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option> -->
 									</select>
 								</div>
 
@@ -463,7 +463,6 @@
 			],
 			lctlist: [],
 			lctlist_x: [],
-			lctlist_sel2: {},
 			dctlist: [],
 			dctlist_x: [],
 			listInterval: null, // interval for show bagde message in chat list
@@ -641,7 +640,9 @@
 							apmdct: '',
 							apmlct: '',
 							lcttype: '',
-						}; 
+						};
+						this.lctlist = this.lctlist_x;
+						this.appendsel2('apmlct',this.lctlist);
 						$('#apmlct').val(null).trigger('change');
 						$('#apmtime').val(null).trigger('change');
 						$('#apmdct').val(null).trigger('change');
@@ -909,6 +910,8 @@
 
 			async lctload(){
 				this.lctlist = [];
+				this.lctlist_x = [];
+				this.activeselect2('apmlct');
 				await axios.get("<?php echo site_url('appointment/lctload'); ?>")
 					.then(res => {
 						res = res.data;
@@ -918,25 +921,26 @@
 								lctname : item.lctname,
 							});
 						});
-						this.lctlist_sel2 = this.changeformatselect2('apmlct',this.lctlist);
+						this.appendsel2('apmlct',this.lctlist);
 					});
-				this.activeselect2('apmlct');
+				this.lctlist_x = this.lctlist;
 				$('#apmlct').val(null).trigger('change');
 			},
 			async dctload(){
 				this.dctlist = [];
+				this.dctlist_x = [];
 				this.activeselect2('apmdct');
 				await axios.get("<?php echo site_url('appointment/dctload'); ?>")
 					.then(res => {
 						res = res.data;
 						res.row.forEach((item,idx) => {
-							this.lctlist.push({
+							this.dctlist.push({
 								dctcode : item.dctcode,
 								dctname : item.dctname,
 							});
 						});
 					});
-				$('#apmlct').val(null).trigger('change');
+				$('#apmdct').val(null).trigger('change');
 			},
 			changeformatselect2(elid,arr){
 				let dt = [];
@@ -978,8 +982,8 @@
 					xmsg += '-วันที่ขอทำนัด<br>';
 				}
 				if(!this.newapm.apmtime){
-					npass = true;
-					xmsg += '-เวลาที่ขอทำนัด<br>';
+					npass = true
+;					xmsg += '-เวลาที่ขอทำนัด<br>';
 				}
 
 				xmsg += 'ไม่ถูกต้อง <br> กรุณากรอกข้อมูลให้ถูกต้องครบถ้วน';
@@ -995,20 +999,46 @@
 				return npass;
 			},
 			loadschedulelctbydct(dct){
-				this.lctlist_x = this.lctlist; 
-				// ย้ายข้อมูลส่วนของ LCT ทั้งหมดมาไว้ที่ lctlist_x ก่อน กันหาย เพราะเดวจะมีการฟิลเตอร์ lct โดยตารางออกเวรของหมอ
+				let lct = $('#apmlct');
+				lct.prop('disabled',true);
+				lct.empty();
+				let loadoption = new Option('กำลังโหลดข้อมูลคลินิก.....' ,0 ,true ,true);
+				lct.append(loadoption).trigger('change');
 				axios.get("<?php echo site_url('appointment/loadschedulelctbydct'); ?>",{params: {dct: dct}})
 					.then(res => {
 						res = res.data;
 						if(res.success){
 							// res = res.row;
-							$('#apmlct').select2("destroy").select2();
-							this.lctlist = res.row;
-							this.activeselect2('apmlct');
+							this.lctlist = [];
+							res.row.forEach((item,idx) => {
+								this.lctlist.push({
+									lctcode : item.LCT,
+									lctname : item.NAME,
+								});
+							});
+							this.appendsel2('apmlct',this.lctlist);
+							lct.prop('disabled',this.newapm.lcttype != 'itlct');
 						}
 					});
 
-
+			},
+			appendsel2(elid,arr){
+				let dt = {};
+				let newoption = null;
+				switch(elid){
+					case 'apmlct' : 
+							$('#'+elid).empty();
+							arr.forEach((item,idx) => {
+								dt = {
+									id : item.lctcode
+									,text : " [ " + item.lctcode + " ] " + item.lctname
+								};
+								newoption = new Option(dt.text ,dt.id ,false ,false);
+								$('#apmlct').append(newoption).trigger('change');
+							});
+						break;
+					default : 
+				}
 			},
 		},
 		mounted() {
