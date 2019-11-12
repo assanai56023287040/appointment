@@ -511,7 +511,7 @@ class Appointment extends CI_Controller {
 		return $arr;
 	}
 
-	function loadschedulelctbydct(){
+	function loadlctbydct(){
 		$dct = $this->input->get('dct');
 
 		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
@@ -536,24 +536,75 @@ class Appointment extends CI_Controller {
 
 	}
 
-	function dctload(){
+	function loaddctbylct(){
 		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
 
-	    $params = array('hn' => $hn
-    					,'oappdate' => $oappdate
-    					,'oapptime' => $oapptime
-    					,'itemno' => $itemno
-					);
+	    $params = array('lct' => $this->input->get('lct'));
 
 	    $data = $client->dtDCTScheduleByLCT($params)->dtDCTScheduleByLCTResult;
 
 	    $res = json_decode($data);
 
-		if($lct->num_rows() > 0){ //$res->MessageCode == 200
+		if(count($res) > 0){
+			echo json_encode(array(
+	    		'success' => true
+	    		,'row' => $res
+	    	));
+	    }else{
+	    	echo json_encode(array(
+	    		'success' => false
+	    	));
+	    }
+
+	}
+
+	function dctupdate(){
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
+
+	    $data = $client->dtDCTinSchedule()->dtDCTinScheduleResult;
+
+	    $res = json_decode($data);
+
+		$this->db->where('dctcode <>','')->delete('dct');
+
+		foreach ($res as $k => $v) {
+			$this->db->insert('dct', array(
+				'dctcode' => $v->DCT,
+				'dctname' => $v->NAME,
+			));
+		}
+
+	}
+
+	function dctload(){
+		// $date = date("Y-m-d");
+		// $ex = $this->db->query("
+		// 			SELECT CASE WHEN date(d.dt) = date('{$date}') 
+		// 						THEN 1
+		// 						ELSE 0 END AS exist
+		// 			FROM dct d
+		// 			LIMIT 1
+		// 	");
+
+		// if($ex->row()->exist == 0){
+		// 	$this->dctupdate();
+		// }
+
+		// $dct = $this->db->order_by('dctcode','asc')->get('dct');
+
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
+
+	    $data = $client->dtDCTinSchedule()->dtDCTinScheduleResult;
+
+	    $res = json_decode($data);
+
+		// // if($lct->num_rows() > 0){ //$res->MessageCode == 200
+		if(count($res) > 0){ //$res->MessageCode == 200
 			echo json_encode(array(
 					'success' => true
 					,'code' => 'pass'
-					,'row' => $lct->result_array()
+					,'row' => $res
+					// ,'row' => $dct->result_array()
 				));
 		}else{
 			echo json_encode(array(

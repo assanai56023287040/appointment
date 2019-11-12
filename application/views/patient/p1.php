@@ -332,15 +332,13 @@
 								</div>
 
 								<div class="d-inline-block float-right text-right mt-1">
-									<button class="btn btn-outline-secondary" type="button" title="ตารางออกตรวจแพทย์" :disabled="!newapm.apmdct && !newapm.apmlct">
+									<button class="btn btn-outline-secondary" type="button" title="ตารางออกตรวจแพทย์" :disabled="(!newapm.apmdct && !newapm.apmlct) || (!newapm.isseldct && newapm.lcttype != 'itlct')">
 											<i class="far fa-calendar-alt align-middle" style="font-size: 1.5rem"></i>
 									</button>
 								</div>
 
 								<div class="mt-3 mb-2">
-									<select id="apmdct" :disabled="!newapm.isseldct"> <!-- v-model="newapm.apmlct" -->
-										<option value="165">165 | นพ.อัศนีย์</option>
-									</select>
+									<select id="apmdct" :disabled="!newapm.isseldct"></select>
 								</div>
 
 								<div class="form-check form-check-inline">
@@ -471,6 +469,7 @@
 			messages: [],
 			offsetchat: 0,
 			onlistload: false,
+			switchload: '',
 		},
 		methods: {
 			onlyshowmodal(modal_id){
@@ -568,8 +567,14 @@
 							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
 						});
 
-						$('#apmlct').on("select2:closing", v => {
-							this.newapm.apmlct = $('#apmlct').val();
+						$('#apmlct').on("select2:select", v => {
+							let val = v.params.data.id;
+							if(!val || this.newapm.apmlct == val){return false;}
+							this.newapm.apmlct = val
+							if(this.switchload != 'dct'){ // หากมีการเลือก dct มาก่อน ระบบจะทำการ filter คลีนิคมาให้ เพราะงั้น จึงไม่ต้องไปโหลด dct แล้ว
+								this.switchload = 'lct';
+								this.loaddctbylct(this.newapm.apmlct);
+							}
 						});
 						break;
 
@@ -580,8 +585,8 @@
 							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
 						});
 
-						$('#apmtime').on("select2:closing", v => {
-							this.newapm.apmtime = $('#apmtime').val();
+						$('#apmtime').on("select2:select", v => {
+							this.newapm.apmtime = v.params.data.id;
 						});
 						break;
 
@@ -591,9 +596,15 @@
 							placeholder: "เลือกแพทย์",
 						});
 
-						$('#apmdct').on("select2:closing", v => {
-							this.newapm.apmdct = $('#apmdct').val();
-							this.loadschedulelctbydct(this.newapm.apmdct);
+						$('#apmdct').on("select2:select", v => {
+							let val = v.params.data.id;
+							if(!val || this.newapm.apmdct == val){return false;}
+							this.newapm.apmdct = val;
+							if(this.switchload != 'lct'){ // หากมีการเลือก lct มาก่อน ระบบจะทำการ filter แพทย์มาให้ เพราะงั้น จึงไม่ต้องไปโหลด lct แล้ว
+								this.switchload = 'dct';
+								this.loadlctbydct(this.newapm.apmdct);
+							}
+							
 						});
 						break;
 				
@@ -641,8 +652,15 @@
 							apmlct: '',
 							lcttype: '',
 						};
-						this.lctlist = this.lctlist_x;
-						this.appendsel2('apmlct',this.lctlist);
+						if(this.switchload == 'dct'){
+							this.lctlist = this.lctlist_x;
+							this.appendsel2('apmlct',this.lctlist);
+						}
+						if(this.switchload == 'lct'){
+							this.dctlist = this.dctlist_x;
+							this.appendsel2('apmdct',this.dctlist);
+						}
+						this.switchload = '';
 						$('#apmlct').val(null).trigger('change');
 						$('#apmtime').val(null).trigger('change');
 						$('#apmdct').val(null).trigger('change');
@@ -935,11 +953,13 @@
 						res = res.data;
 						res.row.forEach((item,idx) => {
 							this.dctlist.push({
-								dctcode : item.dctcode,
-								dctname : item.dctname,
+								dctcode : item.DCT,
+								dctname : item.NAME,
 							});
 						});
+						this.appendsel2('apmdct',this.dctlist);
 					});
+				this.dctlist_x = this.dctlist;
 				$('#apmdct').val(null).trigger('change');
 			},
 			changeformatselect2(elid,arr){
@@ -998,13 +1018,13 @@
 				}
 				return npass;
 			},
-			loadschedulelctbydct(dct){
+			loadlctbydct(dct){
 				let lct = $('#apmlct');
 				lct.prop('disabled',true);
 				lct.empty();
 				let loadoption = new Option('กำลังโหลดข้อมูลคลินิก.....' ,0 ,true ,true);
 				lct.append(loadoption).trigger('change');
-				axios.get("<?php echo site_url('appointment/loadschedulelctbydct'); ?>",{params: {dct: dct}})
+				axios.get("<?php echo site_url('appointment/loadlctbydct'); ?>",{params: {dct: dct}})
 					.then(res => {
 						res = res.data;
 						if(res.success){
@@ -1020,14 +1040,36 @@
 							lct.prop('disabled',this.newapm.lcttype != 'itlct');
 						}
 					});
-
+			},
+			loaddctbylct(lct){
+				let dct = $('#apmdct');
+				dct.prop('disabled',true);
+				dct.empty();
+				let loadoption = new Option('กำลังโหลดข้อมูลแพทย์ที่ออกตรวจ.....' ,0 ,true ,true);
+				dct.append(loadoption).trigger('change');
+				axios.get("<?php echo site_url('appointment/loaddctbylct'); ?>",{params: {lct: lct}})
+					.then(res => {
+						res = res.data;
+						if(res.success){
+							// res = res.row;
+							this.dctlist = [];
+							res.row.forEach((item,idx) => {
+								this.dctlist.push({
+									dctcode : item.DCT,
+									dctname : item.NAME,
+								});
+							});
+							this.appendsel2('apmdct',this.dctlist);
+							dct.prop('disabled',!this.newapm.isseldct);
+						}
+					});
 			},
 			appendsel2(elid,arr){
 				let dt = {};
 				let newoption = null;
 				switch(elid){
 					case 'apmlct' : 
-							$('#'+elid).empty();
+							$('#apmlct').empty();
 							arr.forEach((item,idx) => {
 								dt = {
 									id : item.lctcode
@@ -1035,6 +1077,17 @@
 								};
 								newoption = new Option(dt.text ,dt.id ,false ,false);
 								$('#apmlct').append(newoption).trigger('change');
+							});
+						break;
+					case 'apmdct' : 
+							$('#apmdct').empty();
+							arr.forEach((item,idx) => {
+								dt = {
+									id : item.dctcode
+									,text : " [ " + item.dctcode + " ] " + item.dctname
+								};
+								newoption = new Option(dt.text ,dt.id ,false ,false);
+								$('#apmdct').append(newoption).trigger('change');
 							});
 						break;
 					default : 
@@ -1050,6 +1103,7 @@
 				$('#patient-page').removeClass("d-none");
 				this.listload();
 				this.lctload();
+				this.dctload();
 				this.activedatepicker();
 				this.activeselect2('apmtime');
 				this.activeselect2('apmdct');
