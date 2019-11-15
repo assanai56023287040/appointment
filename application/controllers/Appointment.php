@@ -31,11 +31,12 @@ class Appointment extends CI_Controller {
 			,'stid' => $this->input->post('stid')
 			,'ptid' => $this->input->post('ptid')
 			,'hn' => $this->input->post('hn')
-			,'isseldct' => $this->input->post('isseldct')
-			,'apmdct' => $this->input->post('apmdct')
 			,'lcttype' => $this->input->post('lcttype')
 			,'apmlct' => $this->input->post('apmlct')
 			,'lctname' => $this->input->post('lctname')
+			,'isseldct' => $this->input->post('isseldct')
+			,'apmdct' => $this->input->post('apmdct')
+			,'dctname' => $this->input->post('dctname')
 			,'chcnt' => 1
 			,'active' => 'A'
 			,'credt' => date("Y-m-d H:i:s")
@@ -63,11 +64,12 @@ class Appointment extends CI_Controller {
 			,'apmtime' =>$this->input->post('apmtime')
 			,'sicktxt' => $this->input->post('sicktxt')
 			,'tel' => $this->input->post('tel')
-			,'isseldct' => $this->input->post('isseldct')
-			,'apmdct' => $this->input->post('apmdct')
 			,'lcttype' => $this->input->post('lcttype')
 			,'apmlct' => $this->input->post('apmlct')
 			,'lctname' => $this->input->post('lctname')
+			,'isseldct' => $this->input->post('isseldct')
+			,'apmdct' => $this->input->post('apmdct')
+			,'dctname' => $this->input->post('dctname')
 			,'credt' => date("Y-m-d H:i:s")
 		));
 
@@ -577,34 +579,18 @@ class Appointment extends CI_Controller {
 	}
 
 	function dctload(){
-		// $date = date("Y-m-d");
-		// $ex = $this->db->query("
-		// 			SELECT CASE WHEN date(d.dt) = date('{$date}') 
-		// 						THEN 1
-		// 						ELSE 0 END AS exist
-		// 			FROM dct d
-		// 			LIMIT 1
-		// 	");
-
-		// if($ex->row()->exist == 0){
-		// 	$this->dctupdate();
-		// }
-
-		// $dct = $this->db->order_by('dctcode','asc')->get('dct');
-
 		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
 
 	    $data = $client->dtDCTinSchedule()->dtDCTinScheduleResult;
 
 	    $res = json_decode($data);
 
-		// // if($lct->num_rows() > 0){ //$res->MessageCode == 200
+		
 		if(count($res) > 0){ //$res->MessageCode == 200
 			echo json_encode(array(
 					'success' => true
 					,'code' => 'pass'
 					,'row' => $res
-					// ,'row' => $dct->result_array()
 				));
 		}else{
 			echo json_encode(array(
@@ -613,6 +599,32 @@ class Appointment extends CI_Controller {
 				));
 		}
 
+	}
+
+	function loaddctschedule(){
+		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
+
+		$params = array(
+						'lct' => $this->input->get('lct')
+						,'dct' => $this->input->get('dct')
+					);
+
+	    $data = $client->dtDCTScheduleDetail($params)->dtDCTScheduleDetailResult;
+
+	    $res = json_decode($data);
+
+	    if(count($res) > 0){ //$res->MessageCode == 200
+			echo json_encode(array(
+					'success' => true
+					,'code' => 'pass'
+					,'row' => $res
+				));
+		}else{
+			echo json_encode(array(
+					'success' => false
+					,'code' => 'notPass'
+				));
+		}
 	}
 
 }

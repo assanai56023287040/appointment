@@ -141,9 +141,14 @@
 					<span class="align-middle mx-2" style="font-size: 1rem;">ข้อมูลคนไข้</span> <!-- ขอทำนัด -->
 				</button>
 				<hr/>
-				<button class="btn btn-block x-btn-orenge my-3" style="border-radius: 10px;" @click="apmload(selapm.apmid)">
-					<i class="fa fa-info align-middle" style="font-size: 1.8rem"></i>
-					<span class="align-middle mx-2" style="font-size: 1rem;">ดูข้อมูลการขอทำนัด</span> <!-- ขอทำนัด -->
+				<button class="btn btn-block x-btn-orenge my-3" 
+						style="border-radius: 10px;" 
+						@click="actionshowmodal('edit-appointment')"
+						:class="{'non-edit' : onptapmload}"
+                      	:disabled="onptapmload"
+				>
+					<i class="align-middle" style="font-size: 1.8rem" :class="onptapmload ? 'fas fa-circle-notch fa-spin' : 'fas fa-info'"></i>
+					<span class="align-middle mx-2" style="font-size: 1rem;">{{ onptapmload ? 'กำลังดาวน์โหลดข้อมูลขอทำนัด' : 'ดูข้อมูลการขอทำนัด' }}</span> <!-- ขอทำนัด -->
 				</button>
 				<div class="text-center w-100 my-2">
 					<h3 class="font-weight-bold">ข้อมูลการขอทำนัด</h3>
@@ -280,7 +285,7 @@
 	</div> <!-- end of div modal patient-profile -->
 
 	<!-- new-appointment modal id -->
-	<div id="new-appointment" class="modal fade" data-backdrop="static" role="dialog">
+	<div id="new-appointment" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false">
 		<div class="modal-dialog modal-xl modal-dialog-centered">
 			<div class="modal-content">
 				<!-- modal header -->
@@ -332,7 +337,7 @@
 								</div>
 
 								<div class="d-inline-block float-right text-right mt-1">
-									<button class="btn btn-outline-secondary" type="button" title="ตารางออกตรวจแพทย์" :disabled="(!newapm.apmdct && !newapm.apmlct) || (!newapm.isseldct && newapm.lcttype != 'itlct')">
+									<button class="btn btn-outline-secondary" type="button" title="ตารางออกตรวจแพทย์" :disabled="(!newapm.apmdct && !newapm.apmlct) || (!newapm.isseldct && newapm.lcttype != 'itlct')" @click="actionshowmodal('dct-schedule-in')">
 											<i class="far fa-calendar-alt align-middle" style="font-size: 1.5rem"></i>
 									</button>
 								</div>
@@ -351,7 +356,7 @@
 								</div>
 
 								<div class="my-2"> <!--  class="collapse" -->
-									<select id="apmlct" :disabled="newapm.lcttype != 'itlct'" style="width: 95% !important;"> <!-- v-model="newapm.apmlct" -->
+									<select id="apmlct" :disabled="newapm.lcttype != 'itlct'"> <!-- v-model="newapm.apmlct" -->
 										<!-- <option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option> -->
 									</select>
 								</div>
@@ -379,7 +384,7 @@
 					<!-- new apm -->
 					<button class="btn x-btn-green px-3" v-if="isnewapm" style="border-radius: 10px;" @click="savenewapm()">
 						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
-						<span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span> <!-- ขอทำนัด -->
+						<span class="align-middle ml-2" style="font-size: 2rem;">บันทึก</span><!-- ขอทำนัด -->
 					</button>
 					<!-- edit apm -->
 					<button class="btn x-btn-orenge px-3" 
@@ -396,6 +401,36 @@
 			</div>
 		</div> <!-- end of div modal dialog -->
 	</div> <!-- end of div modal new-appointment -->
+
+	<!-- dct-schedule modal id -->
+	<div id="dct-schedule" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<!-- modal header -->
+				<div class="modal-header">
+					<div class="row" style="min-width: 100%">
+						<div class="col-6 text-left font-weight-bold" :class="{'non-edit' : ondctscheduleload}">
+							<i style="font-size: 2rem;" class="d-inline mr-2" :class="ondctscheduleload ? 'fas fa-circle-notch fa-spin' : 'far fa-calendar-alt'"></i>
+							<h3 class="d-inline font-weight-bold" >{{ ondctscheduleload ? 'กำลังตรวจสอบตารางออกตรวจแพทย์' : 'ตารางออกตรวจแพทย์' }}</h3>
+						</div>
+						<div class="col-6 text-right px-0">
+							<i class="far fa-times-circle icon-hover-trans-gray" @click="actionshowmodal('dct-schedule-out')" style="font-size: 2rem;"></i>
+						</div>
+					</div>
+				</div>
+
+				<!-- modal body -->
+				<div class="modal-body">
+
+				</div>
+
+				<!-- modal footer -->
+				<div class="modal-footer">
+
+				</div>
+			</div>
+		</div>
+	</div> <!-- end of dct-schedule modal -->
 	
 </div> <!-- end of div container #app -->
 
@@ -469,6 +504,8 @@
 			messages: [],
 			offsetchat: 0,
 			onlistload: false,
+			onptapmload: false,
+			ondctscheduleload: false,
 			switchload: '',
 		},
 		methods: {
@@ -485,6 +522,16 @@
 					case 'edit-appointment' : 
 						this.isnewapm = false;
 						this.onlyshowmodal('new-appointment');
+						break;
+					case 'dct-schedule-in' :
+						$('#new-appointment').modal('hide');
+						this.onlyshowmodal('dct-schedule');
+						this.loaddctschedule();
+						break;
+					case 'dct-schedule-out' :
+						$('#dct-schedule').modal('hide');
+						this.onlyshowmodal('new-appointment');
+						// this.loaddctschedule();
 						break;
 				}
 			},
@@ -562,7 +609,6 @@
 					case 'apmlct':
 						$('#apmlct').select2({
 							theme: "bootstrap",
-							width: 'resolve',
 							placeholder: "เลือกคลินิค",
 							// sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
 						});
@@ -701,6 +747,7 @@
 			savenewapm(){
 				if(this.validnewapm()){return false;}
 				let sellct = this.lctlist.find( v => v.lctcode == this.newapm.apmlct);
+				let seldct = this.dctlist.find( v => v.dctcode == this.newapm.apmdct);
 				let params = new URLSearchParams({
 					'header' : this.newapm.header,
 					'apmdate' : this.dateformysql(this.newapm.apmdate),
@@ -710,11 +757,12 @@
 					'ptid' : this.ptid,
 					'hn' : this.ptdata.HN,
 					'stid' : this.newapm.stid,
-					'isseldct' : this.newapm.isseldct,
-					'apmdct' : this.newapm.apmdct,
 					'lcttype' : this.newapm.lcttype,
 					'apmlct' : sellct.lctcode,
 					'lctname' : sellct.lctname,
+					'isseldct' : this.newapm.isseldct,
+					'apmdct' : this.newapm.apmdct,
+					'dctname' : seldct.dctname,
 				});
 				axios.post("<?php echo site_url('appointment/newapm'); ?>",params)
 				.then(async res => {
@@ -738,6 +786,7 @@
 			},
 			saveeditapm(){
 				let sellct = this.lctlist.find( v => v.lctcode == this.newapm.apmlct);
+				let seldct = this.dctlist.find( v => v.dctcode == this.newapm.apmdct);
 				let params = new URLSearchParams({
 					'apmid' : this.selapm.apmid,
 					'header' : this.newapm.header,
@@ -748,11 +797,12 @@
 					'ptid' : this.ptid,
 					'hn' : this.ptdata.HN,
 					'stid' : this.newapm.stid,
-					'isseldct' : this.newapm.isseldct,
-					'apmdct' : this.newapm.apmdct,
 					'lcttype' : this.newapm.lcttype,
 					'apmlct' : sellct.lctcode,
 					'lctname' : sellct.lctname,
+					'isseldct' : this.newapm.isseldct,
+					'apmdct' : this.newapm.apmdct,
+					'dctname' : seldct.dctname,
 				});
 				axios.post("<?php echo site_url('appointment/editapm'); ?>",params)
 				.then(async res => {
@@ -826,27 +876,25 @@
 				await this.loadchat();
 				this.scrolltobottom();
 				this.inquirychat();
+				this.clearform('newapm');
+				this.apmload(this.selapm.apmid,true);
 				// $('#create-msg-box').focus();
 			},
-			apmload(apmid){
-				Swal.fire({
-	                title: "กำลังตรวจสอบข้อมูล กรุณารอสักครู่...",
-	                allowOutsideClick: false,
-	            });
-	            Swal.showLoading();
+			apmload(apmid,aniload = false){
+				if(aniload)  this.onptapmload = true;
 				axios.get("<?php echo site_url('appointment/apmload'); ?>",{
 					params : {
 	            		apmid: apmid
 	            	}
 				}).then(res => {
-					Swal.close();
-					console.log(res);
+					this.onptapmload = false;
 					this.newapm = res.data.row;
 					this.newapm.apmdate = this.dateforth(res.data.row.apmdate);
+					$('#apmdct').val(this.newapm.apmdct).trigger('change');
 					$('#apmlct').val(this.newapm.apmlct).trigger('change');
 					$('#apmtime').val(this.newapm.apmtime).trigger('change');
 					
-					this.actionshowmodal('edit-appointment');
+					// this.actionshowmodal('edit-appointment');
 				});
 			},
 			createmsg(){
@@ -1070,6 +1118,10 @@
 				switch(elid){
 					case 'apmlct' : 
 							$('#apmlct').empty();
+
+							newoption = new Option("ไม่เลือกคลีนิค" ,0 ,true ,true);
+							$('#apmlct').append(newoption).trigger('change');
+
 							arr.forEach((item,idx) => {
 								dt = {
 									id : item.lctcode
@@ -1081,6 +1133,10 @@
 						break;
 					case 'apmdct' : 
 							$('#apmdct').empty();
+
+							newoption = new Option("ไม่เลือกแพทย์" ,0 ,true ,true);
+							$('#apmdct').append(newoption).trigger('change');
+
 							arr.forEach((item,idx) => {
 								dt = {
 									id : item.dctcode
@@ -1092,6 +1148,18 @@
 						break;
 					default : 
 				}
+			},
+			loaddctschedule(){
+				// this.ondctscheduleload = true;
+				axios.get("<?php echo site_url('appointment/loaddctschedule'); ?>",{
+					params : {
+						lct : this.newapm.apmlct
+						,dct : this.newapm.apmdct
+					}
+				})
+				.then(res => {
+					console.log(res);
+				});
 			},
 		},
 		mounted() {
