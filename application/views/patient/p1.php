@@ -404,7 +404,7 @@
 
 	<!-- dct-schedule modal id -->
 	<div id="dct-schedule" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false">
-		<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-dialog modal-xl modal-dialog-centered">
 			<div class="modal-content">
 				<!-- modal header -->
 				<div class="modal-header">
@@ -421,7 +421,27 @@
 
 				<!-- modal body -->
 				<div class="modal-body">
-
+					<div class="row">
+						<div class="col-auto">
+							<label class="small font-weight-bold" for="dct-schedule-month">เดือนที่ออกตรวจ : </label>
+							<input class="form-control" type="text" id="dct-schedule-month" v-model="dctschedulemonth" placeholder="เลือกเดือน">
+						</div>
+						<div class="col-auto">
+							<div class="alert alert-success small alert-dismissible" v-show="scheduledctname">
+								<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+								<strong>แพทย์ : </strong>
+								<br/>{{ scheduledctname }}
+							</div>
+						</div>
+						<div class="col-auto">
+							<div class="alert alert-info small alert-dismissible" v-show="schedulelctname">
+								<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+								<strong>คลินิค : </strong>
+								<br/>{{ schedulelctname }}
+							</div>
+						</div>
+					</div>
+					<hr/>
 				</div>
 
 				<!-- modal footer -->
@@ -507,6 +527,9 @@
 			onptapmload: false,
 			ondctscheduleload: false,
 			switchload: '',
+			dctschedulemonth: '',
+			scheduledctname : '',
+			schedulelctname : '',
 		},
 		methods: {
 			onlyshowmodal(modal_id){
@@ -526,6 +549,16 @@
 					case 'dct-schedule-in' :
 						$('#new-appointment').modal('hide');
 						this.onlyshowmodal('dct-schedule');
+
+						let d = moment();
+						this.dctschedulemonth = (d.month()+1)+'-'+(d.year()+543);
+
+						if(this.newapm.apmdct){
+							this.scheduledctname = this.dctlist.find( v => v.dctcode == this.newapm.apmdct).dctname;
+						}
+						if(this.newapm.apmlct){
+							this.schedulelctname = this.lctlist.find( v => v.lctcode == this.newapm.apmlct).lctname;
+						}
 						this.loaddctschedule();
 						break;
 					case 'dct-schedule-out' :
@@ -602,6 +635,21 @@
 				$('#stdate').datepicker()
 					.on('hide', v =>{
 						this.stdate = $('#stdate').val();
+					});
+
+				$('#dct-schedule-month').datepicker({
+					    language:'th-th',
+						format: "mm-yyyy",
+						autoclose: true,
+						todayHighlight: true,
+						startDate: '+3d',
+					    startView: "months",
+					    minViewMode: "months"
+				});
+
+				$('#dct-schedule-month').datepicker()
+					.on('hide', v =>{
+						this.dctschedulemonth = $('#dct-schedule-month').val();
 					});
 			},
 			activeselect2(elid){
@@ -1031,7 +1079,7 @@
 				let n = moment().startOf('day'); // moment will return value for now date
 				let sd = moment(dt,"YYYY-MM-DD"); // select date 
 				let df = sd.diff(n , 'days');
-				return df;	
+				return df;
 			},
 			validnewapm(){
 				let npass = false;
@@ -1050,8 +1098,8 @@
 					xmsg += '-วันที่ขอทำนัด<br>';
 				}
 				if(!this.newapm.apmtime){
-					npass = true
-;					xmsg += '-เวลาที่ขอทำนัด<br>';
+					npass = true;
+					xmsg += '-เวลาที่ขอทำนัด<br>';
 				}
 
 				xmsg += 'ไม่ถูกต้อง <br> กรุณากรอกข้อมูลให้ถูกต้องครบถ้วน';
@@ -1150,14 +1198,28 @@
 				}
 			},
 			loaddctschedule(){
-				// this.ondctscheduleload = true;
+				this.ondctscheduleload = true;
+				let std = null;
+				let dx = moment(this.dctschedulemonth,'MM-YYYY').startOf('day');
+				if(dx.diff(moment().startOf('day') ,'months')){ // ถ้าเป็นเดือนเดียวกันให้มา 
+					std = moment().add(3,'days');
+					dx = moment(std.format('MM-YYYY'),'MM-YYYY').startOf('day');
+					std = std.format('YYYY-MM-DD');
+				}else{
+					std = dx.startOf('month').format('YYYY-MM-DD');
+				}
+
+				let end = dx.endOf('month').format('YYYY-MM-DD');
 				axios.get("<?php echo site_url('appointment/loaddctschedule'); ?>",{
 					params : {
 						lct : this.newapm.apmlct
 						,dct : this.newapm.apmdct
+						,std : std
+						,end : end
 					}
 				})
 				.then(res => {
+					this.ondctscheduleload = false;
 					console.log(res);
 				});
 			},
