@@ -601,12 +601,14 @@ class Appointment extends CI_Controller {
 
 	}
 
-	function loaddctschedule(){
+	function loadscheduledct(){
 		$client = new SoapClient(TUH_SW_API,TUH_SW_API_OPTION);
 
 		$params = array(
 						'lct' => $this->input->get('lct')
 						,'dct' => $this->input->get('dct')
+						,'stdate' => $this->input->get('std')
+						,'endate' => $this->input->get('end')
 					);
 
 	    $data = $client->dtDCTScheduleDetail($params)->dtDCTScheduleDetailResult;

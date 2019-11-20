@@ -405,13 +405,13 @@
 	<!-- dct-schedule modal id -->
 	<div id="dct-schedule" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false">
 		<div class="modal-dialog modal-xl modal-dialog-centered">
-			<div class="modal-content">
+			<div class="modal-content" style="height: 80% !important;">
 				<!-- modal header -->
 				<div class="modal-header">
 					<div class="row" style="min-width: 100%">
-						<div class="col-6 text-left font-weight-bold" :class="{'non-edit' : ondctscheduleload}">
-							<i style="font-size: 2rem;" class="d-inline mr-2" :class="ondctscheduleload ? 'fas fa-circle-notch fa-spin' : 'far fa-calendar-alt'"></i>
-							<h3 class="d-inline font-weight-bold" >{{ ondctscheduleload ? 'กำลังตรวจสอบตารางออกตรวจแพทย์' : 'ตารางออกตรวจแพทย์' }}</h3>
+						<div class="col-6 text-left font-weight-bold">
+							<i style="font-size: 2rem;" class="far fa-calendar-alt d-inline mr-2"></i>
+							<h3 class="d-inline font-weight-bold" >ตารางออกตรวจแพทย์</h3>
 						</div>
 						<div class="col-6 text-right px-0">
 							<i class="far fa-times-circle icon-hover-trans-gray" @click="actionshowmodal('dct-schedule-out')" style="font-size: 2rem;"></i>
@@ -424,24 +424,44 @@
 					<div class="row">
 						<div class="col-auto">
 							<label class="small font-weight-bold" for="dct-schedule-month">เดือนที่ออกตรวจ : </label>
-							<input class="form-control" type="text" id="dct-schedule-month" v-model="dctschedulemonth" placeholder="เลือกเดือน">
+							<input class="form-control" type="text" id="dct-schedule-month" v-model="scheduledctmonth" placeholder="เลือกเดือน">
 						</div>
 						<div class="col-auto">
 							<div class="alert alert-success small alert-dismissible" v-show="scheduledctname">
-								<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+								<a href="#" class="close" data-dismiss="alert" aria-label="close"@click="scheduledctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>แพทย์ : </strong>
 								<br/>{{ scheduledctname }}
 							</div>
 						</div>
 						<div class="col-auto">
 							<div class="alert alert-info small alert-dismissible" v-show="schedulelctname">
-								<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+								<a href="#" class="close" data-dismiss="alert" aria-label="close" @click="schedulelctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>คลินิค : </strong>
 								<br/>{{ schedulelctname }}
 							</div>
 						</div>
 					</div>
 					<hr/>
+					<div class="text-center alert alert-warning" v-show="onscheduledctload">
+						<i class="fas fa-circle-notch fa-spin align-middle" style="font-size: 1.8rem"></i>
+						<span class="align-middle mx-2" style="font-size: 1rem;">กำลังตรวจสอบตารางออกตรวจแพทย์</span>
+					</div>
+					<div class="row">
+						<div class="py-2 col-sm-6 col-md-4 col-lg-3" v-for="(i,idx) in scheduledctitem">
+							<div class="card">
+								<div class="card-header small">
+									aaaaaaaaaa
+								</div>
+								<div class="card-body">
+									bbbbbbbbbb
+								</div>
+								<div class="card-footer">
+									cccccccccc
+								</div>
+							</div>
+						</div>
+					</div>
+					
 				</div>
 
 				<!-- modal footer -->
@@ -525,11 +545,14 @@
 			offsetchat: 0,
 			onlistload: false,
 			onptapmload: false,
-			ondctscheduleload: false,
 			switchload: '',
-			dctschedulemonth: '',
+			onscheduledctload: false,
+			scheduledctmonth: '',
 			scheduledctname : '',
 			schedulelctname : '',
+			scheduledctboo : true,
+			schedulelctboo : true,
+			scheduledctitem: [],
 		},
 		methods: {
 			onlyshowmodal(modal_id){
@@ -551,7 +574,7 @@
 						this.onlyshowmodal('dct-schedule');
 
 						let d = moment();
-						this.dctschedulemonth = (d.month()+1)+'-'+(d.year()+543);
+						this.scheduledctmonth = (d.month()+1)+'-'+(d.year()+543);
 
 						if(this.newapm.apmdct){
 							this.scheduledctname = this.dctlist.find( v => v.dctcode == this.newapm.apmdct).dctname;
@@ -559,12 +582,14 @@
 						if(this.newapm.apmlct){
 							this.schedulelctname = this.lctlist.find( v => v.lctcode == this.newapm.apmlct).lctname;
 						}
-						this.loaddctschedule();
+						this.schedulelctboo = true;
+						this.scheduledctboo = true;
+						this.loadscheduledct();
 						break;
 					case 'dct-schedule-out' :
 						$('#dct-schedule').modal('hide');
 						this.onlyshowmodal('new-appointment');
-						// this.loaddctschedule();
+						// this.loadscheduledct();
 						break;
 				}
 			},
@@ -649,7 +674,10 @@
 
 				$('#dct-schedule-month').datepicker()
 					.on('hide', v =>{
-						this.dctschedulemonth = $('#dct-schedule-month').val();
+						let val = $('#dct-schedule-month').val();
+						if(val == this.scheduledctmonth || !val){return false;}
+						this.scheduledctmonth = val;
+						this.loadscheduledct(this.scheduledctboo,this.scheduledctboo);
 					});
 			},
 			activeselect2(elid){
@@ -1197,11 +1225,14 @@
 					default : 
 				}
 			},
-			loaddctschedule(){
-				this.ondctscheduleload = true;
+			loadscheduledct(uselct = true , usedct = true){
+				this.onscheduledctload = true;
+				this.scheduledctitem = [];
 				let std = null;
-				let dx = moment(this.dctschedulemonth,'MM-YYYY').startOf('day');
-				if(dx.diff(moment().startOf('day') ,'months')){ // ถ้าเป็นเดือนเดียวกันให้มา 
+				let dx = moment(this.scheduledctmonth,'MM-YYYY').startOf('day');
+				dx = moment(this.dateformysql(dx.format('YYYY-MM-DD')),'YYYY-MM-DD').startOf('day');
+
+				if(dx.diff(moment().startOf('day') ,'months')){ // ถ้าเป็นเดือนเดียวกันให้ผ่าน IF ลงมา
 					std = moment().add(3,'days');
 					dx = moment(std.format('MM-YYYY'),'MM-YYYY').startOf('day');
 					std = std.format('YYYY-MM-DD');
@@ -1210,16 +1241,29 @@
 				}
 
 				let end = dx.endOf('month').format('YYYY-MM-DD');
-				axios.get("<?php echo site_url('appointment/loaddctschedule'); ?>",{
+				axios.get("<?php echo site_url('appointment/loadscheduledct'); ?>",{
 					params : {
-						lct : this.newapm.apmlct
-						,dct : this.newapm.apmdct
+						lct : uselct ? this.newapm.apmlct : ''
+						,dct : usedct ? this.newapm.apmdct : ''
 						,std : std
 						,end : end
 					}
 				})
 				.then(res => {
-					this.ondctscheduleload = false;
+					res = res.data;
+					this.onscheduledctload = false;
+					if(res.success){
+						this.scheduledctitem = res.row
+					}else{
+						Swal.fire({
+						  type: 'error',
+						  title: 'ไม่พบข้อมูล!',
+						  text: 'กรุณาลงทะเบียนอีกครั้ง!',
+						  showConfirmButton: true,
+				          allowOutsideClick: false,
+						});
+						this.actionshowmodal('dct-schedule-out');
+					}
 					console.log(res);
 				});
 			},
