@@ -404,8 +404,8 @@
 
 	<!-- dct-schedule modal id -->
 	<div id="dct-schedule" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false">
-		<div class="modal-dialog modal-xl modal-dialog-centered">
-			<div class="modal-content" style="height: 80% !important;">
+		<div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+			<div class="modal-content">
 				<!-- modal header -->
 				<div class="modal-header">
 					<div class="row" style="min-width: 100%">
@@ -427,14 +427,14 @@
 							<input class="form-control" type="text" id="dct-schedule-month" v-model="scheduledctmonth" placeholder="เลือกเดือน">
 						</div>
 						<div class="col-auto">
-							<div class="alert alert-success small alert-dismissible" v-show="scheduledctname">
+							<div class="alert alert-success small alert-dismissible" v-show="scheduledctboo">
 								<a href="#" class="close" data-dismiss="alert" aria-label="close"@click="scheduledctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>แพทย์ : </strong>
 								<br/>{{ scheduledctname }}
 							</div>
 						</div>
 						<div class="col-auto">
-							<div class="alert alert-info small alert-dismissible" v-show="schedulelctname">
+							<div class="alert alert-info small alert-dismissible" v-show="schedulelctboo">
 								<a href="#" class="close" data-dismiss="alert" aria-label="close" @click="schedulelctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>คลินิค : </strong>
 								<br/>{{ schedulelctname }}
@@ -448,15 +448,16 @@
 					</div>
 					<div class="row">
 						<div class="py-2 col-sm-6 col-md-4 col-lg-3" v-for="(i,idx) in scheduledctitem">
-							<div class="card">
-								<div class="card-header small">
-									aaaaaaaaaa
+							<div class="card shadow-sm"  style="font-size: 1rem"><!-- :class="scheduledayclass(i.LCTDAY)" -->
+								<div class="card-body text-left">
+									<span class="font-weight-bold">{{ i.SUBCLINICNAME }}</span>
+									<hr/>
+									แพทย์ : {{ i.DCTNAME }}<br/>
+									คลินิค : {{ i.LCTNAME }}<br/>
+									เวลา : {{ i.TIMESPANNAME }}
 								</div>
-								<div class="card-body">
-									bbbbbbbbbb
-								</div>
-								<div class="card-footer">
-									cccccccccc
+								<div class="card-footer text-center">
+									{{ i.DAYNAME }} | {{ i.WORKDATE }}
 								</div>
 							</div>
 						</div>
@@ -578,9 +579,13 @@
 
 						if(this.newapm.apmdct){
 							this.scheduledctname = this.dctlist.find( v => v.dctcode == this.newapm.apmdct).dctname;
+						}else{
+							this.scheduledctname = '';
 						}
 						if(this.newapm.apmlct){
 							this.schedulelctname = this.lctlist.find( v => v.lctcode == this.newapm.apmlct).lctname;
+						}else{
+							this.schedulelctname = '';
 						}
 						this.schedulelctboo = true;
 						this.scheduledctboo = true;
@@ -749,6 +754,21 @@
 					if(strdate.length == 3){
 						return strdate[2]+'/'+strdate[1]+'/'+(parseInt(strdate[0],10)+543);
 					}else{return v;}
+				}else{
+					return "";
+				}
+			},
+			convertmonthto(type,m){
+				if(m){
+					let mx = m.split('-');
+					switch(type){
+						case 'th' : mx[1] = mx[1]+543;
+							break;
+						case 'en' : mx[1] = mx[1]-543;
+							break;	
+					}
+
+					return mx[0]+'-'+mx[1];
 				}else{
 					return "";
 				}
@@ -1229,11 +1249,11 @@
 				this.onscheduledctload = true;
 				this.scheduledctitem = [];
 				let std = null;
-				let dx = moment(this.scheduledctmonth,'MM-YYYY').startOf('day');
-				dx = moment(this.dateformysql(dx.format('YYYY-MM-DD')),'YYYY-MM-DD').startOf('day');
+				let dx = moment(this.convertmonthto('en',this.scheduledctmonth),'MM-YYYY').startOf('day');
+				let no = moment().startOf('day');
 
-				if(dx.diff(moment().startOf('day') ,'months')){ // ถ้าเป็นเดือนเดียวกันให้ผ่าน IF ลงมา
-					std = moment().add(3,'days');
+				if(dx.month() == no.month() && dx.year() == no.year()){ // ถ้าเป็นเดือนเดียวกัน(หรือน้อยกว่า)ให้ผ่าน IF ลงมา
+					std = no.add(3,'days');
 					dx = moment(std.format('MM-YYYY'),'MM-YYYY').startOf('day');
 					std = std.format('YYYY-MM-DD');
 				}else{
@@ -1254,6 +1274,9 @@
 					this.onscheduledctload = false;
 					if(res.success){
 						this.scheduledctitem = res.row
+						this.scheduledctitem.forEach((item,idx) => {
+							item.WORKDATE = this.dateforth(item.WORKDATE.substr(0,10));
+						});
 					}else{
 						Swal.fire({
 						  type: 'error',
@@ -1266,6 +1289,30 @@
 					}
 					console.log(res);
 				});
+			},
+			scheduledayclass(v){
+				switch(v){
+					case '1': 
+						return 'card-weekday-color-monday'
+						break;
+					case '2': 
+						return 'card-weekday-color-tueday'
+						break;
+					case '3': 
+						return 'card-weekday-color-wednesday'
+						break;
+					case '4': 
+						return 'card-weekday-color-thursday'
+						break;
+					case '5': 
+						return 'card-weekday-color-friday'
+						break;
+					case '6': 
+						return 'card-weekday-color-saturday'
+						break;
+					default: 
+						return 'card-weekday-color-sunday';
+				}
 			},
 		},
 		mounted() {
