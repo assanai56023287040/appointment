@@ -446,11 +446,16 @@
 						<i class="fas fa-circle-notch fa-spin align-middle" style="font-size: 1.8rem"></i>
 						<span class="align-middle mx-2" style="font-size: 1rem;">กำลังตรวจสอบตารางออกตรวจแพทย์</span>
 					</div>
+					<div class="text-center alert alert-danger" v-show="!onscheduledctload && scheduledctitem.length == 0">
+						<i class="far fa-calendar-times align-middle" style="font-size: 1.8rem"></i>
+						<span class="align-middle mx-2" style="font-size: 1rem;">ไม่พบข้อมูลการออกตรวจแพทย์ตามข้อมูลที่เลือก</span>
+					</div>
 					<div class="row">
 						<div class="py-2 col-sm-6 col-md-4 col-lg-3" v-for="(i,idx) in scheduledctitem">
-							<div class="card shadow-sm"  style="font-size: 1rem"><!-- :class="scheduledayclass(i.LCTDAY)" -->
-								<div class="card-body text-left">
-									<span class="font-weight-bold">{{ i.SUBCLINICNAME }}</span>
+							<div class="card shadow-sm h-100" style="font-size: 1rem" :class="scheduledayclass(i.LCTDAY)" @click="sdisel = sdisel==i?null:i">
+								<div class="card-body text-left" :class="{'sdisel' : i==sdisel}">
+									<i class="align-middle ml-0 mr-1" style="font-size: 1.6rem" :class="i == sdisel ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+									<span class="font-weight-bold align-middle">{{ i.SUBCLINICNAME }}</span>
 									<hr/>
 									แพทย์ : {{ i.DCTNAME }}<br/>
 									คลินิค : {{ i.LCTNAME }}<br/>
@@ -554,6 +559,7 @@
 			scheduledctboo : true,
 			schedulelctboo : true,
 			scheduledctitem: [],
+			sdisel : null,
 		},
 		methods: {
 			onlyshowmodal(modal_id){
@@ -575,7 +581,10 @@
 						this.onlyshowmodal('dct-schedule');
 
 						let d = moment();
-						this.scheduledctmonth = (d.month()+1)+'-'+(d.year()+543);
+
+						if(!this.scheduledctmonth){
+							this.scheduledctmonth = (d.month()+1)+'-'+(d.year()+543);
+						}
 
 						if(this.newapm.apmdct){
 							this.scheduledctname = this.dctlist.find( v => v.dctcode == this.newapm.apmdct).dctname;
@@ -758,7 +767,7 @@
 					return "";
 				}
 			},
-			convertmonthto(type,m){
+			convertdctmonthto(type,m){
 				if(m){
 					let mx = m.split('-');
 					switch(type){
@@ -1249,7 +1258,7 @@
 				this.onscheduledctload = true;
 				this.scheduledctitem = [];
 				let std = null;
-				let dx = moment(this.convertmonthto('en',this.scheduledctmonth),'MM-YYYY').startOf('day');
+				let dx = moment(this.convertdctmonthto('en',this.scheduledctmonth),'MM-YYYY').startOf('day');
 				let no = moment().startOf('day');
 
 				if(dx.month() == no.month() && dx.year() == no.year()){ // ถ้าเป็นเดือนเดียวกัน(หรือน้อยกว่า)ให้ผ่าน IF ลงมา
@@ -1278,36 +1287,29 @@
 							item.WORKDATE = this.dateforth(item.WORKDATE.substr(0,10));
 						});
 					}else{
-						Swal.fire({
-						  type: 'error',
-						  title: 'ไม่พบข้อมูล!',
-						  text: 'กรุณาลงทะเบียนอีกครั้ง!',
-						  showConfirmButton: true,
-				          allowOutsideClick: false,
-						});
-						this.actionshowmodal('dct-schedule-out');
+						this.scheduledctitem = [];
 					}
 					console.log(res);
 				});
 			},
 			scheduledayclass(v){
 				switch(v){
-					case '1': 
+					case 1: 
 						return 'card-weekday-color-monday'
 						break;
-					case '2': 
-						return 'card-weekday-color-tueday'
+					case 2: 
+						return 'card-weekday-color-tuesday'
 						break;
-					case '3': 
+					case 3: 
 						return 'card-weekday-color-wednesday'
 						break;
-					case '4': 
+					case 4: 
 						return 'card-weekday-color-thursday'
 						break;
-					case '5': 
+					case 5: 
 						return 'card-weekday-color-friday'
 						break;
-					case '6': 
+					case 6: 
 						return 'card-weekday-color-saturday'
 						break;
 					default: 

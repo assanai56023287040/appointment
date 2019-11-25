@@ -306,3 +306,167 @@ body.admin-page {
 	color: #ffffff;
 	text-shadow: 0 0 15px #262626;/*#808080*/
 }
+
+/* color of sunday*/
+
+.card-weekday-color-sunday {
+	border: 1px solid #ff0000;
+}
+
+.card-weekday-color-sunday:hover {
+	background-color: #ffcccc;
+}
+
+.card-weekday-color-sunday > div.sdisel {
+	background-color: #ffcccc !important;
+}
+
+.card-weekday-color-sunday > div.card-body > i {
+	color: #ff0000;
+}
+
+.card-weekday-color-sunday > div.card-footer {
+	background-color: #ff6666 !important;
+	border-top: 1px solid #ff0000;
+}
+
+/* color of monday*/
+
+.card-weekday-color-monday {
+	border: 1px solid #e6e600;
+}
+
+.card-weekday-color-monday:hover {
+	background-color: #ffffcc;
+}
+
+.card-weekday-color-monday > div.sdisel {
+	background-color: #ffffcc !important;
+}
+
+.card-weekday-color-monday > div.card-body > i {
+	color: #e6e600;
+}
+
+.card-weekday-color-monday > div.card-footer {
+	background-color: #ffff66 !important;
+	border-top: 1px solid #e6e600;
+}
+
+
+
+/* color of tuesday*/
+
+.card-weekday-color-tuesday {
+	border: 1px solid #ff1a90;
+}
+
+.card-weekday-color-tuesday:hover {
+	background-color: #ffe6f3;
+}
+
+.card-weekday-color-tuesday > div.sdisel {
+	background-color: #ffe6f3 !important;
+}
+
+.card-weekday-color-tuesday > div.card-body > i {
+	color: #ff1a90;
+}
+
+.card-weekday-color-tuesday > div.card-footer {
+	background-color: #ffb3d9 !important;
+	border-top: 1px solid #ff1a90;
+}
+
+/* color of wednesday*/
+
+.card-weekday-color-wednesday {
+	border: 1px solid #00b300;
+}
+
+.card-weekday-color-wednesday:hover {
+	background-color: #ccffcc;
+}
+
+.card-weekday-color-wednesday > div.sdisel {
+	background-color: #ccffcc !important;
+}
+
+.card-weekday-color-wednesday > div.card-body > i {
+	color: #00b300;
+}
+
+.card-weekday-color-wednesday > div.card-footer {
+	background-color: #66ff66 !important;
+	border-top: 1px solid #00b300;
+}
+
+
+/* color of thursday*/
+
+.card-weekday-color-thursday {
+	border: 1px solid #e65c00;
+}
+
+.card-weekday-color-thursday:hover {
+	background-color: #ffe0cc;
+}
+
+.card-weekday-color-thursday > div.sdisel {
+	background-color: #ffe0cc !important;
+}
+
+.card-weekday-color-thursday > div.card-body > i {
+	color: #e65c00;
+}
+
+.card-weekday-color-thursday > div.card-footer {
+	background-color: #ffb366 !important;
+	border-top: 1px solid #e65c00;
+}
+
+/* color of friday*/
+
+.card-weekday-color-friday {
+	border: 1px solid #00cccc;
+}
+
+.card-weekday-color-friday:hover {
+	background-color: #e6ffff;
+}
+
+.card-weekday-color-friday > div.sdisel {
+	background-color: #e6ffff !important;
+}
+
+.card-weekday-color-friday > div.card-body > i {
+	color: #00cccc;
+}
+
+.card-weekday-color-friday > div.card-footer {
+	background-color: #99ffff !important;
+	border-top: 1px solid #00cccc;
+}
+
+/* color of saturday*/
+
+.card-weekday-color-saturday {
+	border: 1px solid #990099;
+}
+
+.card-weekday-color-saturday:hover {
+	background-color: #ffccff;
+}
+
+.card-weekday-color-saturday > div.sdisel {
+	background-color: #ffccff !important;
+}
+
+.card-weekday-color-saturday > div.card-body > i {
+	color: #990099;
+}
+
+.card-weekday-color-saturday > div.card-footer {
+	background-color: #ff80ff !important;
+	border-top: 1px solid #990099;
+}
