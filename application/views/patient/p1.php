@@ -405,7 +405,7 @@
 	<!-- dct-schedule modal id -->
 	<div id="dct-schedule" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false">
 		<div class="modal-dialog modal-xl modal-dialog-centered" role="document">
-			<div class="modal-content">
+			<div class="modal-content" style="height: 95vh;">
 				<!-- modal header -->
 				<div class="modal-header">
 					<div class="row" style="min-width: 100%">
@@ -420,28 +420,30 @@
 				</div>
 
 				<!-- modal body -->
-				<div class="modal-body">
+				<div class="modal-body" style="display: flex;flex-flow: column;height: 75vh;">
 					<div class="row">
 						<div class="col-auto">
 							<label class="small font-weight-bold" for="dct-schedule-month">เดือนที่ออกตรวจ : </label>
 							<input class="form-control" type="text" id="dct-schedule-month" v-model="scheduledctmonth" placeholder="เลือกเดือน">
 						</div>
 						<div class="col-auto">
-							<div class="alert alert-success small alert-dismissible" v-show="scheduledctboo">
-								<a href="#" class="close" data-dismiss="alert" aria-label="close"@click="scheduledctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
+							<div class="alert alert-success small alert-dismissible m-0" v-show="scheduledctboo">
+								<a href="#" class="close" @click="scheduledctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>แพทย์ : </strong>
 								<br/>{{ scheduledctname }}
 							</div>
 						</div>
 						<div class="col-auto">
-							<div class="alert alert-info small alert-dismissible" v-show="schedulelctboo">
-								<a href="#" class="close" data-dismiss="alert" aria-label="close" @click="schedulelctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
+							<div class="alert alert-info small alert-dismissible m-0" v-show="schedulelctboo">
+								<a href="#" class="close" @click="schedulelctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>คลินิค : </strong>
 								<br/>{{ schedulelctname }}
 							</div>
 						</div>
 					</div>
-					<hr/>
+
+					<hr class="my-3 mx-0 text-dark">
+
 					<div class="text-center alert alert-warning" v-show="onscheduledctload">
 						<i class="fas fa-circle-notch fa-spin align-middle" style="font-size: 1.8rem"></i>
 						<span class="align-middle mx-2" style="font-size: 1rem;">กำลังตรวจสอบตารางออกตรวจแพทย์</span>
@@ -450,11 +452,11 @@
 						<i class="far fa-calendar-times align-middle" style="font-size: 1.8rem"></i>
 						<span class="align-middle mx-2" style="font-size: 1rem;">ไม่พบข้อมูลการออกตรวจแพทย์ตามข้อมูลที่เลือก</span>
 					</div>
-					<div class="row">
+					<div class="row" style="overflow-y: auto;">
 						<div class="py-2 col-sm-6 col-md-4 col-lg-3" v-for="(i,idx) in scheduledctitem">
-							<div class="card shadow-sm h-100" style="font-size: 1rem" :class="scheduledayclass(i.LCTDAY)" @click="sdisel = sdisel==i?null:i">
-								<div class="card-body text-left" :class="{'sdisel' : i==sdisel}">
-									<i class="align-middle ml-0 mr-1" style="font-size: 1.6rem" :class="i == sdisel ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+							<div class="card shadow-sm h-100" style="font-size: 1rem" :class="scheduledayclass(i.LCTDAY)" @click="sdisel = sdisel==idx?null:idx">
+								<div class="card-body text-left" :class="{'sdisel' : idx==sdisel}">
+									<i class="align-middle ml-0 mr-1" style="font-size: 1.6rem" :class="idx == sdisel ? 'fas fa-check-circle' : 'far fa-circle'"></i>
 									<span class="font-weight-bold align-middle">{{ i.SUBCLINICNAME }}</span>
 									<hr/>
 									แพทย์ : {{ i.DCTNAME }}<br/>
@@ -471,8 +473,16 @@
 				</div>
 
 				<!-- modal footer -->
-				<div class="modal-footer">
-
+				<div class="modal-footer sticky-bottom">
+					<button class="btn x-btn-green px-3" 
+							style="border-radius: 10px;"
+							@click="sdiselitem()"
+							:class="{'non-edit' : !sdisel}"
+                        	:disabled="!sdisel"
+						>
+						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
+						<span class="align-middle ml-2" style="font-size: 2rem;">เลือก</span><!-- ขอทำนัด -->
+					</button>
 				</div>
 			</div>
 		</div>
@@ -585,19 +595,24 @@
 						if(!this.scheduledctmonth){
 							this.scheduledctmonth = (d.month()+1)+'-'+(d.year()+543);
 						}
-
+						// ตรวจสอบแพทย์
 						if(this.newapm.apmdct){
 							this.scheduledctname = this.dctlist.find( v => v.dctcode == this.newapm.apmdct).dctname;
+							this.scheduledctboo = true
 						}else{
 							this.scheduledctname = '';
+							this.scheduledctboo = false;
 						}
+						// ตรวจสอบคลินิค
 						if(this.newapm.apmlct){
 							this.schedulelctname = this.lctlist.find( v => v.lctcode == this.newapm.apmlct).lctname;
+							this.schedulelctboo = true
 						}else{
 							this.schedulelctname = '';
+							this.schedulelctboo = false;
 						}
-						this.schedulelctboo = true;
-						this.scheduledctboo = true;
+
+						this.sdisel = null;
 						this.loadscheduledct();
 						break;
 					case 'dct-schedule-out' :
@@ -1314,6 +1329,33 @@
 						break;
 					default: 
 						return 'card-weekday-color-sunday';
+				}
+			},
+			async sdiselitem(){
+				if(!this.sdisel){return false;}
+				let sel = this.scheduledctitem[this.sdisel];
+				this.actionshowmodal('dct-schedule-out');
+				if(this.switchload == 'dct' && !this.scheduledctboo && this.newapm.apmdct != sel.DCT){
+					// ถ้าปลดการ filter แพทย์ ออกที่หน้าตารางออกตรวจ แล้วเลือกแพทย์ใหม่ ที่ไม่ใช้แพทย์เดิมที่หน้า -> reload LCT
+					await this.loadlctbydct(sel.DCT);
+				}else if(this.switchload == 'lct' && !this.schedulelctboo && this.newapm.apmlct != sel.LCT){
+					// ถ้าปลดการ filter คลีนิค ออกที่หน้าตารางออกตรวจ แล้วเลือกคลีนิคใหม่ ที่ไม่ใช้คลีนิคเดิมที่หน้า -> reload DCT
+					await this.loaddctbylct(sel.LCT);
+				}
+
+				this.newapm.apmdate = sel.WORKDATE;
+				this.newapm.apmdct = sel.DCT;
+				this.newapm.apmlct = sel.LCT;
+
+				$('#apmdct').val(this.newapm.apmdct).trigger('change');
+				$('#apmlct').val(this.newapm.apmlct).trigger('change');
+			},
+			timetransform(t){
+				if(t == 0){
+					this.newapm.apmtime = '00';
+					$('#apmtime').val(this.newapm.apmtime).trigger('change');
+				}else{
+					t.substr()
 				}
 			},
 		},

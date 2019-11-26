@@ -66,7 +66,7 @@ body.admin-page {
 }
 
 .sticky-bottom {
-	position: absolute;
+	position: sticky;
 	bottom: 0px;
 }
 
@@ -311,6 +311,7 @@ body.admin-page {
 
 .card-weekday-color-sunday {
 	border: 1px solid #ff0000;
+	cursor: pointer;
 }
 
 .card-weekday-color-sunday:hover {
@@ -334,6 +335,7 @@ body.admin-page {
 
 .card-weekday-color-monday {
 	border: 1px solid #e6e600;
+	cursor: pointer;
 }
 
 .card-weekday-color-monday:hover {
@@ -359,6 +361,7 @@ body.admin-page {
 
 .card-weekday-color-tuesday {
 	border: 1px solid #ff1a90;
+	cursor: pointer;
 }
 
 .card-weekday-color-tuesday:hover {
@@ -382,6 +385,7 @@ body.admin-page {
 
 .card-weekday-color-wednesday {
 	border: 1px solid #00b300;
+	cursor: pointer;
 }
 
 .card-weekday-color-wednesday:hover {
@@ -406,6 +410,7 @@ body.admin-page {
 
 .card-weekday-color-thursday {
 	border: 1px solid #e65c00;
+	cursor: pointer;
 }
 
 .card-weekday-color-thursday:hover {
@@ -429,6 +434,7 @@ body.admin-page {
 
 .card-weekday-color-friday {
 	border: 1px solid #00cccc;
+	cursor: pointer;
 }
 
 .card-weekday-color-friday:hover {
@@ -452,6 +458,7 @@ body.admin-page {
 
 .card-weekday-color-saturday {
 	border: 1px solid #990099;
+	cursor: pointer;
 }
 
 .card-weekday-color-saturday:hover {
