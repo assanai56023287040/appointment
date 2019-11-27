@@ -477,8 +477,8 @@
 					<button class="btn x-btn-green px-3" 
 							style="border-radius: 10px;"
 							@click="sdiselitem()"
-							:class="{'non-edit' : !sdisel}"
-                        	:disabled="!sdisel"
+							:class="{'non-edit' : sdisel == null}"
+                        	:disabled="sdisel == null"
 						>
 						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
 						<span class="align-middle ml-2" style="font-size: 2rem;">เลือก</span><!-- ขอทำนัด -->
@@ -1266,6 +1266,22 @@
 								$('#apmdct').append(newoption).trigger('change');
 							});
 						break;
+					case 'apmtime' : 
+							$('#apmtime').empty();
+
+							newoption = new Option("ไม่เลือกเวลา" ,"00" ,true ,true);
+							$('#apmtime').append(newoption).trigger('change');
+
+							arr.forEach((item,idx) => {
+								dt = {
+									id : item.k
+									,text : item.v
+								};
+								newoption = new Option(dt.text ,dt.id ,false ,false);
+								$('#apmtime').append(newoption).trigger('change');
+							});
+
+						break;
 					default : 
 				}
 			},
@@ -1332,9 +1348,8 @@
 				}
 			},
 			async sdiselitem(){
-				if(!this.sdisel){return false;}
+				if(this.sdisel == null){return false;}
 				let sel = this.scheduledctitem[this.sdisel];
-				this.actionshowmodal('dct-schedule-out');
 				if(this.switchload == 'dct' && !this.scheduledctboo && this.newapm.apmdct != sel.DCT){
 					// ถ้าปลดการ filter แพทย์ ออกที่หน้าตารางออกตรวจ แล้วเลือกแพทย์ใหม่ ที่ไม่ใช้แพทย์เดิมที่หน้า -> reload LCT
 					await this.loadlctbydct(sel.DCT);
@@ -1349,14 +1364,55 @@
 
 				$('#apmdct').val(this.newapm.apmdct).trigger('change');
 				$('#apmlct').val(this.newapm.apmlct).trigger('change');
+
+				let st = this.timetransform(sel.STTIME);
+				this.newapm.apmtime = st.hr;
+				$('#apmtime').val(st.hr).trigger('change');
+				this.filterapmtime(sel.STTIME,sel.ENDTIME,'apmtime');
+
+				this.actionshowmodal('dct-schedule-out');
 			},
 			timetransform(t){
-				if(t == 0){
-					this.newapm.apmtime = '00';
-					$('#apmtime').val(this.newapm.apmtime).trigger('change');
+				t = t.toString();
+				let res = null;
+				if(t == "0"){
+					res = {
+						hr: "00",
+						mn: "00",
+						sc: "00",
+					};
 				}else{
-					t.substr()
+					if(t.length >= 5){
+						t = t.padStart(6,0);
+						let hr = t.slice(0,2);
+						let mn = t.slice(2,4);
+						let sc = t.slice(4,6);
+
+						res = {
+							hr: hr,
+							mn: mn,
+							sc: sc,
+						};
+					}
 				}
+
+				return res;
+			},
+			filterapmtime(sttime,endtime,elid){
+				let st = this.timetransform(sttime);
+				let en = this.timetransform(endtime);
+
+				let i = parseInt(st.hr);
+				let t = parseInt(en.hr);
+				let arr = [];
+				if(i == 0 && t == 0){return false;}
+				for (; i <= t; i++){
+					arr.push({
+						k: i.toString().padStart(2,0), 
+						v: i.toString().padStart(2,0)+".00"
+					});	
+				} //end of for loop
+				this.appendsel2(elid,arr);
 			},
 		},
 		mounted() {
