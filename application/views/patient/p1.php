@@ -368,9 +368,7 @@
 									</div>
 									<div class="col form-group">
 										<label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
-										<select class="form-control" type="text" id="apmtime">
-											<option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
-										</select>
+										<select class="form-control" type="text" id="apmtime"></select>
 									</div>
 								</div> <!-- end div of sub form-row -->
 
@@ -826,6 +824,8 @@
 							this.dctlist = this.dctlist_x;
 							this.appendsel2('apmdct',this.dctlist);
 						}
+
+						this.appendsel2('apmtime',this.timehr);
 						this.switchload = '';
 						$('#apmlct').val(null).trigger('change');
 						$('#apmtime').val(null).trigger('change');
@@ -1010,6 +1010,7 @@
 					this.onptapmload = false;
 					this.newapm = res.data.row;
 					this.newapm.apmdate = this.dateforth(res.data.row.apmdate);
+					$('#apmdate').datepicker('update', this.newapm.apmdate);
 					$('#apmdct').val(this.newapm.apmdct).trigger('change');
 					$('#apmlct').val(this.newapm.apmlct).trigger('change');
 					$('#apmtime').val(this.newapm.apmtime).trigger('change');
@@ -1290,15 +1291,19 @@
 				this.scheduledctitem = [];
 				let std = null;
 				let dx = moment(this.convertdctmonthto('en',this.scheduledctmonth),'MM-YYYY').startOf('day');
-				let no = moment().startOf('day');
+				let no = moment().startOf('day'); // no is now
 
 				if(dx.month() == no.month() && dx.year() == no.year()){ // ถ้าเป็นเดือนเดียวกัน(หรือน้อยกว่า)ให้ผ่าน IF ลงมา
 					std = no.add(3,'days');
 					dx = moment(std.format('MM-YYYY'),'MM-YYYY').startOf('day');
 					std = std.format('YYYY-MM-DD');
+
+					this.scheduledctmonth = std.format('MM-YYYY');
+					$('#dct-schedule-month').datepicker('update',this.scheduledctmonth);
 				}else{
 					std = dx.startOf('month').format('YYYY-MM-DD');
 				}
+
 
 				let end = dx.endOf('month').format('YYYY-MM-DD');
 				axios.get("<?php echo site_url('appointment/loadscheduledct'); ?>",{
@@ -1362,6 +1367,7 @@
 				this.newapm.apmdct = sel.DCT;
 				this.newapm.apmlct = sel.LCT;
 
+				$('#apmdate').datepicker('update', this.newapm.apmdate);
 				$('#apmdct').val(this.newapm.apmdct).trigger('change');
 				$('#apmlct').val(this.newapm.apmlct).trigger('change');
 
