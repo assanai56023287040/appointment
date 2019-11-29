@@ -491,8 +491,17 @@
 <?php $this->load->view('js/myjs'); ?>
 <script type="text/javascript">
 
+	const fdbconfig = {
+		databaseURL: "https://tuhappointmentv1.firebaseio.com"
+	};
+
+	firebase.initializeApp(fdbconfig);
+
+	const db = firebase.database();
+	const apmchat = db.ref('apmchat');
+	apmchat.push('yyyyy');
 	
-	var app = new Vue({
+	let app = new Vue({
 		el: '#app',
 		data: {
 			patientpage: false,
@@ -1424,17 +1433,7 @@
 		mounted() {
 			var _this = this;
 			let ssidcard = ssget('idcard');
-			if(ssidcard != null && ssidcard != ''){
-				this.showlistpage();
-				this.ptid = lcget('ptid');
-				$('#patient-page').removeClass("d-none");
-				this.listload();
-				this.lctload();
-				this.dctload();
-				this.activedatepicker();
-				this.activeselect2('apmtime');
-				this.activeselect2('apmdct');
-			}else{
+			if(ssidcard == null || ssidcard == ''){
 				Swal.fire({
 				  type: 'error',
 				  title: 'ท่านไม่มีสิทธิ์เข้าใช้งานหน้านี้!',
@@ -1445,7 +1444,38 @@
 				}).then(() => {
 					window.location = "<?php echo site_url('login'); ?>";
 				});
+				return false;
 			}
+
+			
+			this.showlistpage();
+			this.ptid = lcget('ptid');
+			$('#patient-page').removeClass("d-none");
+			this.listload();
+			this.lctload();
+			this.dctload();
+			this.activedatepicker();
+			this.activeselect2('apmtime');
+			this.activeselect2('apmdct');
+
+			// let firebaseConfig = {
+			// 	apiKey: "AIzaSyA68XE68hnFfoD5zZimz4ET5Vye5JrvCiI",
+		 //    	authDomain: "tuhappointmentv1.firebaseapp.com",
+		 //    	databaseURL: "https://tuhappointmentv1.firebaseio.com",
+		 //    	projectId: "tuhappointmentv1",
+		 //    	storageBucket: "tuhappointmentv1.appspot.com",
+		 //    	messagingSenderId: "139160427028",
+		 //    	appId: "1:139160427028:web:c30fd7df3d2031943fa501",
+		 //    	measurementId: "G-0TQP6T4JJY"
+		 //  	};
+		 //  	// Initialize Firebase
+		 //  	firebase.initializeApp(firebaseConfig);
+		 //  	firebase.analytics();
+
+			// let firebaseref = firebase.database().ref("apmchat");
+			// firebaseref.once('value').then(snapshot => {
+			// 	console.log(snapshot.val());
+			// });
 			
 		},
 		computed: {
