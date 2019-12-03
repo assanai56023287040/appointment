@@ -497,9 +497,13 @@
 
 	firebase.initializeApp(fdbconfig);
 
+	// firebase var
 	const db = firebase.database();
-	const apmchat = db.ref('apmchat');
-	apmchat.push('yyyyy');
+	const firegb = db.ref('apmchat');
+	const fireside = firegb.child('patientside');
+	const fireresp = firegb.child('adminside');
+	let firemain = null;
+	let fireapmid =  null;
 	
 	let app = new Vue({
 		el: '#app',
@@ -637,7 +641,6 @@
 				}else{
 					$('#list-page').css('display','');
 				}
-				this.ptdata = JSON.parse(lcget('patientdata'));
 			},
 			showchatpage(){ 
 				$('#chat-page').show("slide", { direction: "down" }, 500);
@@ -953,7 +956,7 @@
 					});
 				});
 			},
-			async listload(){
+			async listload(firelisten = false){
 				this.onlistload = true;
 	            await axios.get("<?php echo site_url('appointment/listload'); ?>",{
 					params : {
@@ -970,7 +973,10 @@
 	            	this.apmlist.forEach((item,idx) =>{
 	            		// console.log(item);
 	            		item.apmdate = this.dateforth(item.apmdate);
+	            		item.firecnt = 0;
 	            	});
+
+	            	if(firelisten) this.activefirebase('hn' ,this.ptdata.HN , 'listpage');
 	            });
 
 			},
@@ -1140,23 +1146,6 @@
 				this.dctlist_x = this.dctlist;
 				$('#apmdct').val(null).trigger('change');
 			},
-			changeformatselect2(elid,arr){
-				let dt = [];
-				switch(elid){
-					case 'apmlct' : 
-							arr.forEach((item,idx) => {
-								dt.push({
-									"id" : item.lctcode
-									,"text" : item.lctcode + " | " + item.lctname
-								});
-							});
-						break;
-					default : 
-						break;
-				}
-
-				return {"results" : dt};
-			},
 			checkapmdatefromnow(dt){
 				let n = moment().startOf('day'); // moment will return value for now date
 				let sd = moment(dt,"YYYY-MM-DD"); // select date 
@@ -1307,7 +1296,7 @@
 					dx = moment(std.format('MM-YYYY'),'MM-YYYY').startOf('day');
 					std = std.format('YYYY-MM-DD');
 
-					this.scheduledctmonth = std.format('MM-YYYY');
+					this.scheduledctmonth = dx.format('MM-YYYY');
 					$('#dct-schedule-month').datepicker('update',this.scheduledctmonth);
 				}else{
 					std = dx.startOf('month').format('YYYY-MM-DD');
@@ -1429,6 +1418,21 @@
 				} //end of for loop
 				this.appendsel2(elid,arr);
 			},
+			activefirebase(type , val , act){
+				switch(type){
+					case 'hn' : firemain = fireside.child(val);
+								if(act == 'listpage'){
+									firemain.on('value', snap => {
+										let res = snap.val();
+										// res.forEach((item,idx) => {
+
+										// });
+									});
+								}
+						break;
+					case 'apmid' : 
+				}
+			},
 		},
 		mounted() {
 			var _this = this;
@@ -1447,36 +1451,16 @@
 				return false;
 			}
 
-			
 			this.showlistpage();
 			this.ptid = lcget('ptid');
+			this.ptdata = JSON.parse(lcget('patientdata'));
 			$('#patient-page').removeClass("d-none");
-			this.listload();
+			this.listload(true);
 			this.lctload();
 			this.dctload();
 			this.activedatepicker();
 			this.activeselect2('apmtime');
 			this.activeselect2('apmdct');
-
-			// let firebaseConfig = {
-			// 	apiKey: "AIzaSyA68XE68hnFfoD5zZimz4ET5Vye5JrvCiI",
-		 //    	authDomain: "tuhappointmentv1.firebaseapp.com",
-		 //    	databaseURL: "https://tuhappointmentv1.firebaseio.com",
-		 //    	projectId: "tuhappointmentv1",
-		 //    	storageBucket: "tuhappointmentv1.appspot.com",
-		 //    	messagingSenderId: "139160427028",
-		 //    	appId: "1:139160427028:web:c30fd7df3d2031943fa501",
-		 //    	measurementId: "G-0TQP6T4JJY"
-		 //  	};
-		 //  	// Initialize Firebase
-		 //  	firebase.initializeApp(firebaseConfig);
-		 //  	firebase.analytics();
-
-			// let firebaseref = firebase.database().ref("apmchat");
-			// firebaseref.once('value').then(snapshot => {
-			// 	console.log(snapshot.val());
-			// });
-			
 		},
 		computed: {
 
