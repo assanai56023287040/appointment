@@ -322,18 +322,26 @@
 									<input class="form-control" type="text" id="header" v-model="newapm.header" placeholder="ระบุหัวข้อเรื่อง">
 								</div>
 								
-								<div class="alert alert-danger small" v-show="false">
+								<div class="alert alert-danger small" v-if="false">
 									<strong>เวลาทำการ : วันและเวลาราชการ     </strong>
 									<br/>จันทร์ - ศุกร์  |  8.00 - 16.00
 									<br/>ติดต่อคลีนิกในเวลา : 02-926-9991
 									<br/>ติดต่อคลีนิกนอกเวลา : 02-926-9860
 								</div>
+
+								<div class="alert alert-danger small mx-0 my-2 px-3 py-2">
+									<span class="text-muted small">**สามารถเลือกวันขอทำนัดได้หลังจากวันปัจจุบัน 3 วัน</span>
+								</div>
 							</div>
 							<div class="col-sm-6">
 
 								<div class="d-inline-block form-check form-check-inline text-left">
-									<input class="form-check-input" type="checkbox" value="" v-model="newapm.isseldct" id="defaultCheck1">
-									<label class="small font-weight-bold form-check-label" for="defaultCheck1">ระบุแพทย์</label>
+									<input class="form-check-input" type="radio" name="doctor" id="dctsel" value="dctsel" v-model="newapm.isseldct" @click="handledctselect('dctsel')">
+									<label class="small font-weight-bold form-check-label" for="dctsel">ระบุแพทย์</label>
+								</div>
+								<div class="d-inline-block form-check form-check-inline text-left">
+									<input class="form-check-input" type="radio" name="doctor" id="nondctsel" value="nondctsel" v-model="newapm.isseldct" @click="handledctselect('nondctsel')">
+									<label class="small font-weight-bold form-check-label" for="nondctsel">ไม่ระบุแพทย์</label>
 								</div>
 
 								<div class="d-inline-block float-right text-right mt-1">
@@ -343,7 +351,7 @@
 								</div>
 
 								<div class="mt-3 mb-2">
-									<select id="apmdct" :disabled="!newapm.isseldct"></select>
+									<select id="apmdct" :disabled="newapm.isseldct != 'dctsel'"></select>
 								</div>
 
 								<div class="form-check form-check-inline">
@@ -530,7 +538,7 @@
 				apmtime: '',
 				tel: '',
 				stid : '01',
-				isseldct: 0,
+				isseldct: '',
 				apmdct: '',
 				apmlct: '',
 				lcttype: '',
@@ -823,7 +831,7 @@
 							apmtime: '',
 							tel: '',
 							stid : '01',
-							isseldct: 0,
+							isseldct: '',
 							apmdct: '',
 							apmlct: '',
 							lcttype: '',
@@ -879,7 +887,14 @@
 			savenewapm(){
 				if(this.validnewapm()){return false;}
 				let sellct = this.lctlist.find( v => v.lctcode == this.newapm.apmlct);
-				let seldct = this.dctlist.find( v => v.dctcode == this.newapm.apmdct);
+
+				let seldct = null ;
+				if(this.newapm.isseldct == 'nondctsel'){
+					seldct = this.dctlist_x.find( v => v.dctcode == "-99");
+				}else{
+					seldct = this.dctlist.find( v => v.dctcode == this.newapm.apmdct);
+				}
+
 				let params = new URLSearchParams({
 					'header' : this.newapm.header,
 					'apmdate' : this.dateformysql(this.newapm.apmdate),
@@ -1059,6 +1074,17 @@
 				this.scrolltobottom();
 				$("#create-msg-box").focus();
 
+				db.ref('apmchat/adminsite/'+this.ptdata.HN+'/'+this.selapm.apmid).child('/').push(['aaaaa','bbbbb',{ xo01: 'assanai'}]);
+				// {
+				// 	msgtxt: this.msgtxt,
+				// 	msgdate: d,
+				// 	msgtime: t,
+				// }
+
+				// fireresp.child(this.ptdata.HN).child(this.selapm.apmid).push({
+					
+				// });
+
 				axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
 					.then(res => {
 						this.inquirychat();
@@ -1227,7 +1253,7 @@
 								});
 							});
 							this.appendsel2('apmdct',this.dctlist);
-							dct.prop('disabled',!this.newapm.isseldct);
+							dct.prop('disabled',this.newapm.isseldct != 'seldct');
 						}
 					});
 			},
@@ -1264,6 +1290,16 @@
 								newoption = new Option(dt.text ,dt.id ,false ,false);
 								$('#apmdct').append(newoption).trigger('change');
 							});
+						break;
+					case 'apmdct-nondctsel' :
+							$('#apmdct').empty();
+
+							dt = {
+								id : "-99"
+								,text : " [ -99 ] ไม่ระบุแพทย์"
+							};
+							newoption = new Option(dt.text ,dt.id ,true ,true);
+							$('#apmdct').append(newoption).trigger('change');
 						break;
 					case 'apmtime' : 
 							$('#apmtime').empty();
@@ -1424,6 +1460,8 @@
 								if(act == 'listpage'){
 									firemain.on('value', snap => {
 										let res = snap.val();
+										if(!res) return false;
+
 										// res.forEach((item,idx) => {
 
 										// });
@@ -1431,6 +1469,21 @@
 								}
 						break;
 					case 'apmid' : 
+				}
+			},
+			handledctselect(ty){
+				if(ty == 'dctsel'){
+					if(this.switchload == 'lct'){
+						this.appendsel2('apmdct',this.dctlist);
+					}
+					this.newapm.apmdct = "";
+					$('#apmdct').val(null).trigger('change');
+				}else if(ty == 'nondctsel'){
+					if(this.switchload == 'lct'){
+						this.appendsel2('apmdct-nondctsel',"");
+					}
+					this.newapm.apmdct = "-99";
+					$('#apmdct').val("-99").trigger('change');
 				}
 			},
 		},

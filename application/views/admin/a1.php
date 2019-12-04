@@ -913,7 +913,7 @@
             <div class="row" style="min-width: 100%">
               <div class="col-6 text-left font-weight-bold">
                 เลือกรายการทำนัดของ HN : {{ selapm.hn }} เพื่อยืนยัน
-                <br/><span class="text-muted small">ดับเบิ้ลที่รายการเพื่อยืนยันรายการนัดหมาย</span>
+                <br/><span class="text-muted small">ดับเบิ้ลคลิกที่รายการเพื่อยืนยันรายการนัดหมาย</span>
               </div>
               <div class="col-6 text-right px-0">
                 <i class="far fa-times-circle" data-dismiss="modal" style="font-size: 2rem;"></i>
