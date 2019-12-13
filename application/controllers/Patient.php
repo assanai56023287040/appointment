@@ -2,6 +2,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 header('Access-Control-Allow-Origin: *');
 
+require_once APPPATH."/third_party/jrs-php-client/autoload.dist.php";
+// base_url('assets/js/moment.min.js')
+
+use Jaspersoft\Client\Client;
+
 class Patient extends CI_Controller {
 
 	/**
@@ -19,6 +24,8 @@ class Patient extends CI_Controller {
 	 * map to /index.php/welcome/<method_name>
 	 * @see https://codeigniter.com/user_guide/general/urls.html
 	 */
+
+
 	
 	function patientpage(){
 		$this->load->view('patient/p1');
@@ -106,6 +113,31 @@ class Patient extends CI_Controller {
 			'success' => true
 			,'row' => $pt->first_row()
 		));
+	}
+
+	function testjasperconn(){
+
+		$c = new Client(
+						"http://localhost:8080/jasperserver",
+						"jasperadmin",
+						"jasperadmin"
+					);	
+
+		$report = $c->reportService()->runReport('/tuh_report/apm_oapp', 'html');
+
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Description: File Transfer');
+		header('Content-Disposition: attachment; filename=jaspertest.html');
+		header('Content-Transfer-Encoding: binary');
+		header('Content-Length: ' . strlen($report));
+		header('Content-Type: application/pdf');
+ 
+		echo $report;
+	}
+
+	function testdir(){
+		echo base_url('assets/js/moment.min.js');
 	}
 
 }
