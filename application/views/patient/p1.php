@@ -124,7 +124,9 @@
 										<div class="alert" :class="stalertclass(list.stid)">{{ list.stname }}</div>
 									</div>
 								</div>
-								<div class="d-inline float-right p-0" style="position: relative;min-width: 40px;"></div>
+								<div class="d-inline float-right p-0" style="position: relative;min-width: 40px;">
+									<span class="badge badge-danger" v-show="list.firecnt > 0">{{ list.firecnt }}</span>
+								</div>
 							</div> <!-- end of div row -->
 						</div> <!-- end of div v-for -->
 					</div> <!-- end of content flex -->
@@ -177,13 +179,19 @@
 						<div class="row m-0 p-0 sticky-top h-100" style="display: flex;flex-direction: column;">
 							<div class="container-fluid px-0 col-12" id="messages-area" style="align-self: stretch;overflow-y: auto;">
 								<div class="row m-0 p-0 sticky-top">
-									<div class="col-12 m-0 p-0 text-right bg-white">
+									<div class="col-6 m-0 p-0 text-left bg-white d-inline-block">
+										<button class="btn x-btn-green my-1 mx-2" style="border-radius: 10px;" @click="oappsheetexport()" v-show="selapm.stid == '03'">
+											<i class="fas fa-print align-middle" style="font-size: 1.8rem"></i>
+											<span class="align-middle mx-2" style="font-size: 1rem;">พิมพ์ใบนัด PDF</span> <!-- ขอทำนัด -->
+										</button>
+									</div>
+									<div class="col-6 m-0 p-0 text-right bg-white d-inline-block">
 										<button class="btn x-btn-yellow my-1 mx-2" style="border-radius: 10px;" @click="showlistpage(true)">
 											<i class="fa fa-chevron-circle-down align-middle" style="font-size: 1.8rem"></i>
 											<span class="align-middle mx-2" style="font-size: 1rem;">ปิดหน้าแชท</span> <!-- ขอทำนัด -->
 										</button>
-										<hr class="my-2">
 									</div>
+									<hr class="my-2">
 								</div>
 								<div class="text-center x-btn-white px-5 mx-5 my-2" v-show="false" style="border-radius: 10px;">
 									<i class="fa fa-angle-up align-middle" style="font-size: 1.5rem"></i>
@@ -197,10 +205,11 @@
 	                                  	{{ msg.msgdate | thdate }}
 	                                  </span>
 	                                </div>
-									<div class="d-block text-muted" 
+									<div class="d-block text-muted"
 										style="font-size: 1rem;" 
 										v-if="msg.side != 'a' ? false : idx == 0 ? true : messages[idx-1].creby == msg.creby ? false : true"
-											>{{ msg.crebyname }}</div>
+											>{{ msg.crebyname }}
+									</div>
 									<span class="text-muted" v-if="msg.side == 'p'" style="font-size: 14px;">{{ msg.msgtime | hourminute }}</span>
 									<div class="d-inline-block py-2 px-4 text-wrap text-left" :class="msg.msgcl ? 'text-muted font-italic '+msg.msgcl : 'chat-msg-area'">
 										{{ msg.msgtxt }}
@@ -312,14 +321,14 @@
 									<textarea class="form-control" id="sicktxt" v-model="newapm.sicktxt" placeholder="แจ้งรายละเอียดอาการป่วยสำหรับการขอทำนัด" rows="5"></textarea>
 								</div>
 								<div class="form-group">
-									<label class="small font-weight-bold" for="header">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
-									<input class="form-control" type="text" id="header" v-model="newapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
+									<label class="small font-weight-bold" for="apmtel">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
+									<input class="form-control" type="text" id="apmtel" v-model="newapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
 								</div>
 
 
 								<div class="form-group" v-show="false">
-									<label class="small font-weight-bold" for="header">หัวข้อเรื่อง : </label>
-									<input class="form-control" type="text" id="header" v-model="newapm.header" placeholder="ระบุหัวข้อเรื่อง">
+									<label class="small font-weight-bold" for="apmheader">หัวข้อเรื่อง : </label>
+									<input class="form-control" type="text" id="apmheader" v-model="newapm.header" placeholder="ระบุหัวข้อเรื่อง">
 								</div>
 								
 								<div class="alert alert-danger small" v-if="false">
@@ -508,8 +517,6 @@
 	// firebase var
 	const db = firebase.database();
 	const firegb = db.ref('apmchat');
-	const fireside = firegb.child('patientside');
-	const fireresp = firegb.child('adminside');
 	let firemain = null;
 	let fireapmid =  null;
 	
@@ -589,6 +596,7 @@
 			schedulelctboo : true,
 			scheduledctitem: [],
 			sdisel : null,
+			fireres : [],
 		},
 		methods: {
 			onlyshowmodal(modal_id){
@@ -701,7 +709,7 @@
 
 				$('#sfdate').datepicker()
 					.on('hide', v =>{
-						this.sfdate= $('#sfdate').val();
+						this.sfdate = $('#sfdate').val();
 					});
 
 				$('#stdate').datepicker()
@@ -988,11 +996,13 @@
 	            	this.apmlist.forEach((item,idx) =>{
 	            		// console.log(item);
 	            		item.apmdate = this.dateforth(item.apmdate);
-	            		item.firecnt = 0;
 	            	});
 
-	            	if(firelisten) this.activefirebase('hn' ,this.ptdata.HN , 'listpage');
 	            });
+
+            	if(firelisten){
+            		this.activefirebase('hn' ,this.ptdata.HN , 'listpage');
+            	}
 
 			},
 			stalertclass(v){
@@ -1025,10 +1035,11 @@
 				this.selapm = this.apmlist.find( v => v.apmid == apmid );
 				await this.loadchat();
 				this.scrolltobottom();
-				this.inquirychat();
+				// this.inquirychat();
 				this.clearform('newapm');
 				this.apmload(this.selapm.apmid,true);
 				// $('#create-msg-box').focus();
+				this.activefirebase('apmid' ,this.selapm.apmid , 'openchat');
 			},
 			apmload(apmid,aniload = false){
 				if(aniload)  this.onptapmload = true;
@@ -1070,24 +1081,24 @@
 					'msgcl' : '',
 				});
 
+				//firebase work zone -- push data to adminisite for noti admin 
+				db.ref('apmchat/adminsite/'+this.ptdata.HN+'/'+this.selapm.apmid).child('/').push(
+						{ msgtxt: this.currmsg
+							,msgdate: d
+							,msgtime: t
+							,creby: ''
+							,crebyname: ''
+							,msgcl: ''
+						}
+					);
+
 				this.currmsg = "";
 				this.scrolltobottom();
 				$("#create-msg-box").focus();
 
-				db.ref('apmchat/adminsite/'+this.ptdata.HN+'/'+this.selapm.apmid).child('/').push(['aaaaa','bbbbb',{ xo01: 'assanai'}]);
-				// {
-				// 	msgtxt: this.msgtxt,
-				// 	msgdate: d,
-				// 	msgtime: t,
-				// }
-
-				// fireresp.child(this.ptdata.HN).child(this.selapm.apmid).push({
-					
-				// });
-
 				axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
 					.then(res => {
-						this.inquirychat();
+						// this.inquirychat();
 					});
 			},
 			async loadchat(){
@@ -1454,21 +1465,42 @@
 				} //end of for loop
 				this.appendsel2(elid,arr);
 			},
-			activefirebase(type , val , act){
+			activefirebase(type , val , act = ''){
 				switch(type){
-					case 'hn' : firemain = fireside.child(val);
+					case 'hn' : firemain = db.ref('apmchat/patientsite/'+this.ptdata.HN);
+								let resmsg = []; 
 								if(act == 'listpage'){
+									// event work zone
 									firemain.on('value', snap => {
-										let res = snap.val();
-										if(!res) return false;
+										snap.forEach((item) => {
+											// item.key ในที่นี้ กำหนดให้เป็น apmid 
+											resmsg.push({
+												apmid : item.key
+												,firecnt : item.numChildren()
+											});
+										}); //end of foreach
 
-										// res.forEach((item,idx) => {
-
-										// });
+										resmsg.forEach(i => {
+											let idx = this.apmlist.findIndex(v => v.apmid == i.apmid);
+											this.apmlist[idx].firecnt = i.firecnt;
+										});
 									});
 								}
 						break;
-					case 'apmid' : 
+					case 'apmid' : fireapmid = db.ref('apmchat/patientsite/'+this.ptdata.HN+'/'+this.selapm.apmid);
+									if(act == 'openchat'){
+										// delete children
+										fireapmid.remove();
+										// event work zone
+										fireapmid.on('value', snap => {
+											console.log(snap.val());
+											snap.forEach(item => {
+												console.log(item.val());
+											});
+										});
+									}
+									
+						break;
 				}
 			},
 			handledctselect(ty){
@@ -1486,6 +1518,11 @@
 					$('#apmdct').val("-99").trigger('change');
 				}
 			},
+
+			oappsheetexport(){
+				window.open("<?php echo site_url('report/oapp_sheet_pdf'); ?>"+"?apmid="+this.selapm.apmid ,'_blank');
+			},
+
 		},
 		mounted() {
 			var _this = this;

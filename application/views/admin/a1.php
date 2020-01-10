@@ -972,6 +972,18 @@
   ?>
   <script type="text/javascript">
 
+  const fdbconfig = {
+    databaseURL: "https://tuhappointmentv1.firebaseio.com"
+  };
+
+  firebase.initializeApp(fdbconfig);
+
+  // firebase var
+  const db = firebase.database();
+  const firegb = db.ref('apmchat');
+  let firemain = null;
+  let fireapmid =  null;
+
   var app = new Vue({
     el: '#app',
     data: {          
@@ -1326,9 +1338,10 @@
         this.selapm = this.apms[idx];
         await this.loadchat();
         this.scrolltobottom();
-        this.inquirychat();
+        // this.inquirychat();
         // this.currentpage.txt += this.selapm.fname + "   " + this.selapm.lname;
         this.loadrelateapm();
+        this.activefirebase('apmid' ,this.selapm.apmid , 'chat');
       },
       async loadchat(){
         this.messages = [];
@@ -1398,13 +1411,24 @@
           'msgcl' : '',
         });
 
+        //firebase work zone -- push data to adminisite for noti admin 
+        db.ref('apmchat/patientsite/'+this.selapm.hn+'/'+this.selapm.apmid).child('/').push(
+            { msgtxt: this.currmsg
+              ,msgdate: d
+              ,msgtime: t
+              ,creby: this.admindata.STAFF_CODE
+              ,crebyname: this.admindata.STAFF_NAME
+              ,msgcl: ''
+            }
+          );
+
         this.currmsg = "";
         this.scrolltobottom();
         $("#create-msg-box").focus();
 
         axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
         .then(res => {
-            this.inquirychat();
+            // this.inquirychat();
         });
       },
       scrolltobottom(){
@@ -1811,12 +1835,56 @@
           'msgcl' : msgcl,
         });
 
+        //firebase work zone -- push data to adminisite for noti admin 
+        db.ref('apmchat/patientsite/'+this.selapm.hn+'/'+this.selapm.apmid).child('/').push(
+            { msgtxt: this.currmsg
+              ,msgdate: d
+              ,msgtime: t
+              ,creby: this.admindata.STAFF_CODE
+              ,crebyname: this.admindata.STAFF_NAME
+              ,msgcl: msgcl
+            }
+          );
+
         this.scrolltobottom();
 
         axios.post("<?php echo site_url('appointment/createmsg'); ?>",params)
         .then(res => {
-            this.inquirychat();
+            // this.inquirychat();
         });
+      },
+      activefirebase(type , val , act = ''){
+        switch(type){
+          case 'hn' : firemain = db.ref('apmchat/adminsite/'+this.ptdata.HN);
+                let resmsg = []; 
+                if(act == 'listpage'){
+                  // event work zone
+                  firemain.on('value', snap => {
+                    snap.forEach((item) => {
+                      // item.key ในที่นี้ กำหนดให้เป็น apmid 
+                      resmsg.push({
+                        apmid : item.key
+                        ,firecnt : item.numChildren()
+                      });
+                    }); //end of foreach
+
+                    resmsg.forEach(i => {
+                      let idx = this.apmlist.findIndex(v => v.apmid == i.apmid);
+                      this.apmlist[idx].firecnt = i.firecnt;
+                    });
+                  });
+                }
+            break;
+          case 'apmid' : fireapmid = db.ref('apmchat/adminsite/'+this.selapm.hn+'/'+this.selapm.apmid);
+                  if(act == 'chat'){
+                    // event work zone
+                    fireapmid.on('value', snap => {
+                      console.log(snap.val());
+                    });
+                  }
+                  
+            break;
+        }
       },
     },
     mounted() {

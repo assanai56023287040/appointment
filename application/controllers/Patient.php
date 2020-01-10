@@ -3,7 +3,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 header('Access-Control-Allow-Origin: *');
 
 require_once APPPATH."/third_party/jrs-php-client/autoload.dist.php";
-// base_url('assets/js/moment.min.js')
 
 use Jaspersoft\Client\Client;
 
@@ -123,21 +122,19 @@ class Patient extends CI_Controller {
 						"jasperadmin"
 					);	
 
-		$report = $c->reportService()->runReport('/tuh_report/apm_oapp', 'html');
+		$control = array('apmid' => 7);
+
+		$report = $c->reportService()->runReport('/reports/tuh_report/oapp_sheet', 'pdf',null ,null ,$control);
 
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
 		header('Content-Description: File Transfer');
-		header('Content-Disposition: attachment; filename=jaspertest.html');
+		header('Content-Disposition: attachment; filename=jaspertest.xls');
+		// header('Content-Disposition: inline; filename=jaspertest.pdf');
 		header('Content-Transfer-Encoding: binary');
 		header('Content-Length: ' . strlen($report));
-		header('Content-Type: application/pdf');
+		header('Content-Type: application/ms-excel');
  
 		echo $report;
 	}
-
-	function testdir(){
-		echo base_url('assets/js/moment.min.js');
-	}
-
 }
