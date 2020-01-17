@@ -125,7 +125,7 @@
 									</div>
 								</div>
 								<div class="d-inline float-right p-0" style="position: relative;min-width: 40px;">
-									<span class="badge badge-danger" v-show="list.firecnt > 0">{{ list.firecnt }}</span>
+									<span class="true-center-page badge badge-danger" v-show="list.firecnt > 0">{{ list.firecnt }}</span>
 								</div>
 							</div> <!-- end of div row -->
 						</div> <!-- end of div v-for -->
@@ -441,15 +441,15 @@
 							<label class="small font-weight-bold" for="dct-schedule-month">เดือนที่ออกตรวจ : </label>
 							<input class="form-control" type="text" id="dct-schedule-month" v-model="scheduledctmonth" placeholder="เลือกเดือน">
 						</div>
-						<div class="col-auto">
-							<div class="alert alert-success small alert-dismissible m-0" v-show="scheduledctboo">
+						<div class="col-auto" v-show="scheduledctboo">
+							<div class="alert alert-success small alert-dismissible m-0">
 								<a href="#" class="close" @click="scheduledctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>แพทย์ : </strong>
 								<br/>{{ scheduledctname }}
 							</div>
 						</div>
-						<div class="col-auto">
-							<div class="alert alert-info small alert-dismissible m-0" v-show="schedulelctboo">
+						<div class="col-auto" v-show="schedulelctboo">
+							<div class="alert alert-info small alert-dismissible m-0">
 								<a href="#" class="close" @click="schedulelctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
 								<strong>คลินิค : </strong>
 								<br/>{{ schedulelctname }}
@@ -495,7 +495,7 @@
 							:class="{'non-edit' : sdisel == null}"
                         	:disabled="sdisel == null"
 						>
-						<i class="far fa-save align-middle" style="font-size: 2rem"></i>
+						<i class="far fa-calendar-check align-middle" style="font-size: 2rem"></i>
 						<span class="align-middle ml-2" style="font-size: 2rem;">เลือก</span><!-- ขอทำนัด -->
 					</button>
 				</div>
@@ -640,7 +640,7 @@
 						}
 
 						this.sdisel = null;
-						this.loadscheduledct();
+						this.loadscheduledct(this.schedulelctboo,this.scheduledctboo);
 						break;
 					case 'dct-schedule-out' :
 						$('#dct-schedule').modal('hide');
@@ -649,7 +649,7 @@
 						break;
 				}
 			},
-			showlistpage(ani = false){	// ani : use animation slide 
+			showlistpage(ani = false){	// ani : use animation slide
 				if(ani){
 					clearInterval(this.chatInterval);
 					$('#list-page').show("slide", { direction: "up" }, 500);
@@ -657,10 +657,12 @@
 				}else{
 					$('#list-page').css('display','');
 				}
+				this.chatpage = false;
 			},
 			showchatpage(){ 
 				$('#chat-page').show("slide", { direction: "down" }, 500);
 				$('#list-page').hide("slide", { direction: "up" }, 500);
+				this.chatpage = true;
 			},
 			activedatepicker(){
 				$('.datepicker-forapmdate').datepicker({
@@ -732,7 +734,7 @@
 						let val = $('#dct-schedule-month').val();
 						if(val == this.scheduledctmonth || !val){return false;}
 						this.scheduledctmonth = val;
-						this.loadscheduledct(this.scheduledctboo,this.scheduledctboo);
+						this.loadscheduledct(this.schedulelctboo,this.scheduledctboo);
 					});
 			},
 			activeselect2(elid){
@@ -812,9 +814,9 @@
 				if(m){
 					let mx = m.split('-');
 					switch(type){
-						case 'th' : mx[1] = mx[1]+543;
+						case 'th' : mx[1] = parseInt(mx[1],10)+543;
 							break;
-						case 'en' : mx[1] = mx[1]-543;
+						case 'en' : mx[1] = parseInt(mx[1],10)-543;
 							break;	
 					}
 
@@ -1002,8 +1004,9 @@
 
             	if(firelisten){
             		this.activefirebase('hn' ,this.ptdata.HN , 'listpage');
+            	}else{
+            		this.unpackfirecnt();
             	}
-
 			},
 			stalertclass(v){
 				switch(v){
@@ -1089,6 +1092,7 @@
 							,creby: ''
 							,crebyname: ''
 							,msgcl: ''
+							,side: 'p'
 						}
 					);
 
@@ -1343,7 +1347,7 @@
 					dx = moment(std.format('MM-YYYY'),'MM-YYYY').startOf('day');
 					std = std.format('YYYY-MM-DD');
 
-					this.scheduledctmonth = dx.format('MM-YYYY');
+					this.scheduledctmonth = this.convertdctmonthto('th',dx.format('MM-YYYY')) ;
 					$('#dct-schedule-month').datepicker('update',this.scheduledctmonth);
 				}else{
 					std = dx.startOf('month').format('YYYY-MM-DD');
@@ -1468,38 +1472,44 @@
 			activefirebase(type , val , act = ''){
 				switch(type){
 					case 'hn' : firemain = db.ref('apmchat/patientsite/'+this.ptdata.HN);
-								let resmsg = []; 
 								if(act == 'listpage'){
+
 									// event work zone
 									firemain.on('value', snap => {
-										snap.forEach((item) => {
-											// item.key ในที่นี้ กำหนดให้เป็น apmid 
-											resmsg.push({
+										this.fireres = [];
+										let idx = 0;
+										snap.forEach(item => {
+											// item.key ในที่นี้ โครงสร้างของ non-sql กำหนดให้เป็น apmid
+											this.fireres.push({
 												apmid : item.key
-												,firecnt : item.numChildren()
+												,cnt : item.numChildren()
 											});
-										}); //end of foreach
+											// จะมี function unpackfirecnt() ทำงานต่อจากนี้ ทำหน้าที่ ยัดค่า cnt -> apmlist[x].firecnt			
 
-										resmsg.forEach(i => {
-											let idx = this.apmlist.findIndex(v => v.apmid == i.apmid);
-											this.apmlist[idx].firecnt = i.firecnt;
-										});
+											//ถ้าเปิดหน้าแชทอยู่ให้ push array แชทเข้าไปเลย
+											if(this.chatpage && this.selapm != [] && item.key == this.selapm.apmid){
+												item.forEach(i => { // forEach อันนี้ คือ การคลายแชทออกมา
+													this.messages.push(i.val());
+													firemain.child(item.key+'/'+i.key).remove();
+												});
+												this.scrolltobottom();
+
+												//ถ้าอ่าน msg แล้ว ให้ set ค่าการแจ้งเตือนที่หน้ารายการ = 0
+												idx = this.apmlist.findIndex(v => v.apmid == item.key);
+												this.apmlist[idx].firecnt = 0;
+											}
+										}); //end of foreach
+										this.unpackfirecnt();
 									});
 								}
 						break;
-					case 'apmid' : fireapmid = db.ref('apmchat/patientsite/'+this.ptdata.HN+'/'+this.selapm.apmid);
+					case 'apmid' : fireapmid = db.ref('apmchat/patientsite/'+this.ptdata.HN+'/'+val); // val คือ apmid
 									if(act == 'openchat'){
 										// delete children
 										fireapmid.remove();
-										// event work zone
-										fireapmid.on('value', snap => {
-											console.log(snap.val());
-											snap.forEach(item => {
-												console.log(item.val());
-											});
-										});
+										let idx = this.apmlist.findIndex(v => v.apmid == val);
+										this.apmlist[idx].firecnt = 0;
 									}
-									
 						break;
 				}
 			},
@@ -1522,6 +1532,14 @@
 			oappsheetexport(){
 				window.open("<?php echo site_url('report/oapp_sheet_pdf'); ?>"+"?apmid="+this.selapm.apmid ,'_blank');
 			},
+
+			unpackfirecnt(){
+				let idx = 0;
+				this.fireres.forEach(i => {
+					idx = this.apmlist.findIndex(v => v.apmid == i.apmid);
+					this.apmlist[idx].firecnt = i.cnt;
+				});
+			}
 
 		},
 		mounted() {

@@ -451,6 +451,7 @@
                           <td>{{ r.apmdate | thdate }}</td>
                           <td>{{ r.apmtime | timewithzero }}</td>
                           <td>{{ r.stname }}</td>
+                          <td><span v-show="r.firecnt > 0" class="badge badge-danger">{{ r.firecnt }}</span></td>
                         </tr>
                       </tbody>
                     </table>
@@ -768,71 +769,74 @@
                     <textarea class="form-control" id="sicktxt" v-model="ptapm.sicktxt" placeholder="แจ้งรายละเอียดอาการป่วยสำหรับการขอทำนัด" rows="5"></textarea>
                   </div>
                   <div class="form-group">
-                    <label class="small font-weight-bold" for="header">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
-                    <input class="form-control" type="text" id="header" v-model="ptapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
+                    <label class="small font-weight-bold" for="apmtel">เบอร์โทรศัพท์ที่ติดต่อได้ : </label>
+                    <input class="form-control" type="text" id="apmtel" v-model="ptapm.tel" placeholder="ระบุเบอร์โทรสำหรับติดต่อกลับ">
                   </div>
 
+
                   <div class="form-group" v-show="false">
-                    <label class="small font-weight-bold" for="header">หัวข้อเรื่อง : </label>
-                    <input class="form-control" type="text" id="header" v-model="ptapm.header" placeholder="ระบุหัวข้อเรื่อง">
+                    <label class="small font-weight-bold" for="apmheader">หัวข้อเรื่อง : </label>
+                    <input class="form-control" type="text" id="apmheader" v-model="ptapm.header" placeholder="ระบุหัวข้อเรื่อง">
                   </div>
-          
-                  <div class="alert alert-danger small" v-show="false">
+                  
+                  <div class="alert alert-danger small" v-if="false">
                     <strong>เวลาทำการ : วันและเวลาราชการ     </strong>
                     <br/>จันทร์ - ศุกร์  |  8.00 - 16.00
                     <br/>ติดต่อคลีนิกในเวลา : 02-926-9991
                     <br/>ติดต่อคลีนิกนอกเวลา : 02-926-9860
                   </div>
+
+                  <div class="alert alert-danger small mx-0 my-2 px-3 py-2">
+                    <span class="text-muted small">**สามารถเลือกวันขอทำนัดได้หลังจากวันปัจจุบัน 3 วัน</span>
+                  </div>
                 </div>
                 <div class="col-sm-6">
-                  <div class="input-group my-2">
-                    <div class="input-group-prepend">
-                      <div class="input-group-text">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="checkbox" value="" v-model="ptapm.isseldct" id="defaultCheck1">
-                          <label class="form-check-label" for="defaultCheck1">ระบุแพทย์</label>
-                        </div>
-                      </div>
-                    </div>
-                    <select class="form-control" type="text" id="apmdct" v-model="ptapm.apmdct" :disabled="!ptapm.isseldct">
-                      <option value="" disabled selected>เลือกแพทย์</option>                    
-                      <option value="11001">11001 | นพ.ทดสอบระบบแพทย์</option>
-                      <!-- <option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option> -->
-                    </select>
-                    <div class="input-group-append" >
-                      <button class="btn btn-outline-secondary" type="button" :disabled="!ptapm.isseldct" title="ตารางออกตรวจแพทย์">
+
+                  <div class="d-inline-block form-check form-check-inline text-left">
+                    <input class="form-check-input" type="radio" name="doctor" id="dctsel" value="dctsel" v-model="ptapm.isseldct" @click="handledctselect('dctsel')">
+                    <label class="small font-weight-bold form-check-label" for="dctsel">ระบุแพทย์</label>
+                  </div>
+                  <div class="d-inline-block form-check form-check-inline text-left">
+                    <input class="form-check-input" type="radio" name="doctor" id="nondctsel" value="nondctsel" v-model="ptapm.isseldct" @click="handledctselect('nondctsel')">
+                    <label class="small font-weight-bold form-check-label" for="nondctsel">ไม่ระบุแพทย์</label>
+                  </div>
+
+                  <div class="d-inline-block float-right text-right mt-1">
+                    <button class="btn btn-outline-secondary" type="button" title="ตารางออกตรวจแพทย์" :disabled="(!ptapm.apmdct && !ptapm.apmlct) || (!ptapm.isseldct && ptapm.lcttype != 'itlct')" @click="actionshowmodal('dct-schedule-in')">
                         <i class="far fa-calendar-alt align-middle" style="font-size: 1.5rem"></i>
-                      </button>
-                    </div>
+                    </button>
+                  </div>
+
+                  <div class="mt-3 mb-2">
+                    <select id="apmdct" :disabled="ptapm.isseldct != 'dctsel'"></select>
+                  </div>
+
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="ptapm.lcttype">
+                    <label class="small font-weight-bold form-check-label" for="clinicChoice2">คลินิคในเวลา</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="ptapm.lcttype">
+                    <label class="small font-weight-bold form-check-label" for="clinicChoice1">คลินิคเฉพาะทาง</label>
+                  </div>
+
+                  <div class="my-2"> <!--  class="collapse" -->
+                    <select id="apmlct" :disabled="ptapm.lcttype != 'itlct'"> <!-- v-model="ptapm.apmlct" -->
+                      <!-- <option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode }} ] {{ l.lctname }}</option> -->
+                    </select>
                   </div>
 
                   <div class="form-row align-item-center justify-content-center">
                     <div class="col form-group">
                       <label class="small font-weight-bold" for="apmdate">วันที่ขอทำนัด : </label>
-                      <input class="form-control datepicker" type="text" id="apmdate" v-model="ptapm.apmdate" placeholder="เลือกวันที่">
+                      <input class="form-control datepicker-forapmdate" type="text" id="apmdate" v-model="ptapm.apmdate" placeholder="เลือกวันที่">
                     </div>
                     <div class="col form-group">
                       <label class="small font-weight-bold" for="apmtime">เวลาที่ขอทำนัด : </label>
-                      <select class="form-control" type="text" id="apmtime">
-                        <option v-for="(t , idx) in timehr" :value="t.k">{{ t.v }}</option>
-                      </select>
+                      <select class="form-control" type="text" id="apmtime"></select>
                     </div>
                   </div> <!-- end div of sub form-row -->
 
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="clinic" id="clinicChoice2" value="itlct" v-model="ptapm.lcttype">
-                    <label class="form-check-label" for="clinicChoice2">คลินิคในเวลา</label>
-                  </div>
-                  <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="clinic" id="clinicChoice1" value="splct" v-model="ptapm.lcttype">
-                    <label class="form-check-label" for="clinicChoice1">คลินิคเฉพาะทาง</label>
-                  </div>
-
-                  <div v-show="ptapm.lcttype == 'itlct'">
-                    <select id="apmlct"  placeholder="เลือกคลีนิก"> <!-- v-model="ptapm.apmlct" -->
-                      <option v-for="(l , idx) in lctlist" :value="l.lctcode">[ {{ l.lctcode  }} ] {{ l.lctname }}</option>
-                    </select>
-                  </div>
                 </div>
               </div>
             </div>
@@ -912,7 +916,7 @@
           <div class="modal-header">
             <div class="row" style="min-width: 100%">
               <div class="col-6 text-left font-weight-bold">
-                เลือกรายการทำนัดของ HN : {{ selapm.hn }} เพื่อยืนยัน
+                เลือกรายการทำนัดของ HN : {{ ptapm.hn }} เพื่อยืนยัน
                 <br/><span class="text-muted small">ดับเบิ้ลคลิกที่รายการเพื่อยืนยันรายการนัดหมาย</span>
               </div>
               <div class="col-6 text-right px-0">
@@ -962,12 +966,98 @@
       </div> <!-- end of div modal dialog -->
     </div> <!-- end of div modal patient-profile -->
 
+    <!-- dct-schedule modal id -->
+    <div id="dct-schedule" class="modal fade" data-backdrop="static" role="dialog" tabindex="-1" data-keyboard="false">
+      <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content" style="height: 95vh;">
+          <!-- modal header -->
+          <div class="modal-header">
+            <div class="row" style="min-width: 100%">
+              <div class="col-6 text-left font-weight-bold">
+                <i style="font-size: 2rem;" class="far fa-calendar-alt d-inline mr-2"></i>
+                <h3 class="d-inline font-weight-bold" >ตารางออกตรวจแพทย์</h3>
+              </div>
+              <div class="col-6 text-right px-0">
+                <i class="far fa-times-circle icon-hover-trans-gray" @click="actionshowmodal('dct-schedule-out')" style="font-size: 2rem;"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- modal body -->
+          <div class="modal-body" style="display: flex;flex-flow: column;height: 75vh;">
+            <div class="row">
+              <div class="col-auto">
+                <label class="small font-weight-bold" for="dct-schedule-month">เดือนที่ออกตรวจ : </label>
+                <input class="form-control" type="text" id="dct-schedule-month" v-model="scheduledctmonth" placeholder="เลือกเดือน">
+              </div>
+              <div class="col-auto">
+                <div class="alert alert-success small alert-dismissible m-0" v-show="scheduledctboo">
+                  <a href="#" class="close" @click="scheduledctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
+                  <strong>แพทย์ : </strong>
+                  <br/>{{ scheduledctname }}
+                </div>
+              </div>
+              <div class="col-auto">
+                <div class="alert alert-info small alert-dismissible m-0" v-show="schedulelctboo">
+                  <a href="#" class="close" @click="schedulelctboo=false;loadscheduledct(schedulelctboo,scheduledctboo)">&times;</a>
+                  <strong>คลินิค : </strong>
+                  <br/>{{ schedulelctname }}
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-3 mx-0 text-dark">
+
+            <div class="text-center alert alert-warning" v-show="onscheduledctload">
+              <i class="fas fa-circle-notch fa-spin align-middle" style="font-size: 1.8rem"></i>
+              <span class="align-middle mx-2" style="font-size: 1rem;">กำลังตรวจสอบตารางออกตรวจแพทย์</span>
+            </div>
+            <div class="text-center alert alert-danger" v-show="!onscheduledctload && scheduledctitem.length == 0">
+              <i class="far fa-calendar-times align-middle" style="font-size: 1.8rem"></i>
+              <span class="align-middle mx-2" style="font-size: 1rem;">ไม่พบข้อมูลการออกตรวจแพทย์ตามข้อมูลที่เลือก</span>
+            </div>
+            <div class="row" style="overflow-y: auto;">
+              <div class="py-2 col-sm-6 col-md-4 col-lg-3" v-for="(i,idx) in scheduledctitem">
+                <div class="card shadow-sm h-100" style="font-size: 1rem" :class="scheduledayclass(i.LCTDAY)" @click="sdisel = sdisel==idx?null:idx">
+                  <div class="card-body text-left" :class="{'sdisel' : idx==sdisel}">
+                    <i class="align-middle ml-0 mr-1" style="font-size: 1.6rem" :class="idx == sdisel ? 'fas fa-check-circle' : 'far fa-circle'"></i>
+                    <span class="font-weight-bold align-middle">{{ i.SUBCLINICNAME }}</span>
+                    <hr/>
+                    แพทย์ : {{ i.DCTNAME }}<br/>
+                    คลินิค : {{ i.LCTNAME }}<br/>
+                    เวลา : {{ i.TIMESPANNAME }}
+                  </div>
+                  <div class="card-footer text-center">
+                    {{ i.DAYNAME }} | {{ i.WORKDATE }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+          <!-- modal footer -->
+          <div class="modal-footer sticky-bottom">
+            <button class="btn x-btn-green px-3" 
+                style="border-radius: 10px;"
+                @click="sdiselitem()"
+                :class="{'non-edit' : sdisel == null}"
+                            :disabled="sdisel == null"
+              >
+              <i class="far fa-save align-middle" style="font-size: 2rem"></i>
+              <span class="align-middle ml-2" style="font-size: 2rem;">เลือก</span><!-- ขอทำนัด -->
+            </button>
+          </div>
+        </div>
+      </div>
+    </div> <!-- end of dct-schedule modal -->
+
   </div>
   <!--  end off div app -->
 
 
   <?php
-    // $this->load->view('js/myjs');
+  // $this->load->view('js/myjs');
   $this->load->view('js/adminjs');
   ?>
   <script type="text/javascript">
@@ -1023,30 +1113,30 @@
             },
           ],
           timehr: [
-            {k: "00", v:"00.00"},
-            {k: "01", v:"01.00"},
-            {k: "02", v:"02.00"},
-            {k: "03", v:"03.00"},
-            {k: "04", v:"04.00"},
-            {k: "05", v:"05.00"},
-            {k: "06", v:"06.00"},
-            {k: "07", v:"07.00"},
-            {k: "08", v:"08.00"},
-            {k: "09", v:"09.00"},
-            {k: "10", v:"10.00"},
-            {k: "11", v:"11.00"},
-            {k: "12", v:"12.00"},
-            {k: "13", v:"13.00"},
-            {k: "14", v:"14.00"},
-            {k: "15", v:"15.00"},
-            {k: "16", v:"16.00"},
-            {k: "17", v:"17.00"},
-            {k: "18", v:"18.00"},
-            {k: "19", v:"19.00"},
-            {k: "20", v:"20.00"},
-            {k: "21", v:"21.00"},
-            {k: "22", v:"22.00"},
-            {k: "23", v:"23.00"},
+            {k: "00" ,v: "00.00"},
+            {k: "01" ,v: "01.00"},
+            {k: "02" ,v: "02.00"},
+            {k: "03" ,v: "03.00"},
+            {k: "04" ,v: "04.00"},
+            {k: "05" ,v: "05.00"},
+            {k: "06" ,v: "06.00"},
+            {k: "07" ,v: "07.00"},
+            {k: "08" ,v: "08.00"},
+            {k: "09" ,v: "09.00"},
+            {k: "10" ,v: "10.00"},
+            {k: "11" ,v: "11.00"},
+            {k: "12" ,v: "12.00"},
+            {k: "13" ,v: "13.00"},
+            {k: "14" ,v: "14.00"},
+            {k: "15" ,v: "15.00"},
+            {k: "16" ,v: "16.00"},
+            {k: "17" ,v: "17.00"},
+            {k: "18" ,v: "18.00"},
+            {k: "19" ,v: "19.00"},
+            {k: "20" ,v: "20.00"},
+            {k: "21" ,v: "21.00"},
+            {k: "22" ,v: "22.00"},
+            {k: "23" ,v: "23.00"},
           ],
           listinterval: null, // interval for show bagde message in chat list
           clicks: 0,
@@ -1060,6 +1150,9 @@
           ptdata: {},
           stlist: [],
           lctlist: [],
+          lctlist_x: [],
+          dctlist: [],
+          dctlist_x: [],
           ptapm: {},
           onapmsload: false,
           onptdataload: false,
@@ -1088,6 +1181,18 @@
           messages: [],
           chatinterval: null, // for update message in chat page
           offsetchat: 0,
+          firstfirelisten: 0,
+          chatpage: false,
+          fireres: [],
+          switchload: '',
+          onscheduledctload: false,
+          scheduledctmonth: '',
+          scheduledctname : '',
+          schedulelctname : '',
+          scheduledctboo : true,
+          schedulelctboo : true,
+          scheduledctitem: [],
+          sdisel : null,
     },
     methods: {
       sessioncheck(){
@@ -1133,6 +1238,22 @@
               this.utdate = '';
               $('#ustatus').val(null).trigger('change');
               this.usersload();
+            break;
+          case 'reverseswitchload' : 
+            if(this.switchload == 'dct'){
+              this.lctlist = this.lctlist_x;
+              this.appendsel2('apmlct',this.lctlist);
+            }
+            if(this.switchload == 'lct'){
+              this.dctlist = this.dctlist_x;
+              this.appendsel2('apmdct',this.dctlist);
+            }
+
+            this.appendsel2('apmtime',this.timehr);
+            this.switchload = '';
+            $('#apmlct').val(null).trigger('change');
+            $('#apmtime').val(null).trigger('change');
+            $('#apmdct').val(null).trigger('change');
             break;
           default : 
         }
@@ -1252,9 +1373,54 @@
           e.preventDefault();
         });
       },
-      // activeDataTable(){
-      //   $('#dataTable').DataTable();
-      // },
+      actionshowmodal(modal_id){
+        switch(modal_id){
+          // case 'new-appointment' : 
+          //   this.isnewapm = true;
+          //   this.clearform('newapm');
+          //   this.onlyshowmodal('edit-appointment');
+          //   break;
+          case 'edit-appointment' : 
+            this.isnewapm = false;
+            this.clearform('reverseswitchload');
+            this.onlyshowmodal('edit-appointment');
+            break;
+          case 'dct-schedule-in' :
+            $('#new-appointment').modal('hide');
+            this.onlyshowmodal('dct-schedule');
+
+            let d = moment();
+
+            if(!this.scheduledctmonth){
+              this.scheduledctmonth = (d.month()+1)+'-'+(d.year()+543);
+            }
+            // ตรวจสอบแพทย์
+            if(this.selapm.apmdct){
+              this.scheduledctname = this.dctlist.find( v => v.dctcode == this.selapm.apmdct).dctname;
+              this.scheduledctboo = true
+            }else{
+              this.scheduledctname = '';
+              this.scheduledctboo = false;
+            }
+            // ตรวจสอบคลินิค
+            if(this.selapm.apmlct){
+              this.schedulelctname = this.lctlist.find( v => v.lctcode == this.selapm.apmlct).lctname;
+              this.schedulelctboo = true
+            }else{
+              this.schedulelctname = '';
+              this.schedulelctboo = false;
+            }
+
+            this.sdisel = null;
+            this.loadscheduledct();
+            break;
+          case 'dct-schedule-out' :
+            $('#dct-schedule').modal('hide');
+            this.onlyshowmodal('edit-appointment');
+            // this.loadscheduledct();
+            break;
+        }
+      },
       changepage(id = '',opt = false){
         if(this.currentpage.kw == id){return;}
         this.currentpage = this.pages.find(v => v.kw == id);
@@ -1263,11 +1429,10 @@
           case 'home': break;
           case 'apmlist': 
               this.apmsload();
-              if(opt){
-                clearInterval(this.chatinterval);
-              }
+              this.chatpage = false;
             break;
           case 'apmchat': 
+              this.chatpage = true;
               this.setEnable('confirmapm-button');
             break;
           case 'dctschedule': break;
@@ -1292,9 +1457,13 @@
           this.apms = [];
           this.onapmsload = false;
           this.apms = res.data.row;
-          // this.apms.forEach((item,idx) =>{
-          //   item.apmdate = this.dateforth(item.apmdate);
-          // });
+          
+          if(this.firstfirelisten == 0){
+            this.activefirebase('all' ,null ,'apmsload');
+            this.firstfirelisten++;
+          }else{
+            this.unpackfirecnt();
+          } 
         });
       },
       apmlistselectrowdetect(event,idx){
@@ -1330,6 +1499,21 @@
           return "";
         }
       },
+      convertdctmonthto(type,m){
+        if(m){
+          let mx = m.split('-');
+          switch(type){
+            case 'th' : mx[1] = mx[1]+543;
+              break;
+            case 'en' : mx[1] = mx[1]-543;
+              break;  
+          }
+
+          return mx[0]+'-'+mx[1];
+        }else{
+          return "";
+        }
+      },
       //  **********************************************************************************
       //  ******************************  chat function zone  ******************************
       //  **********************************************************************************
@@ -1341,7 +1525,7 @@
         // this.inquirychat();
         // this.currentpage.txt += this.selapm.fname + "   " + this.selapm.lname;
         this.loadrelateapm();
-        this.activefirebase('apmid' ,this.selapm.apmid , 'chat');
+        this.activefirebase('apmid' ,this.selapm.apmid , 'openchat');
       },
       async loadchat(){
         this.messages = [];
@@ -1411,7 +1595,7 @@
           'msgcl' : '',
         });
 
-        //firebase work zone -- push data to adminisite for noti admin 
+        //firebase work zone -- push data to patientsite for noti patient 
         db.ref('apmchat/patientsite/'+this.selapm.hn+'/'+this.selapm.apmid).child('/').push(
             { msgtxt: this.currmsg
               ,msgdate: d
@@ -1419,6 +1603,7 @@
               ,creby: this.admindata.STAFF_CODE
               ,crebyname: this.admindata.STAFF_NAME
               ,msgcl: ''
+              ,side: 'a'
             }
           );
 
@@ -1490,8 +1675,14 @@
                 // sorter: data => data.sort((a, b) => a.lctcode.localeCompare(b.lctcode)),
               });
 
-              $('#apmlct').on("select2:closing", v => {
-                this.newapm.apmlct = $('#apmlct').val();
+              $('#apmlct').on("select2:select", v => {
+                let val = v.params.data.id;
+                if(!val || this.selapm.apmlct == val){return false;}
+                this.selapm.apmlct = val
+                if(this.switchload != 'dct'){ // หากมีการเลือก dct มาก่อน ระบบจะทำการ filter คลีนิคมาให้ เพราะงั้น จึงไม่ต้องไปโหลด dct แล้ว
+                  this.switchload = 'lct';
+                  this.loaddctbylct(this.selapm.apmlct);
+                }
               });
             break;
 
@@ -1503,7 +1694,7 @@
               });
 
               $('#apmtime').on("select2:closing", v => {
-                this.newapm.apmtime = $('#apmtime').val();
+                this.selapm.apmtime = $('#apmtime').val();
               });
             break;
 
@@ -1519,7 +1710,7 @@
               });
             break;
 
-            case 'userst':
+          case 'userst':
               $('#userst').select2({
                 theme: "bootstrap",
                 placeholder: "เลือกสถานะ",
@@ -1528,6 +1719,24 @@
 
               $('#userst').on("select2:closing", v => {
                   this.seluser.ustid = $('#userst').val();
+              });
+            break;
+
+          case 'apmdct':
+              $('#apmdct').select2({
+                theme: "bootstrap",
+                placeholder: "เลือกแพทย์",
+              });
+
+              $('#apmdct').on("select2:select", v => {
+                let val = v.params.data.id;
+                if(!val || this.newapm.apmdct == val){return false;}
+                this.newapm.apmdct = val;
+                if(this.switchload != 'lct'){ // หากมีการเลือก lct มาก่อน ระบบจะทำการ filter แพทย์มาให้ เพราะงั้น จึงไม่ต้องไปโหลด lct แล้ว
+                  this.switchload = 'dct';
+                  this.loadlctbydct(this.newapm.apmdct);
+                }
+                
               });
             break;
           
@@ -1584,12 +1793,15 @@
           this.ptapm = res.data.row;
           this.ptapm.apmdate = this.dateforth(this.ptapm.apmdate);
           if(this.ptapm.stid == '03') this.setDisable('confirmapm-button');
+          $('#apmdate').datepicker('update', this.ptapm.apmdate);
+          $('#apmdct').val(this.ptapm.apmdct).trigger('change');
           $('#apmlct').val(this.ptapm.apmlct).trigger('change');
           $('#apmtime').val(this.ptapm.apmtime).trigger('change');
         });
       },
       async lctload(){
         this.lctlist = [];
+        this.lctlist_x = [];
         this.activeselect2('apmlct');
         await axios.get("<?php echo site_url('appointment/lctload'); ?>")
         .then(res => {
@@ -1602,6 +1814,24 @@
           });
         });
         $('#apmlct').val(null).trigger('change');
+      },
+      async dctload(){
+        this.dctlist = [];
+        this.dctlist_x = [];
+        this.activeselect2('apmdct');
+        await axios.get("<?php echo site_url('appointment/dctload'); ?>")
+          .then(res => {
+            res = res.data;
+            res.row.forEach((item,idx) => {
+              this.dctlist.push({
+                dctcode : item.DCT,
+                dctname : item.NAME,
+              });
+            });
+            this.appendsel2('apmdct',this.dctlist);
+          });
+        this.dctlist_x = this.dctlist;
+        $('#apmdct').val(null).trigger('change');
       },
       checkpermission(){
 
@@ -1843,6 +2073,7 @@
               ,creby: this.admindata.STAFF_CODE
               ,crebyname: this.admindata.STAFF_NAME
               ,msgcl: msgcl
+              ,side: 'a'
             }
           );
 
@@ -1853,39 +2084,311 @@
             // this.inquirychat();
         });
       },
-      activefirebase(type , val , act = ''){
+      activefirebase(type , val = null , act = ''){
         switch(type){
-          case 'hn' : firemain = db.ref('apmchat/adminsite/'+this.ptdata.HN);
-                let resmsg = []; 
-                if(act == 'listpage'){
+          case 'all' : firemain = db.ref('apmchat/adminsite');
+                if(act == 'apmsload'){
                   // event work zone
                   firemain.on('value', snap => {
-                    snap.forEach((item) => {
-                      // item.key ในที่นี้ กำหนดให้เป็น apmid 
-                      resmsg.push({
-                        apmid : item.key
-                        ,firecnt : item.numChildren()
-                      });
-                    }); //end of foreach
+                    this.fireres = [];
+                    let idx = 0;
+                    snap.forEach(hn => { // forEach แรก คือ แยกรายการตาม HN
+                      // item.key ในที่นี้ กำหนดให้เป็น HN
+                      hn.forEach(item => {  // forEach สอง คือ แยกรายการตาม apmid
+                        // item.key ในที่นี้ โครงสร้างของ non-sql กำหนดให้เป็น apmid
+                        this.fireres.push({
+                          apmid : item.key
+                          ,cnt : item.numChildren()
+                        });
+                        // จะมี function unpackfirecnt() ทำงานต่อจากนี้ ทำหน้าที่ ยัดค่า cnt -> apmlist[x].firecnt  
 
-                    resmsg.forEach(i => {
-                      let idx = this.apmlist.findIndex(v => v.apmid == i.apmid);
-                      this.apmlist[idx].firecnt = i.firecnt;
-                    });
+                        //ถ้าเปิดหน้าแชทอยู่ให้ push array แชทเข้าไปเลย
+                        if(this.chatpage && this.selapm != [] && item.key == this.selapm.apmid){
+                          item.forEach(i => {  // forEach สาม คือ การคลายแชทออกมา
+                            this.messages.push(i.val());
+                            firemain.child(hn.key+'/'+item.key+'/'+i.key).remove();
+                          });
+                          this.scrolltobottom();
+
+                          //ถ้าอ่าน msg แล้ว ให้ set ค่าการแจ้งเตือนที่หน้ารายการ = 0
+                          idx = this.apms.findIndex(v => v.apmid == item.key);
+                          this.apms[idx].firecnt = 0;
+                        }
+                      }); //end of foreach hn
+                    }); //end of foreach snap
+                    this.unpackfirecnt();
+
                   });
                 }
             break;
-          case 'apmid' : fireapmid = db.ref('apmchat/adminsite/'+this.selapm.hn+'/'+this.selapm.apmid);
-                  if(act == 'chat'){
-                    // event work zone
-                    fireapmid.on('value', snap => {
-                      console.log(snap.val());
-                    });
+          case 'apmid' : fireapmid = db.ref('apmchat/adminsite/'+this.selapm.hn+'/'+val); // val คือ apmid
+                  if(act == 'openchat'){
+                    // delete children
+                    fireapmid.remove();
+                    let idx = this.apms.findIndex(v => v.apmid == val);
+                    this.apms[idx].firecnt = 0;
                   }
-                  
             break;
+          default: 
         }
       },
+
+      unpackfirecnt(){
+        let idx = 0;
+        this.fireres.forEach(async i => {
+          idx = this.apms.findIndex(v => v.apmid == i.apmid);
+          if(idx == -1){ 
+            await this.apmsload();
+            idx = this.apms.findIndex(v => v.apmid == i.apmid);
+          }
+          this.apms[idx].firecnt = i.cnt;
+        });
+      },
+
+      loadlctbydct(dct){
+        let lct = $('#apmlct');
+        lct.prop('disabled',true);
+        lct.empty();
+        let loadoption = new Option('กำลังโหลดข้อมูลคลินิก.....' ,0 ,true ,true);
+        lct.append(loadoption).trigger('change');
+        axios.get("<?php echo site_url('appointment/loadlctbydct'); ?>",{params: {dct: dct}})
+          .then(res => {
+            res = res.data;
+            if(res.success){
+              // res = res.row;
+              this.lctlist = [];
+              res.row.forEach((item,idx) => {
+                this.lctlist.push({
+                  lctcode : item.LCT,
+                  lctname : item.NAME,
+                });
+              });
+              this.appendsel2('apmlct',this.lctlist);
+              lct.prop('disabled',this.ptapm.lcttype != 'itlct');
+            }
+          });
+      },
+      loaddctbylct(lct){
+        let dct = $('#apmdct');
+        dct.prop('disabled',true);
+        dct.empty();
+        let loadoption = new Option('กำลังโหลดข้อมูลแพทย์ที่ออกตรวจ.....' ,0 ,true ,true);
+        dct.append(loadoption).trigger('change');
+        axios.get("<?php echo site_url('appointment/loaddctbylct'); ?>",{params: {lct: lct}})
+          .then(res => {
+            res = res.data;
+            if(res.success){
+              // res = res.row;
+              this.dctlist = [];
+              res.row.forEach((item,idx) => {
+                this.dctlist.push({
+                  dctcode : item.DCT,
+                  dctname : item.NAME,
+                });
+              });
+              this.appendsel2('apmdct',this.dctlist);
+              dct.prop('disabled',this.ptapm.isseldct != 'seldct');
+            }
+          });
+      },
+      appendsel2(elid,arr){
+        let dt = {};
+        let newoption = null;
+        switch(elid){
+          case 'apmlct' : 
+              $('#apmlct').empty();
+
+              newoption = new Option("ไม่เลือกคลีนิค" ,0 ,true ,true);
+              $('#apmlct').append(newoption).trigger('change');
+
+              arr.forEach((item,idx) => {
+                dt = {
+                  id : item.lctcode
+                  ,text : " [ " + item.lctcode + " ] " + item.lctname
+                };
+                newoption = new Option(dt.text ,dt.id ,false ,false);
+                $('#apmlct').append(newoption).trigger('change');
+              });
+            break;
+          case 'apmdct' : 
+              $('#apmdct').empty();
+
+              newoption = new Option("ไม่เลือกแพทย์" ,0 ,true ,true);
+              $('#apmdct').append(newoption).trigger('change');
+
+              arr.forEach((item,idx) => {
+                dt = {
+                  id : item.dctcode
+                  ,text : " [ " + item.dctcode + " ] " + item.dctname
+                };
+                newoption = new Option(dt.text ,dt.id ,false ,false);
+                $('#apmdct').append(newoption).trigger('change');
+              });
+            break;
+          case 'apmdct-nondctsel' :
+              $('#apmdct').empty();
+
+              dt = {
+                id : "-99"
+                ,text : " [ -99 ] ไม่ระบุแพทย์"
+              };
+              newoption = new Option(dt.text ,dt.id ,true ,true);
+              $('#apmdct').append(newoption).trigger('change');
+            break;
+          case 'apmtime' : 
+              $('#apmtime').empty();
+
+              newoption = new Option("ไม่เลือกเวลา" ,"00" ,true ,true);
+              $('#apmtime').append(newoption).trigger('change');
+
+              arr.forEach((item,idx) => {
+                dt = {
+                  id : item.k
+                  ,text : item.v
+                };
+                newoption = new Option(dt.text ,dt.id ,false ,false);
+                $('#apmtime').append(newoption).trigger('change');
+              });
+
+            break;
+          default : 
+        }
+      },
+      loadscheduledct(uselct = true , usedct = true){
+        this.onscheduledctload = true;
+        this.scheduledctitem = [];
+        let std = null;
+        let dx = moment(this.convertdctmonthto('en',this.scheduledctmonth),'MM-YYYY').startOf('day');
+        let no = moment().startOf('day'); // no is now
+
+        if(dx.month() == no.month() && dx.year() == no.year()){ // ถ้าเป็นเดือนเดียวกัน(หรือน้อยกว่า)ให้ผ่าน IF ลงมา
+          std = no.add(3,'days');
+          dx = moment(std.format('MM-YYYY'),'MM-YYYY').startOf('day');
+          std = std.format('YYYY-MM-DD');
+
+          this.scheduledctmonth = dx.format('MM-YYYY');
+          $('#dct-schedule-month').datepicker('update',this.scheduledctmonth);
+        }else{
+          std = dx.startOf('month').format('YYYY-MM-DD');
+        }
+
+
+        let end = dx.endOf('month').format('YYYY-MM-DD');
+        axios.get("<?php echo site_url('appointment/loadscheduledct'); ?>",{
+          params : {
+            lct : uselct ? this.ptapm.apmlct : ''
+            ,dct : usedct ? this.ptapm.apmdct : ''
+            ,std : std
+            ,end : end
+          }
+        })
+        .then(res => {
+          res = res.data;
+          this.onscheduledctload = false;
+          if(res.success){
+            this.scheduledctitem = res.row
+            this.scheduledctitem.forEach((item,idx) => {
+              item.WORKDATE = this.dateforth(item.WORKDATE.substr(0,10));
+            });
+          }else{
+            this.scheduledctitem = [];
+          }
+          console.log(res);
+        });
+      },
+      scheduledayclass(v){
+        switch(v){
+          case 1: 
+            return 'card-weekday-color-monday'
+            break;
+          case 2: 
+            return 'card-weekday-color-tuesday'
+            break;
+          case 3: 
+            return 'card-weekday-color-wednesday'
+            break;
+          case 4: 
+            return 'card-weekday-color-thursday'
+            break;
+          case 5: 
+            return 'card-weekday-color-friday'
+            break;
+          case 6: 
+            return 'card-weekday-color-saturday'
+            break;
+          default: 
+            return 'card-weekday-color-sunday';
+        }
+      },
+      async sdiselitem(){
+        if(this.sdisel == null){return false;}
+        let sel = this.scheduledctitem[this.sdisel];
+        if(this.switchload == 'dct' && !this.scheduledctboo && this.ptapm.apmdct != sel.DCT){
+          // ถ้าปลดการ filter แพทย์ ออกที่หน้าตารางออกตรวจ แล้วเลือกแพทย์ใหม่ ที่ไม่ใช้แพทย์เดิมที่หน้า -> reload LCT
+          await this.loadlctbydct(sel.DCT);
+        }else if(this.switchload == 'lct' && !this.schedulelctboo && this.ptapm.apmlct != sel.LCT){
+          // ถ้าปลดการ filter คลีนิค ออกที่หน้าตารางออกตรวจ แล้วเลือกคลีนิคใหม่ ที่ไม่ใช้คลีนิคเดิมที่หน้า -> reload DCT
+          await this.loaddctbylct(sel.LCT);
+        }
+
+        this.ptapm.apmdate = sel.WORKDATE;
+        this.ptapm.apmdct = sel.DCT;
+        this.ptapm.apmlct = sel.LCT;
+
+        $('#apmdate').datepicker('update', this.ptapm.apmdate);
+        $('#apmdct').val(this.ptapm.apmdct).trigger('change');
+        $('#apmlct').val(this.ptapm.apmlct).trigger('change');
+
+        let st = this.timetransform(sel.STTIME);
+        this.ptapm.apmtime = st.hr;
+        $('#apmtime').val(st.hr).trigger('change');
+        this.filterapmtime(sel.STTIME,sel.ENDTIME,'apmtime');
+
+        this.actionshowmodal('dct-schedule-out');
+      },
+      timetransform(t){
+        t = t.toString();
+        let res = null;
+        if(t == "0"){
+          res = {
+            hr: "00",
+            mn: "00",
+            sc: "00",
+          };
+        }else{
+          if(t.length >= 5){
+            t = t.padStart(6,0);
+            let hr = t.slice(0,2);
+            let mn = t.slice(2,4);
+            let sc = t.slice(4,6);
+
+            res = {
+              hr: hr,
+              mn: mn,
+              sc: sc,
+            };
+          }
+        }
+
+        return res;
+      },
+      filterapmtime(sttime,endtime,elid){
+        let st = this.timetransform(sttime);
+        let en = this.timetransform(endtime);
+
+        let i = parseInt(st.hr);
+        let t = parseInt(en.hr);
+        let arr = [];
+        if(i == 0 && t == 0){return false;}
+        for (; i <= t; i++){
+          arr.push({
+            k: i.toString().padStart(2,0), 
+            v: i.toString().padStart(2,0)+".00"
+          }); 
+        } //end of for loop
+        this.appendsel2(elid,arr);
+      },
+
     },
     mounted() {
       if(ssget('adminusername') && lcget('admindata') && lcget('adminusername')){
@@ -1894,6 +2397,7 @@
         this.statusload();
         this.usersstatusload();
         this.lctload();
+        this.dctload();
         this.activeevent();
         this.activedatepicker();
             // this.activeDataTable();

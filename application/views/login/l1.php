@@ -26,7 +26,7 @@
 <!-- หน้าแรกของการ Login -->
 <section id="signin" class="d-none">
 	<div class="full-height" style="position: relative;">
-		<div class="true-center-page container badge-login bg-white text-center">
+		<div class="true-center-page badge-login container bg-white text-center">
 			<img class="mt-3" src="<?php echo base_url('assets/img/tuh_header_logo.png'); ?>" width="75%" alt="Responsive image">
 
 				<p class="mt-2 font-weight-bold">เลขบัตรประชาชน</p>

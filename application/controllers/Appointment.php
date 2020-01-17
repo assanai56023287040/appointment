@@ -100,6 +100,7 @@ class Appointment extends CI_Controller {
 						,p.fname
 						,p.lname
 						,s.stname
+						,0 AS firecnt
 					",false)
 				->from('apmpt a')
 				->join('pt p','a.ptid = p.ptid','left')
@@ -338,6 +339,7 @@ class Appointment extends CI_Controller {
 						,p.fname
 						,p.lname
 						,s.stname
+						,0 AS firecnt
 					",false)
 				->from('apmpt a')
 				->join('pt p','a.ptid = p.ptid','left')
